@@ -1,0 +1,493 @@
+#phase-wrapper {
+    position: absolute;
+    left: 28px;
+    top: 26px;
+    line-height: 17pt;
+    padding: 0;
+    width: 260px;
+    margin: 0;
+}
+#phase-wrapper ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+
+#phase-wrapper ul.phase-menu li span.current-phase {
+    cursor: pointer;
+    display: block;
+    line-height: 15pt;
+    padding-left: 12px;
+    padding-top: 2px;
+    margin-bottom: 2px;
+}
+
+#phase-wrapper ul.phase-menu ul li {
+    padding: 12px;
+    border: solid 0;
+    cursor: pointer;
+}
+
+#phase-wrapper ul.phase-menu ul li em {
+    display:block;
+    text-align: right;
+    font-size: 9pt;
+}
+
+
+#board-controls-wrapper {
+    position: absolute;
+    right: 6px;
+    top: 4px;
+}
+
+#board-controls-wrapper .board-control-current {
+    display: inline-block;
+    font-size: 16pt;
+    height: 38px;
+    line-height: 40px;
+    margin-top: 2px;
+}
+
+#board-controls-wrapper .board-control {
+    display: inline-block;
+    margin-left: 3px;
+    vertical-align: top;
+}
+
+#board-controls-wrapper .board-control button {
+    border: none;
+    height: 40px;
+    width: 46px;
+    opacity: 0.4;
+    cursor: pointer;
+}
+
+#board-controls-wrapper .board-control button::-moz-focus-inner, button::-moz-focus-inner {
+    border: none;
+    outline: none;
+}
+
+#board-controls-wrapper .board-control.enabled button {
+    opacity: 1.0;
+}
+
+#board-controls-wrapper .board-control button:hover {
+    opacity: 0.8;
+}
+
+.card-wrapper {
+    width: 100%;
+    padding-bottom: 24px;
+}
+
+.card-wrapper h2 {
+    padding: 12px 48px;
+    font-weight: normal;
+}
+
+.card-row .card-cell {
+    padding: 6px;
+    width: 33%;
+}
+
+.card-wrapper .card {
+    border: 0 solid;
+    border-radius: 1px;
+    padding: 12px;
+    opacity: 0.85;
+    position: relative;
+    width: 31%;
+    margin: 6px 0 0 4px;
+    display: inline-block;
+}
+
+.card-wrapper .card.moved, .card-wrapper .card.moved:hover, .card-wrapper .card.alert.moved {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.card-wrapper .card:hover {
+    opacity: 1.0;
+}
+
+.card-wrapper .card h1 {
+    font-size: 12pt;
+    font-weight: normal;
+    line-height: 12pt;
+    margin: 0;
+    position: relative;
+}
+
+.card-wrapper .card h1 span.card-id {
+    font-size: 16pt;
+    font-weight: normal;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.card-wrapper .card .card-modified {
+    display: block;
+    font-size: 9pt;
+    line-height: 11pt;
+}
+
+.card-wrapper .card.alert {
+    opacity: 1.0;
+}
+
+.card-wrapper .card.alert::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+
+.card-wrapper .card .card-progress-wrapper {
+    border-top: 1px solid;
+    bottom: 0;
+    display: block;
+    height: 6px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.card-wrapper .card .card-progress-wrapper .card-progress {
+    height: 100%;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.card-wrapper .card .card-glyphs {
+    text-align: right;
+    margin: 6px 0 0;
+    height: 26px;
+    position: relative;
+    clear: both;
+}
+
+.card-wrapper .card .glyph {
+    border: none;
+    width: 28px;
+    height: 28px;
+    display: inline-block;
+    position: relative;
+}
+
+.card-wrapper .card .glyph-button {
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#board-control-options-wrapper {
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    right: 0;
+    top: 51px;
+}
+
+.board-control-option {
+    padding: 12px 24px;
+}
+
+.board-control-option .row {
+    margin: 2px 0;
+    white-space: nowrap;
+}
+
+.board-control-option label {
+    display: inline-block;
+    width: 96px;
+}
+
+.board-control-option input {
+    border-radius: 4px;
+    padding: 3px 5px 2px;
+    width: 229px;
+}
+
+.board-control-option input.short {
+    width: 100px;
+}
+
+.board-control-option .select2-container .select2-choice, .board-control-option input {
+    font-family: "ff-din-web", sans-serif;
+    font-size: 10pt;
+}
+
+.board-control-option .select2-container {
+    width: 240px;
+}
+
+.board-control-option .select2-container .select2-choice {
+    line-height: 28px;
+    padding: 0 5px;
+}
+
+.select2-drop.board-option-dropdown {
+    font-size: 9pt;
+    padding-top: 3px;
+}
+
+.board-control-option .select2-container .select2-choice .select2-arrow {
+    display: none;
+}
+
+.board-control-option .select2-container .select2-choice abbr {
+    right: 6px;
+    top: 6px;
+}
+
+.card .card-view-field-wrapper {
+    font-size: 9pt;
+    width: 100%;
+    margin: 4px 0;
+}
+
+.card .card-view-field-wrapper { padding: 0 3px 3px 0; width: 100%; min-width: 140px; line-height: 10pt; }
+
+.card .card-view-field-wrapper .card-view-field {
+    display: block;
+    line-height: 9pt;
+    margin: 0;
+    overflow: hidden;
+    padding: 4px 2px 1px;
+}
+.card .card-view-field-wrapper .card-view-field label { font-weight: bold; width: 40%; margin-right: 6px; }
+.card .card-view-field-wrapper .card-view-field span { width: 54%;}
+.card .card-view-field-wrapper .card-view-field label, .card .card-view-field-wrapper .card-view-field span { display: inline-block; overflow: hidden; white-space: nowrap; }
+
+.card-alert-wrapper {
+    border-radius: 2px 0 2px 2px;
+    font-size: 9pt;
+    padding: 0 3px;
+    position: absolute;
+    right: 0;
+    top: 26px;
+    z-index: 1;
+    display: none;
+    text-align: left;
+    width: 340px;
+}
+
+.card-alert-wrapper .card-alert span {
+    display: inline-block;
+    width: 60px;
+}
+
+.card-alert-wrapper .card-alert div.row.card-alert-detail {
+    padding: 3px;
+    word-break: break-all;
+
+}
+.card-alert {
+    padding: 6px;
+}
+
+.card-wrapper .card.alert .glyph-warning:hover {
+    border-radius: 2px 2px 0 0;
+}
+
+.card-wrapper .card.alert .glyph-warning:hover .card-alert-wrapper {
+    display: block;
+}
+
+
+.card-alert-dismiss {
+    border-radius: 100%;
+    float: right;
+    height: 26px;
+    margin: -2px;
+    width: 26px;
+    opacity: 0.4;
+    cursor: pointer;
+}
+
+.card-alert-dismiss:hover {
+    opacity: 0.8;
+}
+
+.card-alert-dismiss:active {
+    opacity: 1.0;
+}
+
+.card-alert-wrapper.pending-action {
+    opacity: 0.7;
+}
+
+#gravity .ui-dialog {
+    max-width: 800px;
+    width: auto;
+    max-height: 80%;
+    font-family: "ff-din-web", sans-serif;
+}
+
+#gravity .ui-corner-all {
+    border-radius: 2px;
+}
+
+#gravity .ui-widget-content {
+    border: none;
+}
+
+#gravity .ui-dialog.ui-widget .ui-dialog-titlebar {
+    border: none;
+    padding: 0;
+}
+
+#gravity .ui-dialog.ui-widget .ui-dialog-titlebar .ui-dialog-title {
+    display: block;
+    font-size: 24pt;
+    font-weight: normal;
+    margin: 6px 0;
+    overflow: hidden;
+    padding: 0 12px 6px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: auto;
+    float: none;
+}
+
+#gravity .ui-dialog .ui-dialog-titlebar-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    opacity: 0.4;
+    cursor: pointer;
+    top: 0.2em;
+    right: 0.2em;
+    margin: 0;
+    padding: 0;
+}
+
+#gravity .ui-dialog .ui-dialog-titlebar-close:hover { opacity: 0.7; }
+
+#gravity .ui-dialog .ui-dialog-titlebar-close .ui-button-icon-primary { display: none;}
+
+#change-phase-wrapper {
+    padding-bottom: 36px;
+    text-align: center;
+    width: 608px;
+    margin: 0 auto;
+}
+
+#change-phase-wrapper .phase-tile {
+    display: inline-block;
+    float: left;
+    margin: 2px;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+}
+
+#change-phase-wrapper .phase-tile, #change-phase-wrapper .phase-tile .phase-tile-overlay {
+    padding: 4px;
+    border-radius: 2px;
+}
+
+#change-phase-wrapper .phase-tile, #change-phase-wrapper .phase-tile .phase-tile-text-wrapper, #change-phase-wrapper .phase-tile .phase-tile-overlay {
+    width: 140px;
+    height: 140px;
+}
+
+#change-phase-wrapper .phase-tile .phase-tile-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 30pt;
+    font-weight: bold;
+}
+
+#change-phase-wrapper .phase-tile .phase-tile-text-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#change-phase-wrapper.disabled .phase-tile {
+    opacity: 0.7;
+}
+
+#change-phase-wrapper .phase-tile .phase-tile-text-wrapper h2 {
+    display: inline-block;
+    font-size: 12pt;
+    font-weight: normal;
+}
+
+#change-phase-wrapper .phase-tile.phase-tile-current .phase-tile-text-wrapper h2 {
+    font-weight: bold;
+}
+
+div.dialog-card-alert {
+    padding-bottom: 6px;
+    clear: both;
+}
+
+div.dialog-card-alert button {
+    border-radius: 4px;
+    padding: 6px;
+    margin: 0 12px 0 0;
+    min-width: 40px;
+    font-size: 9pt;
+    cursor: pointer;
+}
+
+div.dialog-card-alert button.alert-dismiss {
+    float: right;
+}
+
+div.dialog-card-alert.pending {
+    opacity: 0.8;
+}
+
+div.dialog-card-alert.pending button {
+    pointer-events: none;
+}
+
+div.dialog-card-alert div.dialog-card-alert-details {
+    font-size: 9pt;
+}
+
+div.dialog-card-alert div.dialog-card-alert-details strong {
+    display: inline-block;
+    width: 96px;
+}
+
+div.dialog-card-alert div.dialog-card-alert-body {
+    padding: 3px 6px 18px;
+    margin: 3px 0 6px;
+    font-size: 10pt;
+    word-wrap: break-word;
+}
+
+.card-alerts-no-navigation div.dialog-card-alert button.alert-next, .card-alerts-no-navigation div.dialog-card-alert button.alert-previous {
+    display: none;
+}

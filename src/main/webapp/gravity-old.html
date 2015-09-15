@@ -1,0 +1,102 @@
+﻿<!doctype html>
+<html>
+<head>
+    <title>Gravity</title>
+
+    <!-- Scripts -->
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script src="js/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="js/select2.js"></script>
+    <script src="js/select2.min.js"></script>
+    <script src="js/jquery.validate.js" type="text/javascript"></script>
+    <script src="js/gravity.js" type="text/javascript"></script>
+    <script src="js/board.js" type="text/javascript"></script>
+    <script src="js/template.js" type="text/javascript"></script>
+    <script src="js/phase.js" type="text/javascript"></script>
+    <script src="js/cards.js" type="text/javascript"></script>
+    <script src="js/card.js" type="text/javascript"></script>
+    <script src="js/view.js" type="text/javascript"></script>
+    <script src="js/filter.js" type="text/javascript"></script>
+    <script src="js/search.js" type="text/javascript"></script>
+    <script src="js/form.js" type="text/javascript"></script>
+    <script src="js/list.js" type="text/javascript"></script>
+    <script src="js/validation.js" type="text/javascript"></script>
+    <script src="js/jquery.mousewheel.js" type="text/javascript"></script>
+    <script src="js/perfect-scrollbar.js" type="text/javascript"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="http://use.typekit.com/k/saa3wbx-d.css?3bb2a6e53c9684ffdc9a9bfe1b5b2a6216bc43f667eade1f8c67b88a89fc1532774479e9777421c424ed97e8e14d0fb546f13194b30807eeda3296c10f544bb7db153146d52c54b3a5cb454d4a95ae02d61ba37044a79b04b084080315204291e7bd2afa40b6fb5a0c7954a3980643774aa97cc57573715ef96e11e691c895e406181ff7e11de555a7e7ec0a6d0e080ff680715601d604daf2035a1ac10303d3799bb39b39e705a27ea465b2dd491c91ad743951e1" />
+    <link rel="stylesheet" href="css/jquery-ui.css" />
+    <link rel="stylesheet" href="css/select2.css" />
+    <link rel="stylesheet" href="css/gravity.css" />
+    <link rel="stylesheet" href="css/perfect-scrollbar.css" />
+
+    <!--[if gte IE 9]>
+    <style type="text/css">
+        div.card {
+            filter: none;
+        }
+    </style>
+    <![endif]-->
+
+</head>
+<body>
+
+<div id="loader-wrapper" class="table"><div id="loader" class="table-cell"><img src="images/loader.gif" /></div></div>
+
+<div id="board-selection-wrapper">
+    <div id="form-selection">
+    </div>
+    <div id="board-selection">
+    </div>
+</div>
+
+<div id="board-wrapper" style="display: none;">
+    <div id="hide-sidebar" style="">&#9664;</div>
+    <div id="board-sidebar" class="table">
+        <div class="table-row">
+            <div class="table-cell" style="height: 78px;" id="logo"><span>Change Board</span></div>
+        </div>
+        <div class="table-row">
+            <div class="table-cell">
+                <div id="phase-wrapper"></div>
+            </div>
+        </div>
+    </div>
+    <div id="board-main">
+        <div id="board-header">
+
+            <div id="search-controls">
+                <div id="search-wrapper">
+                    <input type="text" id="search-type" class="required" />
+                    <div id="search-type-prompt"></div>
+                    <div id="search-operator">
+                        <span></span>
+                        <ul>
+                        </ul>
+                    </div>
+                    <input type="text" id="search-value" />
+                    <div id="search-start">
+                        <img src="images/white-magnifying-glass-hi.png" />
+                    </div>
+                </div>
+            </div>
+
+            <div id="user-controls">
+                <img src="images/avatar-placeholder.png" id="user-avatar" />
+                <span id="user-login"></span>
+            </div>
+            <div id="view-controls"><strong>Views</strong><span>&nbsp;</span><ul id="view-options"></ul></div>
+            <div id="filter-controls"><strong>Filters</strong><span>&nbsp;</span><ul id="filter-options"></ul></div>
+        </div>
+        <div id="board-cards"></div>
+    </div>
+</div>
+
+<div id="form-wrapper" style="display: none;">
+    <div id="form-header"></div>
+    <div id="form-content"></div>
+</div>
+
+</body>
+</html>

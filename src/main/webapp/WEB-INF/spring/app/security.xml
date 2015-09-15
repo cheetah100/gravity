@@ -1,0 +1,35 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                    http://www.springframework.org/schema/security 
+                    http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+                    
+    <http use-expressions="true">
+        <intercept-url pattern="/spring/**" access="isAuthenticated()" />
+        <http-basic />
+        <!--  <form-login /> -->
+    </http>
+        
+    <beans:bean id="securityTool" class="nz.net.orcon.kanban.security.SecurityTool"/>
+
+	
+    <beans:bean id="nullAuthenticationProvider" class="nz.net.orcon.kanban.security.NullAuthenticationProvider"/>
+
+	<beans:bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
+		<beans:property name="permissionEvaluator" ref="gravityPermissionEvaluator"/>
+	</beans:bean>
+	
+	<beans:bean id="gravityPermissionEvaluator" class="nz.net.orcon.kanban.security.GravityPermissionEvaluator"/>
+
+	<global-method-security pre-post-annotations="enabled">
+		<expression-handler ref="expressionHandler"/>
+	</global-method-security>
+	
+   	<authentication-manager>
+   		<authentication-provider ref="nullAuthenticationProvider"/>
+   	</authentication-manager>  
+
+	    
+</beans:beans>

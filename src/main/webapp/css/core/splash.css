@@ -1,0 +1,40 @@
+div.panel-wrapper {
+    margin-bottom: 4px;
+}
+
+div.panel-wrapper div.panel {
+    margin: 0 2px 4px 0;
+    padding: 0 0 24px;
+    vertical-align: top;
+}
+
+div.panel h2 {
+    font-size: 16pt;
+    margin: 24px 12px;
+    font-weight: normal;
+    font-variant: small-caps;
+}
+
+div.panel.panel-left {
+    width: 240px;
+    border-right: 0 solid;
+    border-radius: 1px;
+}
+
+div.panel-selection-option {
+    height: 160px;
+    width: 160px;
+    margin: 0 0 4px 4px;
+    vertical-align: top;
+    text-align: center;
+    float: left;
+    cursor: pointer;
+    border-radius: 1px;
+}
+
+div.panel-selection-option span {
+    display: table-cell;
+    line-height: 14pt;
+    padding: 0 6px;
+    vertical-align: middle;
+}

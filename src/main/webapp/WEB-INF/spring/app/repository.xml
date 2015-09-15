@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd 
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">
+	
+	<bean id="repository" class="org.apache.jackrabbit.commons.JcrUtils" factory-method="getRepository">
+		<constructor-arg value="${repository.url}"/>
+	</bean>
+	 	
+	<bean id="ocmFactory" class="nz.net.orcon.kanban.tools.OcmMapperFactory">
+		<property name="user" value="admin"/>
+		<property name="password" value="admin"/>
+		<property name="domainPackage" value="nz.net.orcon.kanban.model"/>
+		<property name="mainNodes">
+			<list>
+				<value>board</value>
+				<value>template</value>
+				<value>resource</value>
+				<value>form</value>
+				<value>list</value>
+				<value>notifications</value>
+				<value>user</value>
+				<value>team</value>
+			</list>
+		</property>
+		<property name="classList">
+			<list>
+				<value>Template</value>
+				<value>TemplateField</value>
+				<value>TemplateTask</value>
+				<value>TemplateGroup</value>
+				<value>Option</value>
+				<value>Board</value>
+				<value>Phase</value>
+				<value>Card</value>
+				<value>CardSummary</value>
+				<value>CardAttachment</value>
+				<value>CardEvent</value>
+				<value>CardTask</value>
+				<value>ObjectMapping</value>
+				<value>Filter</value>
+				<value>Form</value>
+				<value>Condition</value>
+				<value>View</value>
+				<value>ViewField</value>
+				<value>Rule</value>
+				<value>Action</value>
+				<value>ListResource</value>
+				<value>CardNotification</value>
+				<value>Notification</value>
+				<value>User</value>
+				<value>Team</value>
+				<value>NotificationTypeMapping</value>
+				<value>BoardRule</value>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

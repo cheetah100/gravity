@@ -1,0 +1,27 @@
+#page-body-form div.form-footer {
+    padding: 18px 0 48px;
+    text-align: center;
+}
+
+#page-body-form div.form-footer div.submit-form-wrapper {
+
+}
+
+#page-body-form #submit-form {
+    padding: 8px 24px;
+    border-radius: 3px;
+    font-size: 12pt;
+    border: 1px solid #666;
+    cursor: pointer;
+}
+
+#page-body-form #submit-form:hover {
+    background: cornflowerblue;
+    color: white;
+    border-color: white;
+}
+
+.dialog-label {
+    display: inline-block;
+    width: 120px;
+}

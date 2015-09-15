@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gravity Account Summary</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js" type="text/javascript"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js" type="text/javascript"></script>
+
+    <link rel="stylesheet" href="http://use.typekit.com/k/saa3wbx-d.css?3bb2a6e53c9684ffdc9a9bfe1b5b2a6216bc43f667eade1f8c67b88a89fc1532774479e9777421c424ed97e8e14d0fb546f13194b30807eeda3296c10f544bb7db153146d52c54b3a5cb454d4a95ae02d61ba37044a79b04b084080315204291e7bd2afa40b6fb5a0c7954a3980643774aa97cc57573715ef96e11e691c895e406181ff7e11de555a7e7ec0a6d0e080ff680715601d604daf2035a1ac10303d3799bb39b39e705a27ea465b2dd491c91ad743951e1" />
+    <style>
+        body {
+            font-size: 10pt;
+            font-family: "ff-din-web", sans-serif;
+        }
+
+        .table {
+            display: table;
+            width: 95%;
+            border: solid #666;
+            border-width: 0 1px;
+        }
+
+        .tcol1 { background: #eee; display: table-column; }
+        .tcol2 { background: #ccc; display: table-column; }
+
+        .th, .tr {
+            display: table-row;
+        }
+
+        .th {
+            background: #333;
+            color: white;
+            padding: 12px 0;
+            font-weight: bold;
+        }
+
+        .tr:hover .td {
+            background: rgba(0,0,0,0.2) !important;
+        }
+
+        .td {
+            padding: 0 12px;
+            display: table-cell;
+            border-bottom: 1px solid #666;
+        }
+
+
+    </style>
+
+    <script type="text/javascript">
+        var accountnumber,
+            ajaxUrl = "./spring",
+            boardPaths = ["residential-provisioning", "residential-provisioning---copper-based", "third-party-logistics"],
+            cardids = {},
+            cards = {},
+            phases = {},
+            lastphase = {};
+
+        $(document).ready(function() {
+            if (window.location.search) {
+                $.each(window.location.search.substring(1).split('&'), function(i, p) {
+                    var tmp = p.split('=');
+                    if (tmp[0] == "account")
+                        accountnumber = tmp[1];
+                });
+            }
+
+            if (accountnumber)
+                jQuery.each(boardPaths, function(i, path) {
+                    lastphase[path] = -1;
+                    phases[path] = {};
+                    cards[path] = {};
+                    cardids[path] = {};
+                    pullCardIDs(path);
+                });
+        });
+
+        function pullCardIDs(path) {
+            $.ajax({
+                url: ajaxUrl + "/board/" + path + '/search/account_accountnumber/EQUALTO/' + accountnumber,
+                success: function(data) {
+                    if (!$.isEmptyObject(data)) {
+                        cardids[path] = data;
+                        pullPhases(path);
+                    }
+                }
+            });
+        }
+
+        function pullPhases(path) {
+            $.ajax({
+                url: ajaxUrl + "/board/" + path + '/phases/',
+                success: function(data) {
+                    var tmp;
+                    $.each(data, function(i, p) {
+                        if (p.index > lastphase[path]) {
+                            lastphase[path] = p.index;
+                            tmp = i;
+                        }
+                        phases[path][p.id] = p;
+                    });
+
+                    lastphase[path] = data[tmp].id;
+                    pullCards(path);
+                }
+            });
+        }
+
+        function pullCards(path) {
+            var body = $(document).find('body');
+
+            $.each(cardids[path], function(i, p) {
+                $.ajax({
+                    async: false,
+                    url: ajaxUrl + "/board/" + path + '/phases/' + p + '/cards/' + i,
+                    success: function(data) {
+                        cards[path][i] = data;
+                    }
+                });
+            });
+            displayCards(path);
+        }
+
+        function displayCards(path) {
+            var activeorders = $('#active-orders'),
+                completedorders = $('#completed-orders');
+
+            $.each(cards[path], function(i, card) {
+                var link = "./ro-card.html?b="+path+"&c=" + card.id;
+                if (card.phase == lastphase[path]) {
+                    completedorders.append('<div class="tr">' +
+                            '<div class="td"><a href="' + link + '">' + card.id + '</a></div>' +
+                            '<div class="td">' + card.template + '</div>' +
+                            '<div class="td">' + card.creator + '</div>' +
+                            '<div class="td">' + convertDate(card.created) + '</div>' +
+                            '<div class="td">' + (card.modified != null ? convertDate(cards.modified) : '-') + '</div>' +
+                            '</div>');
+                } else {
+                    activeorders.append('<div class="tr">' +
+                            '<div class="td"><a href="' + link + '">' + card.id + '</a></div>' +
+                            '<div class="td">' + card.template + '</div>' +
+                            '<div class="td">' + card.creator + '</div>' +
+                            '<div class="td">' + convertDate(card.created) + '</div>' +
+                            '<div class="td">' + (card.modified != null ? convertDate(cards.modified) : '-') + '</div>' +
+                            '<div class="td">' + phases[path][card.phase].name + '</div>' +
+                            '</div>');
+                }
+            });
+        }
+
+        function convertDate(date) {
+            if (/-/.test(date))
+                return date.substring(0,10).trim();
+
+            var d = new Date(date);
+
+            return d.getFullYear() + '-' + ((d.getMonth() + 1) < 10?'0' + (d.getMonth() + 1):(d.getMonth() + 1)) + '-' + (d.getDate() < 10?'0' + d.getDate():d.getDate());
+        }
+    </script>
+</head>
+<body>
+
+<h2>Active Orders</h2>
+<div id="active-orders" class="table">
+    <div class="tcol1"></div>
+    <div class="tcol2"></div>
+    <div class="tcol1"></div>
+    <div class="tcol2"></div>
+    <div class="tcol1"></div>
+    <div class="tcol2"></div>
+    <div class="th">
+        <div class="td">ID Number</div>
+        <div class="td">Title</div>
+        <div class="td">Created By</div>
+        <div class="td">Created Date</div>
+        <div class="td">Last Modified</div>
+        <div class="td">Phase</div>
+    </div>
+</div>
+
+
+<h2>Completed Orders</h2>
+<div id="completed-orders" class="table">
+    <div class="tcol1"></div>
+    <div class="tcol2"></div>
+    <div class="tcol1"></div>
+    <div class="tcol2"></div>
+    <div class="tcol1"></div>
+    <div class="th">
+        <div class="td">ID Number</div>
+        <div class="td">Title</div>
+        <div class="td">Created By</div>
+        <div class="td">Created Date</div>
+        <div class="td">Last Modified</div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd 
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">
+	
+	<bean id="jcrConfigFactory" class="nz.net.orcon.kanban.JackrabbitRepositoryConfigFactory">
+		<property name="jcrHome" value="${testJcrHome}"/>
+	</bean>
+
+	<bean id="jcrConfig" class="org.apache.jackrabbit.core.config.RepositoryConfig" factory-bean="jcrConfigFactory" factory-method="create"/>
+
+	<bean id="repository" class="org.apache.jackrabbit.core.RepositoryImpl">
+		<constructor-arg index="0" ref="jcrConfig" />
+	</bean>
+	
+	<bean id="ocmFactory" class="nz.net.orcon.kanban.tools.OcmMapperFactory">
+		<property name="user" value="admin"/>
+		<property name="password" value="admin"/>
+		<property name="domainPackage" value="nz.net.orcon.kanban.model"/>
+		<property name="mainNodes">
+			<list>
+				<value>board</value>
+				<value>template</value>
+				<value>resource</value>
+				<value>form</value>
+				<value>notifications</value>
+			</list>
+		</property>
+		<property name="classList">
+			<list>			
+				<value>Template</value>
+				<value>TemplateField</value>
+				<value>TemplateTask</value>
+				<value>TemplateGroup</value>
+				<value>Option</value>
+				<value>Board</value>
+				<value>Phase</value>
+				<value>Card</value>
+				<value>CardSummary</value>
+				<value>CardAttachment</value>
+				<value>CardEvent</value>
+				<value>CardTask</value>
+				<value>Filter</value>
+				<value>Form</value>
+				<value>Condition</value>
+				<value>View</value>
+				<value>ViewField</value>
+				<value>Rule</value>
+				<value>Action</value>
+				<value>ListResource</value>
+				<value>CardNotification</value>
+				<value>Notification</value>
+				<value>User</value>
+				<value>Team</value>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

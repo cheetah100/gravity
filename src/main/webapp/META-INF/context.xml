@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context >
+   
+   <!-- <Resource name="jcr/repository"
+          auth="Container"
+          type="javax.jcr.Repository"
+          factory="org.apache.jackrabbit.rmi.client.ClientRepositoryFactory"
+          url="rmi://localhost:1099/jackrabbit.repository"/>  -->
+          
+</Context>

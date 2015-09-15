@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd 
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/jms 
+    http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+    http://www.springframework.org/schema/util 
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+	<!-- EVENT LISTENING FROM QUEUE -->
+
+	<bean id="hornetqConfiguration"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="location" value="file:///etc/hornetq.conf" />
+	</bean>
+
+	<jee:jndi-lookup id="jmsConnectionFactory" jndi-name="/ConnectionFactory"
+		resource-ref="true" environment-ref="hornetqConfiguration" />
+
+	<jms:listener-container container-type="default"
+		connection-factory="jmsConnectionFactory" acknowledge="auto">
+
+		<jms:listener destination="gravityEvents" 
+			ref="eventListener"
+			method="onMessage" />
+	</jms:listener-container>
+
+	<jms:listener-container container-type="default"
+		connection-factory="jmsConnectionFactory" 
+		acknowledge="auto" 
+		destination-type="topic">
+			
+		<jms:listener destination="gravityCacheInvalidation" 
+			ref="cacheManager"
+			method="onMessage" />
+
+		<jms:listener destination="gravityCardLocking" 
+			ref="cardsLockCache"
+			method="onMessage" />
+
+		<jms:listener destination="gravityPhaseChange" 
+			ref="boardsCache"
+			method="onMessage" />
+
+		<jms:listener destination="gravityIdGenerator" 
+			ref="idSyncReceiver"
+			method="onMessage" />
+
+	</jms:listener-container>
+
+	<bean id="eventListener" class="nz.net.orcon.kanban.automation.JmsEventListener" />
+
+	<jee:jndi-lookup id="gravityEventsQueue" jndi-name="/queue/gravityEvents"
+		resource-ref="true" environment-ref="hornetqConfiguration" />
+
+	<bean id="eventsJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="explicitQosEnabled" value="true" />
+		<property name="timeToLive" value="3600000" />
+		<property name="defaultDestinationName" value="gravityEvents" />
+	</bean>
+
+	<bean id="invalidationJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="explicitQosEnabled" value="true" />
+		<property name="timeToLive" value="3600000" />
+		<property name="defaultDestinationName" value="gravityCacheInvalidation" />
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+
+	<bean id="cardLockingJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="explicitQosEnabled" value="true" />
+		<property name="timeToLive" value="3600000" />
+		<property name="defaultDestinationName" value="gravityCardLocking" />
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+
+	<bean id="phaseChangeJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="explicitQosEnabled" value="true" />
+		<property name="timeToLive" value="3600000" />
+		<property name="defaultDestinationName" value="gravityPhaseChange" />
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+
+	<bean id="idJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<property name="connectionFactory" ref="jmsConnectionFactory" />
+		<property name="explicitQosEnabled" value="true" />
+		<property name="timeToLive" value="3600000" />
+		<property name="defaultDestinationName" value="gravityIdGenerator" />
+		<property name="pubSubDomain" value="true"/>
+	</bean>
+	
+	<bean id="cardListener" class="nz.net.orcon.kanban.automation.CardListener">
+		<property name="automationDelay" value="${automation.delay}"/>
+	</bean>
+	
+	<bean id="cacheManager" class="nz.net.orcon.kanban.automation.CacheManager">
+		<property name="cacheList">
+			<map>
+				<entry key="BOARD" value-ref="boardsCache"/>
+				<entry key="FORM" value-ref="formCache"/>
+				<entry key="LIST" value-ref="listCache"/>
+				<entry key="RESOURCE" value-ref="resourceCache"/>
+				<entry key="TEAM" value-ref="teamCache"/>
+				<entry key="TEMPLATE" value-ref="templateCache"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="idSyncReceiver" class="nz.net.orcon.kanban.automation.IdGeneratorReceiver"/>
+	
+</beans>

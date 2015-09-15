@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:jms="http://www.springframework.org/schema/jms"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd 
+	http://www.springframework.org/schema/jee
+	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/jms 
+    http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+    http://www.springframework.org/schema/util 
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+	<bean id="variableInterpreter" class="nz.net.orcon.kanban.automation.VariableInterpreter"/>
+	
+	<bean id="listTools" class="nz.net.orcon.kanban.tools.ListTools" >
+		<property name="dateInterpreter" ref="dateInterpreter" />
+	</bean>
+	 
+	<bean id="cardTools" class="nz.net.orcon.kanban.tools.CardToolsImpl" />
+	 
+	<bean id="dateInterpreter" class="nz.net.orcon.kanban.tools.DateInterpreter" >
+		<property name="complexDateConverters">
+			<list>
+				<bean class="nz.net.orcon.kanban.tools.PlusDateConverter" />
+				<bean class="nz.net.orcon.kanban.tools.SubtractDateConverter" />
+				<bean class="nz.net.orcon.kanban.tools.NowDateConverter" />
+			</list>
+		</property>
+	</bean> 
+	
+	<!-- AUTOMATION ENGINE & SERVICES -->
+
+	<bean id="automationEngine" class="nz.net.orcon.kanban.automation.AutomationEngine">
+		<property name="plugins">
+			<map>
+				<entry key="execute" value-ref="executionPlugin" />
+				<entry key="move" value-ref="movePlugin" />
+				<entry key="object" value-ref="objectMapperPlugin" />
+				<entry key="map" value-ref="mapMapperPlugin" />
+				<entry key="xml" value-ref="xStreamPlugin" />
+				<entry key="extract" value-ref="extractPlugin" />
+				<entry key="script" value-ref="scriptPlugin" />
+				<entry key="spawn" value-ref="spawnPlugin" />
+				<entry key="persist" value-ref="persistPlugin" />
+				<entry key="template" value-ref="templatePlugin" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="executionPlugin" class="nz.net.orcon.kanban.automation.plugin.ExecutionPlugin">
+		<property name="services">
+			<map>
+				<entry key="smsPlugin" value-ref="bulletinAdvancedEndpoint" />
+				<entry key="cardController" value-ref="cardController" />
+				<entry key="notificationController" value-ref="notificationController" />
+				<entry key="phaseController" value-ref="phaseController" />								
+				<entry key="stringify" value-ref="stringify" />				
+				<entry key="emailSenderAction" value-ref="emailSenderAction" />
+				<entry key="emailReceiverAction" value-ref="emailReceiverAction" />
+				<entry key="uniqueIdAction" value-ref="uniqueIdAction" />
+				<entry key="dateTool" value-ref="dateTool" />
+				<entry key="createVariableAction" value-ref="createVariableAction" />
+				<entry key="clusterManager" value-ref="clusterManager" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="persistPlugin" class="nz.net.orcon.kanban.automation.plugin.PersistPlugin" />
+	
+	<bean id="movePlugin" class="nz.net.orcon.kanban.automation.plugin.MovePlugin" />
+
+	<bean id="objectMapperPlugin" class="nz.net.orcon.kanban.automation.plugin.ObjectMapperPlugin" />
+
+	<bean id="mapMapperPlugin" class="nz.net.orcon.kanban.automation.plugin.MapMapperPlugin" />
+
+	<bean id="xStreamPlugin" class="nz.net.orcon.kanban.automation.plugin.XStreamPlugin" />
+	
+	<bean id="extractPlugin" class="nz.net.orcon.kanban.automation.plugin.ExtractPlugin" />
+	
+	<bean id="propertyPlugin" class="nz.net.orcon.kanban.automation.plugin.PropertyMapperPlugin" />
+	
+	<bean id="scriptPlugin" class="nz.net.orcon.kanban.automation.plugin.ScriptPlugin" />
+	
+	<bean id="spawnPlugin" class="nz.net.orcon.kanban.automation.plugin.SpawnPlugin" />
+	
+	<bean id="templatePlugin" class="nz.net.orcon.kanban.automation.plugin.TemplatePlugin" />	
+
+	<bean id="jcrObserver" class="nz.net.orcon.kanban.automation.JcrObserver"/>
+
+	<bean id="timerManager" class="nz.net.orcon.kanban.automation.TimerManager"/>
+	
+	<bean id="emailSenderAction" class="nz.net.orcon.kanban.automation.actions.EmailSenderAction" />
+	
+	<bean id="uniqueIdAction" class="nz.net.orcon.kanban.automation.actions.UniqueIdAction" />
+	
+	<bean id="emailReceiverAction" class="nz.net.orcon.kanban.automation.actions.EmailReceiverAction" />
+	
+	<bean id="dateTool" class="nz.net.orcon.kanban.automation.actions.DateTool" />
+			
+	<bean id="stringify" class="nz.net.orcon.kanban.automation.actions.StringUtils"/>
+	
+	<bean id="createVariableAction" class="nz.net.orcon.kanban.automation.actions.CreateVariableAction"/>
+	
+
+	<bean id="bulletinAdvancedEndpoint"
+		class="nz.net.orcon.kanban.automation.actions.BulletinAdvancedSmsEndpoint">
+		<property name="user" value="${bulletin.username}" />
+		<property name="password" value="${bulletin.password}" />
+		<property name="url" value="${bulletin.url}" />
+		<property name="from" value="${bulletin.from}" />
+		<property name="rateCode" value="${bulletin.ratecode}" />
+		<property name="base64" ref="stringEncryptor" />
+	</bean>
+
+	<bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory" />
+
+	<bean id="xstreamMarshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+		<property name="aliases">
+			<props>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- Cluster Management -->
+	<bean id="clusterManager" class="nz.net.orcon.kanban.automation.ClusterManager"/>
+
+</beans>

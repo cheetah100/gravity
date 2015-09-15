@@ -1,0 +1,344 @@
+body { background: #101010; color: white; }
+
+
+div#loading-wrapper {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+div#loading-wrapper span {
+    color: white;
+}
+
+#page-header-wrapper {
+    background: #1f0c3f;
+    color: white;
+    border-color: #642882;
+    box-shadow: 0 0 24px #000;
+}
+
+div.panel.panel-left {
+    background: #642882;
+    border-color: #101010;
+}
+
+div.panel-selection-option {
+    background: #dcdcdc;
+    color: #101010;
+}
+
+div.panel-selection-option:hover {
+    background: white;
+    text-shadow: 1px 1px 3px #666;
+}
+
+div.panel-selection-option:active {
+    background: #606060;
+    color: white;
+}
+
+#phase-wrapper ul.phase-menu ul {
+    background: rgba(0,0,0,0.9);
+    border: solid 0 #333;
+}
+
+#phase-wrapper ul.phase-menu ul li {
+    border-color: #333;
+}
+
+#phase-wrapper ul.phase-menu ul li:hover {
+    background: #333;
+}
+
+.card-row .card-cell:hover {
+}
+
+.card-row .card-cell:hover .card {
+}
+
+.card-wrapper .card {
+    border-color: #101010;
+}
+
+.card-wrapper .card, .card-wrapper .card.white {
+    background: #fff;
+    color: black;
+}
+
+.card-wrapper .card.blue {
+    background: #7f90ff;
+}
+
+.card-wrapper .card.green {
+    background: #55ee77;
+}
+
+.card-wrapper .card.aqua {
+    background: #55aaee;
+}
+
+.card-wrapper .card.orange {
+    background: #eeaa55;
+}
+
+.card-wrapper .card.yellow {
+    background: #eeee77;
+}
+
+.card-wrapper .card.purple {
+    background: #9963ee;
+}
+
+.card-wrapper .card.pink {
+    background: #ffaeff;
+}
+
+.card-wrapper .card.brown {
+    background: #9f5c46;
+}
+
+
+.card-wrapper .card.alert, .card-comment-wrapper.card-comment-alert {
+    background: rgba(255, 0, 0, 0.6);
+    color: #e0e0e0;
+}
+
+.card-wrapper .card.alert::after, .card-comment-wrapper.card-comment-alert::after {
+    background: url('../../images/jquery-ui/ui-bg_diagonals-thick_20_666666_40x40.png');
+}
+
+.card-wrapper .card .card-progress-wrapper {
+    background: rgba(0, 0, 0, 0.7);
+    border-color:#101010;
+}
+
+.card-wrapper .card .card-progress-wrapper .card-progress {
+    background: cornflowerblue;
+}
+
+
+.card-wrapper .card .glyph {
+    background-image: url('../../images/gravity-glyphs-90-grayscale.png');
+    background-repeat: no-repeat;
+    background-color: transparent;
+}
+
+
+.card-wrapper .card .glyph.glyph-warning {
+    background-position: -126px -46px;
+}
+
+.card-wrapper .card.warning .glyph.glyph-warning {
+    background-position: -126px -86px;
+}
+
+.card-wrapper .card.alert .glyph.glyph-warning {
+    background-position: -246px -6px;
+}
+
+
+.card-wrapper .card .glyph.glyph-changephase {
+    background-position: -86px -46px;
+}
+
+.card-wrapper .card .glyph.glyph-changephase:hover {
+    background-position: -86px -86px;
+}
+
+.card-wrapper .card .glyph.glyph-changephase:active {
+    background-position: -86px -126px;
+}
+
+.card-wrapper .card .glyph.glyph-editcard {
+    background-position: -6px -46px;
+}
+
+.card-wrapper .card .glyph.glyph-editcard:hover {
+    background-position: -6px -86px;
+}
+
+.card-wrapper .card .glyph.glyph-editcard:active {
+    background-position: -6px -126px;
+}
+
+.card-wrapper .card .glyph.glyph-lock {
+    background-position: -206px -46px;
+}
+
+.card-wrapper .card.locked .glyph.glyph-lock {
+    background-position: -166px -86px;
+}
+
+.card-wrapper .card .glyph.glyph-link {
+    background-position: -46px -46px;
+}
+
+.card-wrapper .card .glyph.glyph-link:hover {
+    background-position: -46px -86px;
+}
+
+.card .card-view-field-wrapper .card-view-field.dark { background: rgba(0,0,0,0.1); }
+
+.card-wrapper .card .glyph.glyph-link:active {
+    background-position: -46px -126px;
+}
+
+
+.card-alert-wrapper .card-alert div.row.card-alert-detail {
+    background: #303030;
+}
+
+.card-alert {
+    border-bottom: 1px solid #aaa;
+}
+
+.card-alert-wrapper {
+    background: none repeat scroll 0 0 black;
+    border: 2px solid #fff;
+    color: white;
+    box-shadow: 2px 2px 3px black;
+}
+
+
+.card-wrapper .card.alert .glyph-warning:hover {
+    background-color: #fff;
+}
+
+
+#board-controls-wrapper .board-control-current {
+    color: #999;
+}
+
+#board-controls-wrapper .board-control button {
+    background: url('../../images/gravity-glyphicons-header.png') transparent;
+}
+
+#board-controls-wrapper .board-control.control-search button {
+    background-position: -128px -29px;
+}
+#board-controls-wrapper .board-control.control-filter button {
+    width: 42px;
+    background-position: -229px -29px;
+}
+#board-controls-wrapper .board-control.control-view button {
+    background-position: -29px -29px;
+}
+#board-controls-wrapper .board-control.control-sort button {
+    width: 40px;
+    background-position: -330px -29px;
+}
+#board-controls-wrapper .board-control.control-findcardid button {
+    width: 42px;
+    background-position: -428px -29px;
+}
+
+#board-control-options-wrapper {
+    background: rgba(0,0,0,0.9);
+}
+
+.board-control-option input {
+    background: none repeat scroll 0 0 #101010;
+    border: 1px solid #999;
+}
+
+.board-control-option .select2-container .select2-choice, .board-control-option input {
+    color: white;
+}
+
+.board-control-option .select2-container .select2-choice {
+    background: #101010;
+}
+
+
+.board-control-option .select2-dropdown-open .select2-choice {
+    background: #333;
+}
+
+
+#change-phase-wrapper .phase-tile {
+    background: rgba(225,225,225,1.0);
+}
+
+#change-phase-wrapper .phase-tile .phase-tile-overlay {
+    background: rgba(225,225,225,0.9);
+}
+
+#change-phase-wrapper .phase-tile .phase-tile-text-wrapper h2 {
+    color: black;
+}
+
+#change-phase-wrapper .phase-tile.phase-tile-current {
+    background: #642882;
+}
+
+#change-phase-wrapper .phase-tile.phase-tile-highlight {
+    background: cornflowerblue;
+}
+
+#change-phase-wrapper .phase-tile.phase-tile-current .phase-tile-text-wrapper h2, #change-phase-wrapper .phase-tile.phase-tile-highlight .phase-tile-text-wrapper h2 {
+    color: white;
+}
+
+#change-phase-wrapper .phase-tile .phase-tile-overlay {
+    text-shadow: 1px 1px 3px #303030;
+}
+
+div.dialog-card-alert button {
+    border: 1px solid #aaa;
+    color: #aaa;
+    background: transparent;
+}
+
+div.dialog-card-alert button:hover {
+    border-color: #fff;
+    background: cornflowerblue;
+    color: white;
+}
+
+div.dialog-card-alert button.alert-dismiss:hover {
+    background: rgba(255, 40, 40, 0.6);
+}
+
+
+div.dialog-card-alert div.dialog-card-alert-body {
+    border-top: 1px solid #aaa;
+}
+
+
+
+.card-comment-wrapper.card-comment-alert:hover {
+    background: rgba(255,150,150,1);
+    color: black;
+}
+
+
+
+#gravity .ui-widget-content {
+    background: #101010;
+    color: white;
+}
+
+#gravity .ui-dialog.ui-widget .ui-dialog-titlebar {
+    background: none;
+}
+
+#gravity .ui-dialog.ui-widget .ui-dialog-titlebar .ui-dialog-title {
+    color: white;
+}
+
+#gravity .ui-dialog .ui-dialog-titlebar-close {
+    background: url('../../images/dialog-close.gif') no-repeat transparent;
+}
+
+
+
+
+.select2-drop.board-option-dropdown {
+    background: #333;
+}
+
+.board-control-option .select2-dropdown-open .select2-choice {
+    box-shadow: none;
+}
+.select2-drop.board-option-dropdown {
+    color: white;
+}
