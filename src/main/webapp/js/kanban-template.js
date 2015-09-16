@@ -1,7 +1,7 @@
 template = null;
 
 function loadTemplate(templateId){
-	$.getJSON("/kanban/spring/template/"+templateId, function(result)
+	$.getJSON("/gravity/spring/template/"+templateId, function(result)
 		{
 			template=result;
 		}

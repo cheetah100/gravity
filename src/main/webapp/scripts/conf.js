@@ -1,5 +1,5 @@
 // base ajax path
-var ajaxUrl = '/kanban/spring';
+var ajaxUrl = '/gravity/spring';
 
 window.loadingLock = false;
 window.loadCardLock = false;
