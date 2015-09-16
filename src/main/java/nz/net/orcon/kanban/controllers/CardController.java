@@ -680,6 +680,11 @@ public class CardController {
 			
 			Board board = boardCache.getItem(boardId);
 			Map<String, Rule> rules = board.getRules();
+			
+			if(rules==null){
+				return null;
+			}
+			
 			Set<Entry<String, Rule>> ruleEntrySet = rules.entrySet();
 			Map<Integer, CardTask> cardTaskMap = new TreeMap<Integer,CardTask>();
 			
