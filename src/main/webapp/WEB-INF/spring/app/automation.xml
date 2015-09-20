@@ -57,7 +57,7 @@
 	<bean id="executionPlugin" class="nz.net.orcon.kanban.automation.plugin.ExecutionPlugin">
 		<property name="services">
 			<map>
-				<entry key="smsPlugin" value-ref="bulletinAdvancedEndpoint" />
+				<!--<entry key="smsPlugin" value-ref="bulletinAdvancedEndpoint" /> -->
 				<entry key="cardController" value-ref="cardController" />
 				<entry key="notificationController" value-ref="notificationController" />
 				<entry key="phaseController" value-ref="phaseController" />								
@@ -108,7 +108,7 @@
 	
 	<bean id="createVariableAction" class="nz.net.orcon.kanban.automation.actions.CreateVariableAction"/>
 	
-
+<!--
 	<bean id="bulletinAdvancedEndpoint"
 		class="nz.net.orcon.kanban.automation.actions.BulletinAdvancedSmsEndpoint">
 		<property name="user" value="${bulletin.username}" />
@@ -118,6 +118,7 @@
 		<property name="rateCode" value="${bulletin.ratecode}" />
 		<property name="base64" ref="stringEncryptor" />
 	</bean>
+-->
 
 	<bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory" />
 
