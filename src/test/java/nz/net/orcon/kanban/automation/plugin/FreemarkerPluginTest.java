@@ -24,6 +24,7 @@ package nz.net.orcon.kanban.automation.plugin;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*; 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
  
-public class TemplatePluginTest {
+public class FreemarkerPluginTest {
 
 	@Mock
 	private ResourceController resourceController;
@@ -48,7 +49,7 @@ public class TemplatePluginTest {
 
 	@Test
 	public void TestPlugin() throws Exception {
-		TemplatePlugin plugin = new TemplatePlugin();
+		FreemarkerPlugin plugin = new FreemarkerPlugin();
 		plugin.setResourceController(resourceController);
 		
 		Action action = new Action();
@@ -65,4 +66,35 @@ public class TemplatePluginTest {
 		String resultString = (String) result;
 		assertEquals( "This is a test string that inserts here ->Hello World<- So do it!", resultString);
 	}
+	
+	@Test
+	public void TestPluginWithArrays() throws Exception {
+		FreemarkerPlugin plugin = new FreemarkerPlugin();
+		plugin.setResourceController(resourceController);
+		
+		// <#assign t=[\"boo\",\"bar\",\"doo\"]>
+		
+		when(resourceController.getResource("test2")).thenReturn("<#list t as i>${i}</#list>");
+		
+		Action action = new Action();
+		action.setResource("test2");
+		action.setResponse("exampleResult");
+		Map<String,Object> context = new HashMap<String,Object>();
+		
+		ArrayList<String> t = new ArrayList<String>();
+		t.add("boo");
+		t.add("bar");
+		t.add("doo");
+		
+		context.put("t", t);
+		
+		plugin.process(action, context);
+		Object result = context.get("exampleResult");
+		
+		assertNotNull(result);
+		assertTrue( result instanceof String);
+		String resultString = (String) result;
+		assertEquals( "boobardoo", resultString);
+	}
+
 }

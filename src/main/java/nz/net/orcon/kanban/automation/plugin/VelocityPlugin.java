@@ -21,60 +21,51 @@
 
 package nz.net.orcon.kanban.automation.plugin;
 
+import java.io.StringWriter;
 import java.util.Map;
 
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import nz.net.orcon.kanban.controllers.ResourceController;
 import nz.net.orcon.kanban.model.Action;
 
-/**
- * This plugin is a simple text replacement plugin which replaces text in a resource
- * with Strings or Objects from the Context. It is similar to velocity and freemarker, 
- * only it actually works ;-)
- * 
- * @author peter
- *
- */
-public class TemplatePlugin implements Plugin {
+public class VelocityPlugin implements Plugin {
 	
 	@Autowired
 	private ResourceController resourceController;
-		
+	
+	@Autowired
+	private
+	VelocityEngine velocityEngine;
+	
 	@Override
 	public Map<String,Object> process( Action action, Map<String,Object> context ) throws Exception{        
-
 		String resource = getResourceController().getResource(action.getResource());
-
-		StringBuilder builder = new StringBuilder(resource);
-		
-		for( String field : context.keySet()){
-			String value = context.get(field).toString();
-			replaceAll( field, value, builder);
-		}
-		
-        context.put(action.getResponse(), builder.toString());
+        VelocityContext velocityContext = new VelocityContext(context);
+        StringWriter resultWriter = new StringWriter();
+        getVelocityEngine().evaluate(velocityContext, resultWriter, action.getResource(), resource);
+        String result = resultWriter.toString();
+        context.put(action.getResponse(), result);
 		return context;
 	}
-	
-	private void replaceAll( String field, String value, StringBuilder builder){
-		
-		int x = 0;
-		String toFind = "${" + field + "}"; 
-		while(x>=0){
-			x = builder.indexOf(toFind);
-			if(x>=0){
-				builder.replace(x, x+toFind.length(), value);
-			}
-		}
-	}
-	
+
 	public ResourceController getResourceController() {
 		return resourceController;
 	}
 
 	public void setResourceController(ResourceController resourceController) {
 		this.resourceController = resourceController;
+	}
+
+	public void setVelocityEngine(VelocityEngine velocityEngine) {
+		this.velocityEngine = velocityEngine;
+		this.velocityEngine.init();
+	}
+
+	public VelocityEngine getVelocityEngine() {
+		return velocityEngine;
 	}
 
 }
