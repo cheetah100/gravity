@@ -31,7 +31,7 @@ public class EmailSenderAction {
 
 	private static final Logger logger = LoggerFactory.getLogger(EmailSenderAction.class);	
 
-	protected void sendEmail(String subject, String emailBody, String to, String bcc, String from, String replyTo,String host){
+	public void sendEmail(String subject, String emailBody, String to, String bcc, String from, String replyTo,String host){
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 		mailSender.setHost(host);

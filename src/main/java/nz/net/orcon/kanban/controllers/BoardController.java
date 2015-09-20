@@ -474,12 +474,14 @@ public class BoardController {
 		
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{boardId}/roles", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> getRoles(@PathVariable String boardId) throws Exception {
 		Board board = boardsCache.getItem(boardId);
 		return board.getRoles();
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{boardId}/roles", method=RequestMethod.POST)
 	public @ResponseBody void addRoles(@PathVariable String boardId, @RequestBody Map<String,String> roles) throws Exception {
 
@@ -503,6 +505,7 @@ public class BoardController {
 		}
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{boardId}/roles/{member}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteRole(@PathVariable String boardId, @PathVariable String member) throws Exception {
 
@@ -616,7 +619,6 @@ public class BoardController {
 		logger.info("Setting Scope: " + boardId +"," + phaseId + "," + cardId);
 		
 		String scope = String.format(URI.HISTORY_URI, boardId, phaseId, IdentifierTools.escapeNumber(cardId), "/");
-		//String scope = String.format(URI.HISTORY_URI, boardId, phaseId, cardId, "/");
 		
 		logger.info("Setting Scope: " + scope);
 		
@@ -766,7 +768,5 @@ public class BoardController {
 		logger.info("Complete with :"+returnList.size());
 				
 		return returnList;
-	}
-
-	
+	}	
 }

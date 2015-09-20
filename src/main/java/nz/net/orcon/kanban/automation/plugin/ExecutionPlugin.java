@@ -108,6 +108,30 @@ public class ExecutionPlugin implements Plugin {
 		try{
 			response = method.invoke(plugin,parameterValueArray);
 			
+		} catch( NullPointerException e) {
+			//Class<?>[] types = method.getParameterTypes();
+			StringBuilder b = new StringBuilder();
+			b.append("No Method Found:");
+			int f = parameterValueArray.length;
+			for( int a=0; a<f; a++){
+				Object o = parameterValueArray[a];
+				if( o==null){
+					b.append(" (index ");
+					b.append(a+1);
+					b.append("=null?)");
+				} else {
+					Class paramType = o.getClass();
+					b.append(" (index ");
+					b.append(a+1);
+					b.append("=");
+					b.append(o.toString());
+					b.append(" (");
+					b.append(paramType.getName());
+					b.append(" )");
+				}
+			}
+			throw new IllegalArgumentException( b.toString(), e);
+			
 		} catch( IllegalArgumentException e) {
 			Class<?>[] types = method.getParameterTypes();
 			StringBuilder b = new StringBuilder();
