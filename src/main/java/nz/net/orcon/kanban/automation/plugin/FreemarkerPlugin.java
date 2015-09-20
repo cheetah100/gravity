@@ -21,52 +21,39 @@
 
 package nz.net.orcon.kanban.automation.plugin;
 
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 import nz.net.orcon.kanban.controllers.ResourceController;
 import nz.net.orcon.kanban.model.Action;
 
-/**
- * This plugin is a simple text replacement plugin which replaces text in a resource
- * with Strings or Objects from the Context. It is similar to velocity and freemarker, 
- * only it actually works ;-)
- * 
- * @author peter
- *
- */
-public class TemplatePlugin implements Plugin {
+public class FreemarkerPlugin implements Plugin {
 	
 	@Autowired
 	private ResourceController resourceController;
-		
+
 	@Override
 	public Map<String,Object> process( Action action, Map<String,Object> context ) throws Exception{        
-
-		String resource = getResourceController().getResource(action.getResource());
-
-		StringBuilder builder = new StringBuilder(resource);
-		
-		for( String field : context.keySet()){
-			String value = context.get(field).toString();
-			replaceAll( field, value, builder);
-		}
-		
-        context.put(action.getResponse(), builder.toString());
+        String resource = getResourceController().getResource(action.getResource());
+        
+        Configuration configuration = new Configuration();
+        
+        configuration.setEncoding(Locale.ENGLISH, "UTF-8");
+        
+        Template template = new Template(action.getResource(), new StringReader(resource), configuration);
+        Writer output = new StringWriter();
+        template.process(context, output);
+        String result = output.toString();
+        context.put(action.getResponse(), result);
 		return context;
-	}
-	
-	private void replaceAll( String field, String value, StringBuilder builder){
-		
-		int x = 0;
-		String toFind = "${" + field + "}"; 
-		while(x>=0){
-			x = builder.indexOf(toFind);
-			if(x>=0){
-				builder.replace(x, x+toFind.length(), value);
-			}
-		}
 	}
 	
 	public ResourceController getResourceController() {
