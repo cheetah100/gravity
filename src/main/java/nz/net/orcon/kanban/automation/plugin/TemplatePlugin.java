@@ -49,8 +49,11 @@ public class TemplatePlugin implements Plugin {
 		StringBuilder builder = new StringBuilder(resource);
 		
 		for( String field : context.keySet()){
-			String value = context.get(field).toString();
-			replaceAll( field, value, builder);
+			Object value = context.get(field);
+			if( value!=null){
+				String valueString = value.toString();
+				replaceAll( field, valueString, builder);
+			}
 		}
 		
         context.put(action.getResponse(), builder.toString());
