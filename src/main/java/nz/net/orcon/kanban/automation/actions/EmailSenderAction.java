@@ -21,6 +21,8 @@
 
 package nz.net.orcon.kanban.automation.actions;
 
+import java.util.Properties;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +33,14 @@ public class EmailSenderAction {
 
 	private static final Logger logger = LoggerFactory.getLogger(EmailSenderAction.class);	
 
-	public void sendEmail(String subject, String emailBody, String to, String bcc, String from, String replyTo,String host){
+	public void sendEmail(String subject, 
+			String emailBody, 
+			String to, 
+			String bcc, 
+			String from, 
+			String replyTo,
+			String host){
+		
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 		mailSender.setHost(host);
@@ -59,5 +68,57 @@ public class EmailSenderAction {
 		mailSender.send(mailMessage);
 		logger.info("Email Message has been sent..");
 	}
+	
+	public void sendSecureEmail(String subject, 
+			String emailBody, 
+			String to, 
+			String bcc, 
+			String from, 
+			String replyTo,
+			String host,
+			String password){
+		
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		
+		mailSender.setHost(host);
+		mailSender.setPort(587);
+		mailSender.setProtocol("smtp");
+		
+		Properties props = new Properties();
+		props.put("mail.smtp.starttls.enable","true");
+		props.put("mail.smtp.auth", "true");
+		
+		mailSender.setJavaMailProperties(props);
+		
+		if(StringUtils.isNotBlank(to)){
+			mailMessage.setTo(to);
+		}
+		if(StringUtils.isNotBlank(bcc)){
+			mailMessage.setBcc(bcc);
+		}
+		
+		if(StringUtils.isNotBlank(from)){
+			mailMessage.setFrom(from);
+			mailSender.setUsername(from);	
+		}
+		
+		if(StringUtils.isNotBlank(password)){
+			mailSender.setPassword(password);
+		}
+		
+		if(StringUtils.isNotBlank(replyTo)){
+			mailMessage.setReplyTo(replyTo);
+		}
+		
+		if(StringUtils.isNotBlank(subject)){
+			mailMessage.setSubject(subject);
+		}
+		
+		mailMessage.setText(emailBody);
+		mailSender.send(mailMessage);
+		logger.info("Secure Email Message has been sent..");
+	}
+	
 		
 }

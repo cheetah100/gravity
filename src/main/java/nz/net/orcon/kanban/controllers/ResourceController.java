@@ -82,7 +82,8 @@ public class ResourceController {
 	public @ResponseBody void createResource(@PathVariable String resourceId, 
 			@RequestBody String value) throws Exception {
 		
-		logger.info("Saving Resource " + resourceId);
+		logger.info("Saving Resource " + resourceId);		
+		logger.info("Resource Text: " + value);
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, ""));

@@ -22,6 +22,7 @@
 package nz.net.orcon.kanban.automation.actions;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class EmailSenderActionIT {
@@ -34,8 +35,22 @@ public class EmailSenderActionIT {
 	}
 	
 	@Test
+	@Ignore
 	public void testSendEmail(){
 		emailSenderAction.sendEmail("subject", "emailBody", "peter.harrison@email.com", null,"gravity@gravity.devcentre.org","gravity@gravity.devcentre.org","mail.server");
 	}
+
+	@Test
+	public void testSendSecureEmail(){
+		emailSenderAction.sendSecureEmail("Test Email", 
+				"Welcome to the Twilight Zone", 
+				"cheetah100@gmail.com", 
+				null,
+				"cheetah100@devcentre.org",
+				"cheetah100@devcentre.org",
+				"mail.devcentre.org",
+				"turf7219");
+	}
+
 	
 }

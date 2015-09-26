@@ -108,7 +108,7 @@
 	
 	<bean id="createVariableAction" class="nz.net.orcon.kanban.automation.actions.CreateVariableAction"/>
 	
-<!--
+	<!-- 
 	<bean id="bulletinAdvancedEndpoint"
 		class="nz.net.orcon.kanban.automation.actions.BulletinAdvancedSmsEndpoint">
 		<property name="user" value="${bulletin.username}" />
@@ -118,7 +118,7 @@
 		<property name="rateCode" value="${bulletin.ratecode}" />
 		<property name="base64" ref="stringEncryptor" />
 	</bean>
--->
+	 -->
 
 	<bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory" />
 
