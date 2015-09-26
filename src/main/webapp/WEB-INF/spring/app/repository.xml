@@ -10,9 +10,11 @@
 	http://www.springframework.org/schema/jee
 	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">
 	
+	<!-- 
 	<bean id="repository" class="org.apache.jackrabbit.commons.JcrUtils" factory-method="getRepository">
 		<constructor-arg value="${repository.url}"/>
 	</bean>
+	 -->
 	 	
 	<bean id="ocmFactory" class="nz.net.orcon.kanban.tools.OcmMapperFactory">
 		<property name="user" value="admin"/>

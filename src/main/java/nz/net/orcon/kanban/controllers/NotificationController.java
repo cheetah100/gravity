@@ -21,6 +21,7 @@
 
 package nz.net.orcon.kanban.controllers;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -153,7 +154,7 @@ public class NotificationController {
 	}
 	
 	@RequestMapping(value = "/{notificationType}", method=RequestMethod.GET)
-	public @ResponseBody NotificationTypeMapping getNotificationTypeMapping(@PathVariable String notificationType) throws LoginException, RepositoryException, ClassNotFoundException{
+	public @ResponseBody NotificationTypeMapping getNotificationTypeMapping(@PathVariable String notificationType) throws LoginException, RepositoryException, ClassNotFoundException, UnknownHostException{
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		NotificationTypeMapping notificationTypeMapping = null;
 		try{

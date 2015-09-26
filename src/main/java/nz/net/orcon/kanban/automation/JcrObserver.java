@@ -21,6 +21,8 @@
 
 package nz.net.orcon.kanban.automation;
 
+import java.net.UnknownHostException;
+
 import javax.annotation.PreDestroy;
 
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
@@ -48,7 +50,7 @@ public class JcrObserver {
 	
 	ObjectContentManager ocm;
 	
-	public void start() throws UnsupportedRepositoryOperationException, LoginException, RepositoryException, ClassNotFoundException{
+	public void start() throws UnsupportedRepositoryOperationException, LoginException, RepositoryException, ClassNotFoundException, UnknownHostException{
 		this.ocm = ocmFactory.getOcm();
 		ObservationManager observationManager = ocm.getSession().getWorkspace().getObservationManager();
 		final String[] types = { "nt:unstructured" };

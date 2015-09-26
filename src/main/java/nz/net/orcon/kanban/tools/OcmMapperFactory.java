@@ -21,6 +21,7 @@
 
 package nz.net.orcon.kanban.tools;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,25 +35,32 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.jackrabbit.oak.jcr.Jcr;
+import org.apache.jackrabbit.oak.plugins.document.DocumentMK;
+import org.apache.jackrabbit.oak.plugins.document.DocumentNodeStore;
+import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.manager.impl.ObjectContentManagerImpl;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.beans.factory.annotation.Autowired;
+
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
 
 public class OcmMapperFactory {
 	
 	private static final Logger logger = LoggerFactory.getLogger(OcmMapperFactory.class);
 	
-	@Autowired
 	private Repository repository;
 	
 	private String domainPackage;
 	private List<String> classList;
 	private List<String> mainNodes;
 	
+	private String host;
 	private String user;
 	private String password;
 	
@@ -69,8 +77,21 @@ public class OcmMapperFactory {
 		this.mapper = new AnnotationMapperImpl(classes);
 	}
 	
-	public ObjectContentManager getOcm() throws LoginException, RepositoryException, ClassNotFoundException {
+	public ObjectContentManager getOcm() throws LoginException, RepositoryException, ClassNotFoundException, UnknownHostException {
+		
+		if(this.repository==null){
+			logger.info("Creating Repository");
+			// MEMORY REPO
+			// repository = new Jcr(new Oak()).createRepository();
+			
+			DB db = new MongoClient(host, 27017).getDB("gravity");
+		    DocumentNodeStore ns = new DocumentMK.Builder().
+		            setMongoDB(db).getNodeStore();
+		    this.repository = new Jcr(new Oak(ns)).createRepository();
+		}
+		
 		if(this.mapper==null){
+			logger.info("Generating Mapper");
 			generateMapper();
 		}
 		
@@ -165,6 +186,14 @@ public class OcmMapperFactory {
 
 	public List<String> getMainNodes() {
 		return mainNodes;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public void setUrl(String host) {
+		this.host = host;
 	}
 
 }
