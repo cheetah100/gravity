@@ -43,7 +43,7 @@ public class TemplatePluginTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(resourceController.getResource("test")).thenReturn("This is a test string that inserts here ->${replaceme}<- So do it!");
+		when(resourceController.getResource("test","test")).thenReturn("This is a test string that inserts here ->${replaceme}<- So do it!");
 	}
 
 	@Test
@@ -56,6 +56,7 @@ public class TemplatePluginTest {
 		action.setResponse("exampleResult");
 		Map<String,Object> context = new HashMap<String,Object>();
 		context.put("replaceme", "Hello World");
+		context.put("boardid", "test");
 		
 		plugin.process(action, context);
 		Object result = context.get("exampleResult");

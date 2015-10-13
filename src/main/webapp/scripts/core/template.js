@@ -1,9 +1,9 @@
 var template = {
     templates: {},
     currenttemplate: false,
-    loadTemplate: function(templateid) {
+    loadTemplate: function(boardid, templateid) {
         jQuery.ajax({
-            url: ajaxUrl + '/template/' + templateid,
+            url: ajaxUrl + '/board/' + boardid + '/templates/' + templateid,
             async: false,
             success: function(data) {
                 if (jQuery.isEmptyObject(data))

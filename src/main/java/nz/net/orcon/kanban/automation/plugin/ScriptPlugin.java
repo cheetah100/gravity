@@ -74,7 +74,7 @@ public class ScriptPlugin implements Plugin{
 		
 		String script = null;
 		if(StringUtils.isNotBlank(action.getResource()) ){
-			script = resourceController.getResource(action.getResource());
+			script = resourceController.getResource((String)context.get("boardid"),action.getResource());
 		} else {
 			script = action.getMethod();
 		}

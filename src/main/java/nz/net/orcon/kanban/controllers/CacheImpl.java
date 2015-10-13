@@ -40,13 +40,15 @@ abstract public class CacheImpl<T> implements Cache<T> {
 	}
 
 	@Override
-	public T getItem(String itemId) throws Exception {
+	public T getItem(String... itemIds) throws Exception {
+		String itemId = getCacheId( itemIds);
+		
 		T item = cacheMap.get(itemId);
 		if( item!=null){
 			return item;
 		}
 		
-		item = getFromStore(itemId);
+		item = getFromStore(itemIds);
 
 		if(item==null){
 			throw new ResourceNotFoundException();
@@ -56,15 +58,20 @@ abstract public class CacheImpl<T> implements Cache<T> {
 		return item;
 	}
 	
-	public Map<String,String> list() throws Exception{
+	public Map<String,String> list(String... prefixs) throws Exception{
 		if( this.cacheList == null){
-			this.cacheList = this.getListFromStore();
+			if( prefixs.length>0){
+				this.cacheList = this.getListFromStore(prefixs);
+			} else {
+				this.cacheList = this.getListFromStore("");
+			}
 		}
 		return new HashMap<String,String>(this.cacheList);
 	}
 
 	@Override
-	public void storeItem(String itemId, T item) throws Exception {
+	public void storeItem(T item, String... itemIds ) throws Exception {
+		String itemId = getCacheId(itemIds);
 		this.cacheMap.put(itemId, item);
 	}
 	
@@ -74,7 +81,17 @@ abstract public class CacheImpl<T> implements Cache<T> {
 		this.cacheList = null;
 	}
 	
-	abstract protected T getFromStore( String itemId ) throws Exception;
+	public String getCacheId( String... ids ){
+		StringBuilder id = new StringBuilder();
+		for (int i = 0; i < ids.length; ++i) {
+			id.append(ids[i]);
+			id.append("-");
+		}
+		String returnValue = id.toString();
+		return returnValue.substring(0, returnValue.length()-1);
+	}
 	
-	abstract protected Map<String,String> getListFromStore() throws Exception;
+	abstract protected T getFromStore(String... itemIds) throws Exception;
+	
+	abstract protected Map<String,String> getListFromStore(String... prefixs) throws Exception;
 }

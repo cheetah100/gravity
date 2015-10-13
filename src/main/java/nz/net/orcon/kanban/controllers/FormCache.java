@@ -43,11 +43,11 @@ public class FormCache extends CacheImpl<Form> {
 	ListTools listTools;
 	
 	@Override
-	protected Form getFromStore(String itemId) throws Exception {
+	protected Form getFromStore(String... itemIds) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Form form;
 		try{
-			form = (Form) ocm.getObject(Form.class,String.format(URI.FORM_URI, itemId));
+			form = (Form) ocm.getObject(Form.class,String.format(URI.FORM_URI, (Object[])itemIds));
 		} finally {
 			ocm.logout();
 		}
@@ -55,11 +55,11 @@ public class FormCache extends CacheImpl<Form> {
 	}
 
 	@Override
-	protected Map<String, String> getListFromStore() throws Exception {
+	protected Map<String, String> getListFromStore(String... prefixes) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Map<String,String> result = null;
 		try{
-			result = listTools.list(String.format(URI.FORM_URI, ""), "name", ocm.getSession());
+			result = listTools.list(String.format(URI.FORM_URI, (Object[])prefixes), "name", ocm.getSession());
 		} finally {
 			ocm.logout();
 		}

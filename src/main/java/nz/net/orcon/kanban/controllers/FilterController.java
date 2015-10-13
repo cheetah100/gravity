@@ -41,6 +41,7 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,6 +67,7 @@ public class FilterController {
 	@Autowired 
 	private ListTools listTools;
 		
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.POST)
 	public @ResponseBody Filter createFilter(@PathVariable String boardId,
 										  @RequestBody Filter filter) throws Exception {
@@ -85,6 +87,7 @@ public class FilterController {
 		return filter;
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")	
 	@RequestMapping(value = "/{filterId}", method=RequestMethod.PUT)
 	public @ResponseBody Filter updateFilter(@PathVariable String boardId,
 										  @PathVariable String filterId,
@@ -102,6 +105,7 @@ public class FilterController {
 		return filter;
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
 	@RequestMapping(value = "/{filterId}", method=RequestMethod.GET)
 	public @ResponseBody Filter getFilter(@PathVariable String boardId, 
 			@PathVariable String filterId) throws Exception {
@@ -115,6 +119,7 @@ public class FilterController {
 		return filter;		
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{filterId}/conditions", method=RequestMethod.POST)
 	public @ResponseBody Condition saveFilterField(@PathVariable String boardId, 
 			@PathVariable String filterId,
@@ -130,6 +135,7 @@ public class FilterController {
 		return filterField;
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{filterId}/conditions/{fieldId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteFilterField(@PathVariable String boardId, 
 			@PathVariable String filterId,
@@ -143,6 +149,7 @@ public class FilterController {
 		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listFilters(@PathVariable String boardId) throws Exception {
 		
@@ -152,6 +159,7 @@ public class FilterController {
 		return result;			
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
 	@RequestMapping(value = "/{filterId}/execute", method=RequestMethod.GET)
 	public @ResponseBody Collection<Card> executeFilter(@PathVariable String boardId, 
 														@PathVariable String filterId) 
@@ -164,6 +172,7 @@ public class FilterController {
 		return cards;		
 	}	
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{filterId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteFilter(@PathVariable String boardId, 
 			@PathVariable String filterId) throws Exception {
@@ -185,5 +194,4 @@ public class FilterController {
 		ocm.logout();
 		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
 	}
-
 }

@@ -1025,6 +1025,7 @@ public class CardController {
 		}
 		return cardNotifications;
 	}
+	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'WRITE,ADMIN')")
 	@RequestMapping(value = "/{cardId}/tasks/{taskId}", method=RequestMethod.DELETE)
 	public void deleteTask(@PathVariable String boardId, 
@@ -1077,8 +1078,6 @@ public class CardController {
 			ocm.logout();
 		}
 	}
-
-	
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'WRITE,ADMIN')")
 	@RequestMapping(value = "/{cardId}/notifications/{type}/reprocess/{notificationId}", method=RequestMethod.GET)

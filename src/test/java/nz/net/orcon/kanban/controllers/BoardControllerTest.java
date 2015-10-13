@@ -144,8 +144,8 @@ public class BoardControllerTest {
 
 		// Lets also check for the test template while setting up.
 		try{
-			templateController.getTemplate(TEMPLATE_ID);
-			templateController.deleteTemplate(TEMPLATE_ID);
+			templateController.getTemplate(BOARD_ID,TEMPLATE_ID);
+			templateController.deleteTemplate(BOARD_ID,TEMPLATE_ID);
 		} catch(ResourceNotFoundException e){
 			// Don't Worry, Be Happy
 		}
@@ -160,7 +160,7 @@ public class BoardControllerTest {
 			assertNotNull(value);
 		}
 		
-		Template createTemplate = templateController.createTemplate(testTemplate);
+		Template createTemplate = templateController.createTemplate(BOARD_ID,testTemplate);
 		assertNotNull( createTemplate );
 		
 		try {

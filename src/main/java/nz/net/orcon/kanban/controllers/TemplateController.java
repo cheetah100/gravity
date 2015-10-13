@@ -45,7 +45,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/template")
+@RequestMapping("/board/{boardId}/templates")
 public class TemplateController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(TemplateController.class);
@@ -65,20 +65,15 @@ public class TemplateController {
 	CacheInvalidationInterface cacheInvalidationManager;
 	
 	@RequestMapping(value = "/{templateId}", method=RequestMethod.GET)
-	public @ResponseBody Template getTemplate(@PathVariable String templateId) throws Exception {		
-		return templateCache.getItem(templateId);
+	public @ResponseBody Template getTemplate(@PathVariable String boardId, @PathVariable String templateId) throws Exception {		
+		return templateCache.getItem(boardId, templateId);
 	}
-
-	@RequestMapping(value = "/{templateId}/roles", method=RequestMethod.GET)
-	public @ResponseBody Map<String,String> getTemplateRoles(@PathVariable String templateId) throws Exception {		
-		return templateCache.getItem(templateId).getRoles();
-	}	
 	
 	@RequestMapping(value = "/{templateId}", method=RequestMethod.DELETE)
-	public @ResponseBody void deleteTemplate(@PathVariable String templateId) throws Exception {
+	public @ResponseBody void deleteTemplate(@PathVariable String boardId, @PathVariable String templateId) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		try {
-			Node node = ocm.getSession().getNode(String.format(URI.TEMPLATE_URI, templateId));
+			Node node = ocm.getSession().getNode(String.format(URI.TEMPLATE_URI, boardId, templateId));
 			if(node==null){
 				ocm.logout();
 				throw new ResourceNotFoundException();
@@ -93,7 +88,7 @@ public class TemplateController {
 	}
 	
 	@RequestMapping(value = "", method=RequestMethod.POST)
-	public @ResponseBody Template createTemplate(@RequestBody Template template) throws Exception {
+	public @ResponseBody Template createTemplate(@PathVariable String boardId, @RequestBody Template template) throws Exception {
 		
 		if( template.getPath()!=null){
 			logger.warn("Attempt to update template using POST");
@@ -105,10 +100,10 @@ public class TemplateController {
 			if( templateId==null){
 				templateId=IdentifierTools.getIdFromNamedModelClass(template);
 			}
-			template.setPath(String.format(URI.TEMPLATE_URI, templateId));
+			template.setPath(String.format(URI.TEMPLATE_URI, boardId, templateId));
 			ocm.insert(template);
 		
-			listTools.ensurePresence(String.format(URI.TEMPLATE_URI, templateId), "groups", ocm.getSession());
+			//listTools.ensurePresence(String.format(URI.TEMPLATE_URI, templateId), "groups", ocm.getSession());
 			
 			ocm.save();
 			this.cacheInvalidationManager.invalidate(TEMPLATE, templateId);
@@ -120,11 +115,12 @@ public class TemplateController {
 	}
 
 	@RequestMapping(value = "/{templateId}", method=RequestMethod.PUT)
-	public @ResponseBody Template updateTemplate(@RequestBody Template template, 
-												 @PathVariable String templateId) throws Exception {
+	public @ResponseBody Template updateTemplate(@PathVariable String boardId,
+												 @PathVariable String templateId,
+												 @RequestBody Template template) throws Exception {
 			
 		if( template.getPath()==null){
-			template.setPath(String.format(URI.TEMPLATE_URI, templateId));
+			template.setPath(String.format(URI.TEMPLATE_URI, boardId, templateId));
 		}
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		try {
@@ -139,31 +135,8 @@ public class TemplateController {
 	}
 	
 	@RequestMapping(value = "", method=RequestMethod.GET)
-	public @ResponseBody Map<String, String> getTemplates() throws Exception {
-		return this.templateCache.list();		
+	public @ResponseBody Map<String, String> getTemplates(@PathVariable String boardId) throws Exception {
+		return this.templateCache.list(boardId,"");		
 	}
 	
-	@RequestMapping(value = "/{templateId}/roles", method=RequestMethod.POST)
-	public @ResponseBody void addRoles(@PathVariable String templateId, @RequestBody Map<String,String> roles) throws Exception {
-
-		ObjectContentManager ocm = ocmFactory.getOcm();
-		try{
-			
-			listTools.ensurePresence(String.format(URI.TEMPLATE_URI, templateId), "roles", ocm.getSession());
-			Node node = ocm.getSession().getNode(String.format(URI.TEMPLATE_ROLES_URI, templateId));
-		
-			if( node==null){
-				logger.warn("Template Not Found: " + templateId);
-				throw new ResourceNotFoundException();
-			}
-			
-			for( Entry<String,String> entry : roles.entrySet()){
-				node.setProperty(entry.getKey(), entry.getValue());
-			}
-			ocm.save();
-			this.cacheInvalidationManager.invalidate(TEMPLATE, templateId);
-		} finally {
-			ocm.logout();
-		}
-	}
 }

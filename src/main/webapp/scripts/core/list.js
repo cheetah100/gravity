@@ -10,7 +10,7 @@ var list = {
     },
     loadList: function(index) {
         jQuery.ajax({
-            url: (/^http/.test(index)?index: ajaxUrl + '/list/' + index),
+            url: (/^http/.test(index)?index: ajaxUrl + '/board/' + board.currentboarddata.id + '/lists/' + index),
             dataType: 'json',
             async: false,
             success: function(data) {

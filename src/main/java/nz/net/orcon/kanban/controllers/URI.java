@@ -37,7 +37,7 @@ public class URI {
 	public static final String CONDITION_URI = "/board/%s/rules/%s/conditions/%s";
 	public static final String FORM_URI = "/form/%s";
 	public static final String FORM_ROLES_URI = "/form/%s/roles";
-	public static final String LIST_URI = "/list/%s";
+	public static final String LIST_URI = "/board/%s/lists/%s";
 	public static final String CARD_NOTIFICATIONS_URI = "/board/%s/phases/%s/cards/%s/notifications/%s";
 	public static final String CARD_NOTIFICATIONS_BY_ID_URI = "/board/%s/phases/%s/cards/%s/notifications/%s/%s";
 	public static final String NOTIFICATIONS_URI = "/notifications";
@@ -45,14 +45,12 @@ public class URI {
 	public static final String NOTIFICATIONS_TYPE_MAPPING_URI = "/notifications/%s/mapping";
 	public static final String NOTIFICATIONS_TYPE_ID_URI = "/notifications/%s/%s";
 	public static final String MOVE_NOTIFICATION_URI = "%s/notifications/%s/%s";
-	public static final String RESOURCE_URI = "/resource/%s";
+	public static final String RESOURCE_URI = "/board/%s/resources/%s";
 	public static final String RULE_URI = "/board/%s/rules/%s";
 	public static final String TEAM_URI = "/team/%s";
 	public static final String TEAM_OWNERS = "/team/%s/owners/%s";
 	public static final String TEAM_MEMBERS = "/team/%s/members/%s";
 	public static final String USER_URI = "/user/%s";
 	public static final String VIEW_URI = "/board/%s/views/%s";
-	public static final String TEMPLATE_URI = "/template/%s";
-	public static final String TEMPLATE_ROLES_URI = "/template/%s/roles";
-	
+	public static final String TEMPLATE_URI = "/board/%s/templates/%s";
 }

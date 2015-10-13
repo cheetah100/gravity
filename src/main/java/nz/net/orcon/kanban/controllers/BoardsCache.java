@@ -94,11 +94,11 @@ public class BoardsCache extends CacheImpl<Board> implements MessageListener {
 	}
 
 	@Override
-	protected Board getFromStore(String itemId) throws Exception {
+	protected Board getFromStore(String... itemIds) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Board board;
 		try{
-			board = (Board) ocm.getObject(Board.class,String.format(URI.BOARD_URI, itemId));
+			board = (Board) ocm.getObject(Board.class,String.format(URI.BOARD_URI, itemIds));
 		} finally {
 			ocm.logout();
 		}
@@ -106,7 +106,7 @@ public class BoardsCache extends CacheImpl<Board> implements MessageListener {
 	}
 
 	@Override
-	protected Map<String, String> getListFromStore() throws Exception {
+	protected Map<String, String> getListFromStore(String... prefixes) throws Exception {
 		
 		logger.info("Getting Board List");
 		

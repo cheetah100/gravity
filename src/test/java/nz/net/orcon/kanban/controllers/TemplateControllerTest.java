@@ -48,6 +48,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations = { "/test-controllers.xml" })
 public class TemplateControllerTest {
 	
+	protected static String BOARD_ID = "test-board";
 	protected static String TEMPLATE_ID = "test-template";
 	
 	protected static Random RND = new Random();
@@ -57,7 +58,7 @@ public class TemplateControllerTest {
 
 	@Test
 	public void testGetTemplate() throws Exception {
-		Template template = controller.getTemplate(TEMPLATE_ID);
+		Template template = controller.getTemplate(BOARD_ID, TEMPLATE_ID);
 		Map<String, TemplateField> fields = template.getFields();
 		assertTrue( fields.size() > 0 );
 	}
@@ -67,31 +68,30 @@ public class TemplateControllerTest {
 		
 		Template template = getTestTemplate();
 		template.setName("Test Template " + RND.nextInt(9999999) );		
-		Template createTemplate = controller.createTemplate(template);
+		Template createTemplate = controller.createTemplate(BOARD_ID,template);
 		
 		assertNotNull(createTemplate);
 		assertEquals( createTemplate.getGroups().size(), template.getGroups().size());
 		
 		createTemplate.setName("Should Be Deleted");
-		Template updateTemplate = controller.updateTemplate(createTemplate, createTemplate.getId());
+		Template updateTemplate = controller.updateTemplate(BOARD_ID, createTemplate.getId(),createTemplate);
 		
 		assertNotNull(updateTemplate);
 		assertEquals(updateTemplate.getName(), "Should Be Deleted");
 		
-		controller.deleteTemplate(updateTemplate.getId());
+		controller.deleteTemplate(BOARD_ID, updateTemplate.getId());
 		
 		try {
-			controller.getTemplate(updateTemplate.getId());
+			controller.getTemplate(BOARD_ID, updateTemplate.getId());
 			fail("Template should not exist after delete");
 		} catch( ResourceNotFoundException e ){
 			// All Good
 		}
-		
 	}
 
 	@Test
 	public void testGetTemplates() throws Exception {
-		Map<String, String> templates = controller.getTemplates();
+		Map<String, String> templates = controller.getTemplates(BOARD_ID);
 		assertTrue( templates.size()>0);
 	}
 	

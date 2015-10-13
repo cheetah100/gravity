@@ -6,16 +6,17 @@
                     http://www.springframework.org/schema/security 
                     http://www.springframework.org/schema/security/spring-security-3.1.xsd">
                     
-    <http use-expressions="true">
+    <http use-expressions="true" auto-config="true">
         <intercept-url pattern="/spring/**" access="isAuthenticated()" />
         <http-basic />
         <!--  <form-login /> -->
     </http>
         
     <beans:bean id="securityTool" class="nz.net.orcon.kanban.security.SecurityTool"/>
-
 	
     <beans:bean id="nullAuthenticationProvider" class="nz.net.orcon.kanban.security.NullAuthenticationProvider"/>
+    
+    <beans:bean id="jcrAuthenticationProvider" class="nz.net.orcon.kanban.security.JcrAuthenticationProvider"/>
 
 	<beans:bean id="expressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
 		<beans:property name="permissionEvaluator" ref="gravityPermissionEvaluator"/>

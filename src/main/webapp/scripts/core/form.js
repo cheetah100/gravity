@@ -44,7 +44,7 @@ var form = {
                 form.formdata[formid] = data;
                 form.changeCurrentForm(formid);
 
-                template.loadTemplate(data.template);
+                template.loadTemplate(data.board,data.template);
                 template.setCurrentTemplate(data.template);
 
                 //phase.setPhases(data.phases);

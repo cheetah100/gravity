@@ -104,6 +104,7 @@ public class FormController {
 		return formCache.getItem(formId);		
 	}
 
+	@PreAuthorize("hasPermission(#formId, 'FORM', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{formId}/roles", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> getFormRoles(@PathVariable String formId) throws Exception {
 		return formCache.getItem(formId).getRoles();		
@@ -152,6 +153,7 @@ public class FormController {
 		}
 	}
 	
+	@PreAuthorize("hasPermission(#formId, 'FORM', 'ADMIN')")
 	@RequestMapping(value = "/{formId}/roles", method=RequestMethod.POST)
 	public  @ResponseBody void addRoles(@PathVariable String formId, @RequestBody Map<String,String> roles) throws Exception {
 
@@ -174,5 +176,4 @@ public class FormController {
 			ocm.logout();
 		}
 	}
-
 }

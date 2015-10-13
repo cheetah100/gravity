@@ -38,6 +38,7 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -96,13 +97,13 @@ public class TeamController {
 		return team;
 	}
 	
-	//@PreAuthorize("hasPermission(#teamId, 'TEAM', 'READ,WRITE,ADMIN')")
+	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{teamId}", method=RequestMethod.GET)
 	public @ResponseBody Team getTeam(@PathVariable String teamId) throws Exception {
 		return teamCache.getItem(teamId);
 	}
 
-	//@PreAuthorize("hasPermission(#teamId, 'TEAM', 'ADMIN')")
+	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "/{teamId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteTeam(@PathVariable String teamId) throws Exception {
 		ObjectContentManager ocm = null;

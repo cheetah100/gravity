@@ -40,6 +40,8 @@ import nz.net.orcon.kanban.tools.ListTools;
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +55,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TemplateCache extends CacheImpl<Template>{
 			
+	private static final Logger logger = LoggerFactory.getLogger(TemplateCache.class);
+	
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
 	
@@ -142,7 +146,7 @@ public class TemplateCache extends CacheImpl<Template>{
 		
 		Map<String,Object> fields = card.getFields();
 		Map<String,Object> newFields = new LinkedHashMap<String,Object>();
-		Template template = getItem(card.getTemplate());
+		Template template = getItem(card.getBoard(),card.getTemplate());
 		
 		if( template==null){
 			return;
@@ -181,19 +185,30 @@ public class TemplateCache extends CacheImpl<Template>{
 	}
 
 	@Override
-	protected Template getFromStore(String itemId) throws Exception {
+	protected Template getFromStore(String... itemIds) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();	
-		Template template = (Template) ocm.getObject(Template.class,"/template/" + itemId);		
+		
+		String pre = Integer.toString(itemIds.length) + " - ";
+		for( int x=0; x < itemIds.length; x++){
+			pre = pre + itemIds[x] + ", ";
+		}
+		logger.info("Prefixs: " + pre);
+		
+		String path = String.format(URI.TEMPLATE_URI,(Object[])itemIds);
+		logger.info( "Getting Template At: " + path);
+		Template template = (Template) ocm.getObject(Template.class,path);		
 		ocm.logout();
 		return template;
 	}
 
 	@Override
-	protected Map<String, String> getListFromStore() throws Exception {
+	protected Map<String, String> getListFromStore(String... prefixs) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Map<String,String> result = null;
 		try{
-			result = listTools.list(String.format(URI.TEMPLATE_URI,""), "name", ocm.getSession());
+			String path = String.format(URI.TEMPLATE_URI,(Object[])prefixs);
+			logger.info( "Getting List of Templates At: " + path);
+			result = listTools.list(path, "name", ocm.getSession());
 		} finally {
 			ocm.logout();
 		}

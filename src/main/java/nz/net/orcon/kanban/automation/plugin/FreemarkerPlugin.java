@@ -42,7 +42,7 @@ public class FreemarkerPlugin implements Plugin {
 
 	@Override
 	public Map<String,Object> process( Action action, Map<String,Object> context ) throws Exception{        
-        String resource = getResourceController().getResource(action.getResource());
+        String resource = getResourceController().getResource((String)context.get("boardid"),action.getResource());
         
         Configuration configuration = new Configuration();
         

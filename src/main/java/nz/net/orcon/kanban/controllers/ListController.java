@@ -32,6 +32,7 @@ import nz.net.orcon.kanban.automation.CacheInvalidationInterface;
 import nz.net.orcon.kanban.model.ListResource;
 import nz.net.orcon.kanban.model.Option;
 import nz.net.orcon.kanban.tools.IdentifierTools;
+import nz.net.orcon.kanban.tools.ListTools;
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +40,7 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,7 +49,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping("/list")
+@RequestMapping("/board/{boardId}/lists")
 public class ListController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ListController.class);
@@ -62,37 +64,58 @@ public class ListController {
 	
 	@Autowired
 	CacheInvalidationInterface cacheInvalidationManager;
+	
+	@Autowired 
+	ListTools listTools;
 		
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")	
 	@RequestMapping(value = "", method=RequestMethod.POST)
-	public @ResponseBody ListResource createList(@RequestBody ListResource list ) throws Exception {
+	public @ResponseBody ListResource createList(
+			@PathVariable String boardId,
+			@RequestBody ListResource list ) throws Exception {
 					
 		ObjectContentManager ocm = ocmFactory.getOcm();
+		
+		listTools.ensurePresence(String.format( URI.BOARD_URI, boardId), "lists", ocm.getSession());
 		 
 		String newId = IdentifierTools.getIdFromNamedModelClass(list);
-		list.setPath(String.format(URI.LIST_URI, newId.toString()));
+		list.setPath(String.format(URI.LIST_URI, boardId, newId.toString()));
 		ocm.insert(list);			
 		ocm.save();
 		ocm.logout();
 		return list;
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{listId}", method=RequestMethod.GET)
-	public @ResponseBody ListResource getList(@PathVariable String listId) throws Exception {
-		return listCache.getItem(IdentifierTools.getIdFromName(listId));
+	public @ResponseBody ListResource getList(
+			@PathVariable String boardId,
+			@PathVariable String listId) throws Exception {
+		
+		return listCache.getItem(boardId, IdentifierTools.getIdFromName(listId));
 	}
 	
-	public String getValue(String listId, String id) throws Exception{
-		ListResource resource = listCache.getItem(IdentifierTools.getIdFromName(listId));
+	public String getValue(
+			String boardId, 
+			String listId, 
+			String id) throws Exception{
+		
+		ListResource resource = listCache.getItem(boardId, IdentifierTools.getIdFromName(listId));
 		Option option = resource.getItems().get(id);
 		return option.getValue();
 	}
 	
-	public String getIdFromName( String name){
+	public String getIdFromName(String name){
 		return IdentifierTools.getIdFromName(name);
 	}
 	
-	public String getAttribute(String listId, String id, String attribute) throws Exception{
-		ListResource resource = listCache.getItem(IdentifierTools.getIdFromName(listId));
+	public String getAttribute(
+			String boardId, 
+			String listId, 
+			String id, 
+			String attribute) throws Exception{
+		
+		ListResource resource = listCache.getItem(boardId, IdentifierTools.getIdFromName(listId));
 		Option option = resource.getItems().get(id);
 		if(option==null){
 			option = resource.getItems().get(IdentifierTools.getIdFromName(id));
@@ -107,30 +130,40 @@ public class ListController {
 		return null;	
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{listId}/basic", method=RequestMethod.GET)
-	public @ResponseBody Map<String,String> getBasicList(@PathVariable String listId) throws Exception {
+	public @ResponseBody Map<String,String> getBasicList(
+			@PathVariable String boardId, 
+			@PathVariable String listId) throws Exception {
+		
 		Map<String,String> returnList = new HashMap<String,String>();
-		ListResource resource = listCache.getItem(listId);
+		ListResource resource = listCache.getItem(boardId,listId);
 		for( Entry<String, Option> entry : resource.getItems().entrySet()){
 			returnList.put(entry.getKey(), entry.getValue().getName());
 		}
 		return returnList;
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.GET)
-	public @ResponseBody Map<String,String> listLists() throws Exception {
-		return this.listCache.list();		
+	public @ResponseBody Map<String,String> listLists(
+			@PathVariable String boardId) throws Exception {
+		
+		return this.listCache.list(boardId,"");		
 	}
 		
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{listId}", method=RequestMethod.DELETE)
-	public @ResponseBody void deleteList( @PathVariable String listId) throws Exception {
+	public @ResponseBody void deleteList( 
+			@PathVariable String boardId,
+			@PathVariable String listId) throws Exception {
 		
 		if( StringUtils.isBlank(listId)){
 			return;
 		}
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		Node node = ocm.getSession().getNode(String.format(URI.LIST_URI,listId));
+		Node node = ocm.getSession().getNode(String.format(URI.LIST_URI, boardId, listId));
 		
 		if(node==null){
 			ocm.logout();

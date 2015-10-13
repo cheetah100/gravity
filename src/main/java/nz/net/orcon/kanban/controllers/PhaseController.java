@@ -87,6 +87,7 @@ public class PhaseController {
 	@Autowired
 	CardLockInterface cardsLockCache;
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{phaseId}", method=RequestMethod.GET)
 	public @ResponseBody Phase getPhase(
 			@PathVariable String boardId, @PathVariable String phaseId) throws Exception {
@@ -102,6 +103,7 @@ public class PhaseController {
 		return phase;		
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.POST)
 	public @ResponseBody Phase createPhase(@PathVariable String boardId, @RequestBody Phase phase) throws Exception {
 		
@@ -124,6 +126,7 @@ public class PhaseController {
 		return phase;
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{phaseId}", method=RequestMethod.PUT)
 	public @ResponseBody Phase updatePhase(@PathVariable String boardId,
 										   @PathVariable String phaseId,
@@ -140,6 +143,7 @@ public class PhaseController {
 		return phase;
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Collection<Phase> getPhaseList(@PathVariable String boardId) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
@@ -148,6 +152,7 @@ public class PhaseController {
 		return objects;
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{phaseId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deletePhase(
 			@PathVariable String boardId, @PathVariable String phaseId) throws Exception {
@@ -170,6 +175,7 @@ public class PhaseController {
 		*/
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'WRITE,ADMIN')")
 	@RequestMapping(value = "/{phaseId}/examine", method=RequestMethod.GET)
 	public @ResponseBody Boolean examinePhase(@PathVariable String boardId, 
 										  		@PathVariable String phaseId) throws Exception {
@@ -196,6 +202,7 @@ public class PhaseController {
 	 * @return
 	 * @throws Exception
 	 */
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{phaseId}/cure", method=RequestMethod.GET)
 	public @ResponseBody Boolean curePhase(@PathVariable String boardId, 
 										  		@PathVariable String phaseId) throws Exception {

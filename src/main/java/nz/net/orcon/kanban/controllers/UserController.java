@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -65,6 +66,8 @@ public class UserController {
 		try {
 			String newId = IdentifierTools.getIdFromNamedModelClass(user);
 			user.setPath(String.format(URI.USER_URI, newId.toString()));
+			user.setPasswordhash(user.hash(user.getName(), user.getKey()));
+			user.setKey(null);
 			ocm.insert(user);			
 			ocm.save();			
 		} finally {
@@ -97,13 +100,13 @@ public class UserController {
 
 	@RequestMapping(value = "/{userId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteUser(@PathVariable String userId) throws Exception {
-		ObjectContentManager ocm =ocmFactory.getOcm();
+		Session session = ocmFactory.getOcm().getSession();
 		try{ 
-			ocm.getSession().removeItem(String.format(URI.USER_URI, userId));
-			ocm.save();
+			session.removeItem(String.format(URI.USER_URI, userId));
+			session.save();
 		} finally {
-			if(ocm!=null){
-				ocm.logout();		
+			if(session!=null){
+				session.logout();		
 			}
 		}
 	}
@@ -121,6 +124,36 @@ public class UserController {
 			session.logout();
 		}
 		return result;			
-	}		
+	}
+	
+	@RequestMapping(value = "/{userId}/changepassword", method=RequestMethod.GET)
+	public @ResponseBody boolean changePassword(
+			@PathVariable String userId,
+			@RequestParam(required=true) String oldPassword,
+			@RequestParam(required=true) String newPassword) throws Exception {
+		
+		logger.info("Changing Password for user " + userId);
+	
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		
+		try{
+			User user = (User) ocm.getObject(User.class,String.format(URI.USER_URI, userId));
+			if( user!=null && user.checkPassword(oldPassword)){
+				user.setPasswordhash(user.hash(user.getName(), newPassword));
+				ocm.update(user);
+				ocm.save();
+				return true;
+			} else {
+				logger.warn("Wrong user credentials while changing password.");
+			}
+		} catch( Exception e){
+			logger.error("Exception changing password.", e);
+		} finally {
+			if(ocm!=null){
+				ocm.logout();
+			}
+		}
+		return false;			
+	}
 
 }

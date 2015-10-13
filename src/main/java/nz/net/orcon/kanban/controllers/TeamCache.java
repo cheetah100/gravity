@@ -26,6 +26,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,8 @@ import nz.net.orcon.kanban.tools.OcmMapperFactory;
 @Service
 public class TeamCache extends CacheImpl<Team> {
 
+	private static final Logger logger = LoggerFactory.getLogger(TeamCache.class);
+	
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
 	
@@ -43,11 +47,11 @@ public class TeamCache extends CacheImpl<Team> {
 	ListTools listTools;
 	
 	@Override
-	protected Team getFromStore(String itemId) throws Exception {
+	protected Team getFromStore(String... itemIds) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Team team;
 		try{
-			team = (Team) ocm.getObject(Team.class,String.format(URI.TEAM_URI, itemId));
+			team = (Team) ocm.getObject(Team.class,String.format(URI.TEAM_URI, (Object[])itemIds));
 		} finally {
 			ocm.logout();
 		}
@@ -55,11 +59,18 @@ public class TeamCache extends CacheImpl<Team> {
 	}
 
 	@Override
-	protected Map<String, String> getListFromStore() throws Exception {
+	protected Map<String, String> getListFromStore(String... prefixs) throws Exception {
+		
+		String pre = Integer.toString(prefixs.length) + " - ";
+		for( int x=0; x < prefixs.length; x++){
+			pre = pre + prefixs[x] + ", ";
+		}
+		logger.info("Prefixs: " + pre);
+		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Map<String,String> result = null;
 		try{
-			result = listTools.list(String.format(URI.TEAM_URI,""), "name", ocm.getSession());
+			result = listTools.list(String.format(URI.TEAM_URI,(Object[])prefixs), "name", ocm.getSession());
 		} finally {
 			ocm.logout();
 		}

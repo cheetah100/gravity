@@ -28,7 +28,6 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 
 import nz.net.orcon.kanban.automation.CacheInvalidationInterface;
-import nz.net.orcon.kanban.model.Board;
 import nz.net.orcon.kanban.model.Condition;
 import nz.net.orcon.kanban.model.Rule;
 import nz.net.orcon.kanban.tools.IdentifierTools;
@@ -42,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -71,6 +71,7 @@ public class RuleController {
 	@Qualifier("eventsJmsTemplate")
 	private JmsTemplate jmsTemplate;
 		
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.POST)
 	public @ResponseBody Rule createRule(@PathVariable String boardId,
 										  @RequestBody Rule rule) throws Exception {
@@ -91,6 +92,7 @@ public class RuleController {
 		return rule;
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{ruleId}", method=RequestMethod.PUT)
 	public @ResponseBody Rule updateRule(@PathVariable String boardId,
 										  @PathVariable String ruleId,
@@ -108,6 +110,7 @@ public class RuleController {
 		return rule;
 	}
 
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{ruleId}", method=RequestMethod.GET)
 	public @ResponseBody Rule getRule(@PathVariable String boardId, 
 									  @PathVariable String ruleId) throws Exception {
@@ -121,6 +124,7 @@ public class RuleController {
 		return rule;		
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{ruleId}/conditions", method=RequestMethod.POST)
 	public @ResponseBody Condition saveRuleCondition(@PathVariable String boardId, 
 			@PathVariable String ruleId,
@@ -136,6 +140,7 @@ public class RuleController {
 		return condition;
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{ruleId}/conditions/{conditionId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteFilterField(@PathVariable String boardId, 
 			@PathVariable String ruleId,
@@ -149,15 +154,17 @@ public class RuleController {
 		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
 	}
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listRules(@PathVariable String boardId) throws Exception {
 		
 		Session session = ocmFactory.getOcm().getSession();
 		Map<String,String> result = listTools.list(String.format(URI.RULE_URI, boardId,""), "name", session);
 		session.logout();
-		return result;			
+		return result;
 	}
 		
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{ruleId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteRule(@PathVariable String boardId, 
 			@PathVariable String ruleId) throws Exception {

@@ -27,10 +27,10 @@ public interface Cache<T> {
 
 	public void invalidate( String itemId );
 	
-	public T getItem(String itemId) throws Exception;
+	public T getItem(String... itemIds) throws Exception;
 	
-	public Map<String,String> list() throws Exception;
+	public Map<String,String> list(String... prefixs) throws Exception;
 	
-	public void storeItem( String itemId, T item) throws Exception;
+	public void storeItem(T item, String... itemIds ) throws Exception;
 
 }

@@ -50,19 +50,20 @@ public class ListCache extends CacheImpl<ListResource>{
 	ListTools listTools;
 			
 	@Override
-	protected ListResource getFromStore(String itemId) throws Exception {
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		ListResource list = (ListResource) ocm.getObject(ListResource.class,"/list/" + itemId);		
+	protected ListResource getFromStore(String... itemIds) throws Exception {
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		ListResource list = (ListResource) ocm.getObject(ListResource.class,String.format(URI.LIST_URI, (Object[])itemIds));
 		ocm.logout();
 		return list;
 	}
 
 	@Override
-	protected Map<String, String> getListFromStore() throws Exception {
+	protected Map<String, String> getListFromStore(String... prefixes) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Map<String,String> result = null;
 		try{
-			result = listTools.list(String.format(URI.LIST_URI,""), "name", ocm.getSession());
+			String path = String.format(URI.LIST_URI, (Object[])prefixes);
+			result = listTools.list(path, "name", ocm.getSession());
 		} finally {
 			ocm.logout();
 		}

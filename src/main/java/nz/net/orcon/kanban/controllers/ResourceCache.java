@@ -51,9 +51,9 @@ public class ResourceCache extends CacheImpl<String> {
 	ListTools listTools;
 				
 	@Override
-	protected String getFromStore(String itemId) throws Exception {
+	protected String getFromStore(String... itemIds) throws Exception {
 		ObjectContentManager ocm = this.ocmFactory.getOcm();
-		Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, itemId));
+		Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, (Object[])itemIds));
 		Property property = node.getProperty("resource");
 		String resource = property.getString();
 		ocm.logout();
@@ -61,11 +61,11 @@ public class ResourceCache extends CacheImpl<String> {
 	}
 
 	@Override
-	protected Map<String, String> getListFromStore() throws Exception {
+	protected Map<String, String> getListFromStore(String... prefixs) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Map<String,String> result = null;
 		try{
-			result = listTools.list(String.format(URI.RESOURCE_URI,""), "name", ocm.getSession());
+			result = listTools.list(String.format(URI.RESOURCE_URI, (Object[])prefixs), "name", ocm.getSession());
 		} finally {
 			ocm.logout();
 		}

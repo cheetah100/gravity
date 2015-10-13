@@ -105,6 +105,7 @@ public class BoardController {
 	@Autowired
 	SecurityTool securityTool;
 	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{boardId}", method=RequestMethod.GET)
 	public @ResponseBody Board getBoard(@PathVariable String boardId) throws Exception {
 		Board board = boardsCache.getItem(boardId);

@@ -44,7 +44,7 @@ public class FreemarkerPluginTest {
 	@Before
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
-		when(resourceController.getResource("test")).thenReturn("This is a test string that inserts here ->${replaceme}<- So do it!");
+		when(resourceController.getResource("test","test")).thenReturn("This is a test string that inserts here ->${replaceme}<- So do it!");
 	}
 
 	@Test
@@ -57,6 +57,7 @@ public class FreemarkerPluginTest {
 		action.setResponse("exampleResult");
 		Map<String,Object> context = new HashMap<String,Object>();
 		context.put("replaceme", "Hello World");
+		context.put("boardid", "test");
 		
 		plugin.process(action, context);
 		Object result = context.get("exampleResult");
@@ -74,7 +75,7 @@ public class FreemarkerPluginTest {
 		
 		// <#assign t=[\"boo\",\"bar\",\"doo\"]>
 		
-		when(resourceController.getResource("test2")).thenReturn("<#list t as i>${i}</#list>");
+		when(resourceController.getResource("test","test2")).thenReturn("<#list t as i>${i}</#list>");
 		
 		Action action = new Action();
 		action.setResource("test2");
@@ -87,6 +88,7 @@ public class FreemarkerPluginTest {
 		t.add("doo");
 		
 		context.put("t", t);
+		context.put("boardid", "test");
 		
 		plugin.process(action, context);
 		Object result = context.get("exampleResult");

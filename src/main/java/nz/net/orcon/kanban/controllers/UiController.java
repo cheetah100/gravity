@@ -98,7 +98,7 @@ public class UiController {
 		if( values!=null){
 			String templateId = values.values().iterator().next();
 			model.addAttribute("templateId", templateId );
-			Template template = templateController.getTemplate(templateId);
+			Template template = templateController.getTemplate(boardId,templateId);
 			model.addAttribute("template", template);
 		}
 		return "manage";
@@ -114,7 +114,7 @@ public class UiController {
 		Map<String, String> templates = board.getTemplates();
 		Entry<String, String> next = templates.entrySet().iterator().next();
 		String templateId = next.getValue();
-		Template template = templateController.getTemplate(templateId);
+		Template template = templateController.getTemplate(boardId,templateId);
 		model.addAttribute("template", template);
 		model.addAttribute("phaseId", phaseId);
 		model.addAttribute("boardId", boardId);

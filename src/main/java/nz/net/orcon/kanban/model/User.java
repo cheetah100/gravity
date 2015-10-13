@@ -23,6 +23,7 @@ package nz.net.orcon.kanban.model;
 
 import java.io.Serializable;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
@@ -39,6 +40,11 @@ public class User extends AbstractNamedModelClass implements Serializable{
 
 	@Field
 	private String surname;
+	
+	@Field 
+	private String passwordhash;
+	
+	private String key;
 	
 	public void setEmail(String email) {
 		this.email = email;
@@ -67,4 +73,42 @@ public class User extends AbstractNamedModelClass implements Serializable{
 	public String getSurname() {
 		return surname;
 	}
+
+	public String getPasswordhash() {
+		return passwordhash;
+	}
+
+	public void setPasswordhash(String passwordhash) {
+		this.passwordhash = passwordhash;
+	}
+
+	/**
+	 * This will take the supplied password and hash it, using the first two characters of the username as salt.
+	 * @param password
+	 */
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	/**
+	 * Does not return the actual password for blinding obvious reasons.
+	 * @return
+	 */
+	public String getKey() {
+		return this.key;
+	}
+	
+	public boolean checkPassword(String password){
+		if( this.passwordhash!=null){
+			return this.passwordhash.equals( hash(this.getName(), password) );
+		} else {
+			return true;
+		}
+	}
+	
+	public String hash( String username, String password){
+		return DigestUtils.sha256Hex(username.substring(0, 2) + password);
+	}
+	
+	
 }

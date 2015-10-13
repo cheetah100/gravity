@@ -42,7 +42,7 @@ public class VelocityPlugin implements Plugin {
 	
 	@Override
 	public Map<String,Object> process( Action action, Map<String,Object> context ) throws Exception{        
-		String resource = getResourceController().getResource(action.getResource());
+		String resource = getResourceController().getResource((String)context.get("boardid"),action.getResource());
         VelocityContext velocityContext = new VelocityContext(context);
         StringWriter resultWriter = new StringWriter();
         getVelocityEngine().evaluate(velocityContext, resultWriter, action.getResource(), resource);

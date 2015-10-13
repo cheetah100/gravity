@@ -29,26 +29,30 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 
+import nz.net.orcon.kanban.controllers.URI;
+import nz.net.orcon.kanban.model.User;
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+//import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 public class JcrAuthenticationProvider implements AuthenticationProvider {
 
-	private static final Logger logger = LoggerFactory.getLogger(JcrAuthenticationProvider.class);
-	
-	private static final String userUri = "/user/%s";
+	private static final Logger logger = LoggerFactory.getLogger(JcrAuthenticationProvider.class);									  
 	
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
+	
+	@Autowired
+	SecurityTool securityTool;
 	
 	@Override
 	public Authentication authenticate(Authentication authIn)
@@ -63,34 +67,24 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
         
     	try {
     		ocm = ocmFactory.getOcm();
-			Node userNode = ocm.getSession().getNode(String.format( userUri, username));
-			if( userNode.getProperty("password").getString().equals(password) ){
-				
-				logger.info("User Found - user: " + username);
-				
-		        List<GrantedAuthority> grantedAuths = new ArrayList<GrantedAuthority>();
-		        
-		        PropertyIterator properties = userNode.getProperties("group");
-		        while( properties.hasNext()){
-		        	Property property = (Property) properties.next();
-		        	String auth = property.getString();
-		        	grantedAuths.add(new GrantedAuthorityImpl(auth));
-		        	logger.info("Auth Added - user: " + username + " auth " + auth);
-		        }
+    		
+    		User user = (User) ocm.getObject(User.class,String.format(URI.USER_URI, username));
+			if( user!=null && user.checkPassword(password) ){
+		        logger.info("Authenticated User: " + username);		        
+		        List<GrantedAuthority> grantedAuths = this.securityTool.getRoles(username);
 		        Authentication auth = new UsernamePasswordAuthenticationToken(username, password, grantedAuths);
-		        logger.info("Authenticated User: " + username);
 		        return auth;				
+			} else {
+				logger.warn("Authentication Failure: " + username);
 			}
 		} catch (Exception e) {
 			logger.error("Authentication Exception: " + username, e);
-			return null;
 		} finally {
 			if( ocm!=null){
 				ocm.logout();
 			}
 		}
     	
-    	logger.info("Authentication User Not Found - user: " + username);
     	return null;
 	}
 
