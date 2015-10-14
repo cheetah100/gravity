@@ -93,16 +93,15 @@ public class ResourceController {
 			HttpServletRequest request) throws Exception {
 				
 		logger.info("Saving Resource " + boardId + "/" + resourceId);
-		//String value = IOUtils.getStringFromReader(request.getReader());
 		
 		BufferedReader reader = request.getReader();
+		reader.reset();
 		StringBuilder valueBuilder = new StringBuilder();
 		
 		while(true){
 			String newValue = reader.readLine();
 			if( newValue!=null){
 				valueBuilder.append(newValue);
-				logger.info("Line: " + newValue);
 			} else {
 				break;
 			}
