@@ -238,7 +238,7 @@ public class CardController {
 										 @PathVariable String phaseId, 
 										 @RequestBody Card card) throws Exception {
 		
-		templateCache.correctCardFieldTypes(card);
+		templateCache.correctCardFieldTypes(boardId, card);
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		try{
@@ -261,7 +261,7 @@ public class CardController {
 				// Add Fields
 				for( Entry<String,Object> entry : card.getFields().entrySet()){
 					Object correctedValue = 
-						templateCache.correctFieldType( entry.getKey(), entry.getValue(), card.getTemplate());
+						templateCache.correctFieldType( entry.getKey(), entry.getValue(), card.getBoard(), card.getTemplate());
 					updateValue( node, entry.getKey(), correctedValue, null);
 				}
 				storeCardEvent(URI.HISTORY_URI,"Creating Card",boardId, phaseId, card.getId().toString(),
@@ -387,7 +387,7 @@ public class CardController {
 			Node node = 
 				ocm.getSession().getNode(String.format(URI.FIELDS_URI, card.getBoard(), card.getPhase(), card.getId()));
 			
-			Object correctedValue = templateCache.correctFieldType(field, value, card.getTemplate());
+			Object correctedValue = templateCache.correctFieldType(field, value, card.getBoard(), card.getTemplate());
 	
 			Object currentValue = null;
 			try {
