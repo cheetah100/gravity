@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -35,19 +36,11 @@ import javax.jcr.Session;
 import javax.jcr.query.QueryResult;
 
 import nz.net.orcon.kanban.automation.CacheInvalidationInterface;
-import nz.net.orcon.kanban.gviz.GVGraph;
-import nz.net.orcon.kanban.gviz.GVNode;
-import nz.net.orcon.kanban.gviz.GVShape;
-import nz.net.orcon.kanban.gviz.GVStyle;
-import nz.net.orcon.kanban.model.Action;
 import nz.net.orcon.kanban.model.Board;
 import nz.net.orcon.kanban.model.Card;
 import nz.net.orcon.kanban.model.CardEvent;
 import nz.net.orcon.kanban.model.CardHistoryStat;
-import nz.net.orcon.kanban.model.Condition;
-import nz.net.orcon.kanban.model.ConditionType;
 import nz.net.orcon.kanban.model.Operation;
-import nz.net.orcon.kanban.model.Rule;
 import nz.net.orcon.kanban.security.SecurityTool;
 import nz.net.orcon.kanban.tools.CardTools;
 import nz.net.orcon.kanban.tools.IdentifierTools;
@@ -62,7 +55,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -284,169 +276,7 @@ public class BoardController {
 			ocm.logout();
 		}
 		return collection;				
-	}
-	
-	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
-	@RequestMapping(value = "/{boardId}/processgraph", method=RequestMethod.GET)
-	public String processGraph(@PathVariable String boardId, Model model) throws Exception {
-
-		// Get Board
-		Board board = boardsCache.getItem(boardId);
-
-		// Construct a GVGraph
-		GVGraph graph = new GVGraph(boardId);
-		
-		// Loop over rules
-		for( Rule rule : board.getRules().values()){	
-			GVNode node = new GVNode(rule.getId());
-			node.setColor("yellow");
-			node.setStyle(GVStyle.filled);
-			node.setShape(GVShape.hexagon);
-			graph.addNode(node);
-
-			if(rule.getAutomationConditions()!=null){
-				for(Condition condition : rule.getAutomationConditions().values()){
-					String nodeName = condition.getFieldName() + 
-							"-" + condition.getOperation() + "-" + condition.getValue();
-					
-					if( condition.getConditionType().equals(ConditionType.TASK)){
-						nodeName = condition.getFieldName();
-					}
-					
-					GVNode conditionNode = graph.getNode(nodeName);
-					if(conditionNode==null){
-						conditionNode = new GVNode(nodeName);
-						conditionNode.setStyle(GVStyle.filled);
-						
-						if( condition.getConditionType().equals(ConditionType.PROPERTY)){
-							conditionNode.setShape(GVShape.oval);
-							conditionNode.setColor("green");
-						}
-						if( condition.getConditionType().equals(ConditionType.TASK)){
-							conditionNode.setShape(GVShape.octagon);
-							conditionNode.setColor("cyan");
-						}
-						if( condition.getConditionType().equals(ConditionType.PHASE)){
-							conditionNode.setShape(GVShape.box);
-							conditionNode.setColor("purple");
-						}
-						graph.addNode(conditionNode);
-					}
-					graph.linkNodes(conditionNode.getName(),node.getName());
-				}
-			}
-
-			if(rule.getTaskConditions()!=null){
-				for(Condition condition : rule.getTaskConditions().values()){
-					String nodeName = condition.getFieldName() + 
-							"-" + condition.getOperation() + "-" + condition.getValue();
-					
-					if( condition.getConditionType().equals(ConditionType.TASK)){
-						nodeName = condition.getFieldName();
-					}
-					
-					GVNode conditionNode = graph.getNode(nodeName);
-					if(conditionNode==null){
-						conditionNode = new GVNode(nodeName);
-						conditionNode.setStyle(GVStyle.filled);
-						
-						if( condition.getConditionType().equals(ConditionType.PROPERTY)){
-							conditionNode.setShape(GVShape.oval);
-							conditionNode.setColor("green");
-						}
-						if( condition.getConditionType().equals(ConditionType.TASK)){
-							conditionNode.setShape(GVShape.octagon);
-							conditionNode.setColor("cyan");
-						}
-						if( condition.getConditionType().equals(ConditionType.PHASE)){
-							conditionNode.setShape(GVShape.box);
-							conditionNode.setColor("purple");
-						}
-						graph.addNode(conditionNode);
-					}
-					graph.linkNodes(conditionNode.getName(),node.getName(),"blue");
-				}
-			}
-
-			
-			if( rule.getActions()!=null){
-				for( Action action : rule.getActions().values()){
-					
-					// Is The Action a Complete Task?
-					if( action.getType().equals("execute") && action.getMethod().equals("completeTask")){
-						
-						String taskname = action.getProperties().get("taskname");
-						String nodeName = taskname + "-EQUALTO-" + taskname;
-						
-						GVNode childNode = graph.getNode(nodeName);
-						if(childNode==null){
-							childNode = new GVNode(nodeName);
-							childNode.setStyle(GVStyle.filled);
-							childNode.setColor("cyan");
-							childNode.setShape(GVShape.octagon);
-							graph.addNode(childNode);
-						}
-						graph.linkNodes(node.getName(),childNode.getName());
-					}
-					
-					// Is The Action a Move to Phase?
-					if( action.getType().equals("execute") && action.getMethod().equals("moveCard")){
-						
-						String destination = action.getProperties().get("destination");
-						String nodeName = "phase-EQUALTO-" + destination;
-						
-						GVNode childNode = graph.getNode(nodeName);
-						if(childNode==null){
-							childNode = new GVNode(nodeName);
-							childNode.setStyle(GVStyle.filled);
-							childNode.setColor("purple");
-							childNode.setShape(GVShape.box);						
-							graph.addNode(childNode);
-						}
-						graph.linkNodes(node.getName(),childNode.getName());
-					}
-					
-					// Is The Action a Store Propperty?
-					if( action.getType().equals("execute") && action.getMethod().equals("updateValue")){
-						
-						String propertyName = action.getProperties().keySet().iterator().next();
-						String fieldName = action.getProperties().get(propertyName);
-						String nodeName = fieldName + "-NOTNULL-" + fieldName;
-						
-						GVNode childNode = graph.getNode(nodeName);
-						if(childNode==null){
-							childNode = new GVNode(nodeName);
-							childNode.setStyle(GVStyle.filled);
-							childNode.setColor("green");
-							childNode.setShape(GVShape.oval);						
-							graph.addNode(childNode);
-						}
-						graph.linkNodes(node.getName(),childNode.getName());
-					}
-					
-					// Is The Action a Persist?
-					if( action.getType().equals("persist") ){
-						
-						for( String fieldName : action.getParameters()){
-							String nodeName = fieldName + "-NOTNULL-" + fieldName;						
-							GVNode childNode = graph.getNode(nodeName);
-							if(childNode==null){
-								childNode = new GVNode(nodeName);
-								childNode.setStyle(GVStyle.filled);
-								childNode.setColor("green");
-								childNode.setShape(GVShape.oval);						
-								graph.addNode(childNode);
-							}
-							graph.linkNodes(node.getName(),childNode.getName());
-						}
-					}
-				}
-			}
-		}
-		model.addAttribute("graph", graph);
-		return "graph";
-	}
-	
+	}	
 
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{boardId}", method=RequestMethod.DELETE)

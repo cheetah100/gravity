@@ -115,6 +115,7 @@
 				<entry key="RESOURCE" value-ref="resourceCache"/>
 				<entry key="TEAM" value-ref="teamCache"/>
 				<entry key="TEMPLATE" value-ref="templateCache"/>
+				<entry key="RULE" value-ref="ruleCache"/>
 			</map>
 		</property>
 	</bean>

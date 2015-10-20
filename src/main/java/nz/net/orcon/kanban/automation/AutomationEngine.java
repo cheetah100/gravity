@@ -42,6 +42,7 @@ import nz.net.orcon.kanban.controllers.BoardsCache;
 import nz.net.orcon.kanban.controllers.CardController;
 import nz.net.orcon.kanban.controllers.NotificationController;
 import nz.net.orcon.kanban.controllers.ResourceNotFoundException;
+import nz.net.orcon.kanban.controllers.RuleCache;
 import nz.net.orcon.kanban.controllers.URI;
 import nz.net.orcon.kanban.model.Action;
 import nz.net.orcon.kanban.model.Board;
@@ -71,6 +72,9 @@ public class AutomationEngine {
 
 	@Autowired
 	BoardsCache boardsCache;
+	
+	@Autowired
+	RuleCache ruleCache;
 	
 	@Autowired
 	DateInterpreter dateInterpreter;
@@ -107,13 +111,8 @@ public class AutomationEngine {
 			return;
 		}
 
-		Map<String, Rule> rules = board.getRules();
-
-		if (rules == null) {
-			LOG.warn("Rules Not Found: " + cardHolder.getBoardId());
-			return;
-		}
-
+		Map<String,Rule> rules = getRulesFromBoard(cardHolder.getBoardId());
+		
 		LOG.info("Automation Examining :" + card.getPath());
 		
 		evaluateTaskRules(rules,card);		
@@ -134,6 +133,19 @@ public class AutomationEngine {
 
 		executeCompulsoryRules(rules,card);
 		executeTaskRules(rules,card);
+	}
+	
+	private Map<String,Rule> getRulesFromBoard(String boardId) throws Exception{
+		Map<String, String> ruleList = ruleCache.list(boardId,"");
+		Map<String,Rule> rules = new HashMap<String,Rule>();
+		
+		for( String ruleId : ruleList.keySet()){
+			Rule rule = ruleCache.getItem(boardId, ruleId);
+			if(rule!=null){
+				rules.put(ruleId, rule);
+			}
+		}
+		return rules;
 	}
 	
 	private void executeCompulsoryRules(Map<String, Rule> rules, Card card) throws Exception {
@@ -275,28 +287,18 @@ public class AutomationEngine {
 	
 	public Map<String,Map<String,Boolean>> explain(CardHolder cardHolder) throws Exception {
 		
-		Map<String,Map<String,Boolean>> result = new HashMap<String,Map<String,Boolean>>();
-		
+		Map<String,Map<String,Boolean>> result = new HashMap<String,Map<String,Boolean>>();		
 		Card card = null;
-		Board board = null;
+
 		try {
 			card = cardController.getCard(cardHolder.getBoardId(),
 					null, cardHolder.getCardId(),"full");
 			
-			board = boardsCache.getItem(cardHolder.getBoardId());
 		} catch (ResourceNotFoundException e) {
-			throw new Exception("Resource no longer exists: " + cardHolder.toString());
-		}
-		if (board == null) {
-			throw new Exception("Board Not Found: " + cardHolder.toString());
+			throw new Exception("Resource Not Found: " + cardHolder.toString());
 		}
 
-		Map<String, Rule> rules = board.getRules();
-
-		if (rules == null) {
-			throw new Exception("Rules Not Found: " + cardHolder.getBoardId());			
-		}
-
+		Map<String, Rule> rules = getRulesFromBoard(cardHolder.getBoardId());
 		Set<Entry<String, Rule>> entrySet = rules.entrySet();
 
 		LOG.info("Explaining :" + card.getPath());
@@ -694,14 +696,8 @@ public class AutomationEngine {
 		
 		LOG.info("Executing Actions on board:" + boardId + " Rule " + ruleId);
 
-		// Get Rule.
-		Board board = this.boardsCache.getItem(boardId);
-		if(board==null){
-			LOG.warn("Execute Actions: Board Not Found: "+ boardId);
-			return;
-		}
-		
-		Rule rule = board.getRules().get(ruleId);
+		// Get Rule.		
+		Rule rule = ruleCache.getItem(boardId, ruleId); 
 		if(rule==null){
 			LOG.warn("Execute Actions: Rule Not Found: "+ boardId + "/" + ruleId);
 			return;
@@ -732,7 +728,7 @@ public class AutomationEngine {
 	
 	public void executeActions(Card card, Rule rule) throws Exception {
 		
-		LOG.info("Executing Actions on Card :" + card.getPath());
+		LOG.info("Executing ActionChain on Card :" + card.getPath() + " rule " + rule.getId());
 		Map<String, Object> context = card.getFields();
 
 		context.put("boardid", card.getBoard());

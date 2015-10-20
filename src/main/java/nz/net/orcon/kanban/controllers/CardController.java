@@ -93,6 +93,9 @@ public class CardController {
 	BoardsCache boardCache;
 	
 	@Autowired 
+	RuleCache ruleCache;
+	
+	@Autowired 
 	CardTools cardTools;
 	
 	@Autowired 
@@ -677,24 +680,14 @@ public class CardController {
 		try{
 			cardTasks = ocm.getChildObjects(CardTask.class, 
 					String.format(URI.TASKS_URI, boardId, phaseId, cardId,""));
-			
-			Board board = boardCache.getItem(boardId);
-			Map<String, Rule> rules = board.getRules();
-			
-			if(rules==null){
-				return null;
-			}
-			
-			Set<Entry<String, Rule>> ruleEntrySet = rules.entrySet();
+						
 			Map<Integer, CardTask> cardTaskMap = new TreeMap<Integer,CardTask>();
 			
 			if(cardTasks!=null){				
 				for (CardTask cardTask : cardTasks) {
-					for (Entry<String, Rule> entry : ruleEntrySet) {
-						Rule rule = entry.getValue();						
-						if(cardTask.getTaskid().equals(rule.getId())){
-							cardTaskMap.put(rule.getIndex(),cardTask);
-						}						
+					Rule rule = ruleCache.getItem(boardId,cardTask.getTaskid());
+					if(rule!=null){
+						cardTaskMap.put(rule.getIndex(),cardTask);
 					}
 				}
 			}
@@ -916,13 +909,12 @@ public class CardController {
 		if(card==null){
 			return null;
 		}
-		Board board = boardCache.getItem(boardId);
-		Map<String, Rule> boardRules = board.getRules();
-		Rule rule = boardRules.get(taskId);
+				
+		Rule rule = ruleCache.getItem(boardId,taskId);
 		
 		if(rule==null){
 			ocm.logout();
-			logger.warn("Rule Not Found in Board: " + taskId);
+			logger.warn("Rule Not Found: " + boardId + "." + taskId);
 			throw new ResourceNotFoundException();
 		}
 		
