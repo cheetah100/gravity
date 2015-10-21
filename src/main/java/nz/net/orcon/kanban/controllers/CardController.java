@@ -93,6 +93,9 @@ public class CardController {
 	BoardsCache boardCache;
 	
 	@Autowired 
+	RuleCache ruleCache;
+	
+	@Autowired 
 	CardTools cardTools;
 	
 	@Autowired 
@@ -238,7 +241,7 @@ public class CardController {
 										 @PathVariable String phaseId, 
 										 @RequestBody Card card) throws Exception {
 		
-		templateCache.correctCardFieldTypes(card);
+		templateCache.correctCardFieldTypes(boardId, card);
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		try{
@@ -261,7 +264,7 @@ public class CardController {
 				// Add Fields
 				for( Entry<String,Object> entry : card.getFields().entrySet()){
 					Object correctedValue = 
-						templateCache.correctFieldType( entry.getKey(), entry.getValue(), card.getTemplate());
+						templateCache.correctFieldType( entry.getKey(), entry.getValue(), card.getBoard(), card.getTemplate());
 					updateValue( node, entry.getKey(), correctedValue, null);
 				}
 				storeCardEvent(URI.HISTORY_URI,"Creating Card",boardId, phaseId, card.getId().toString(),
@@ -387,7 +390,7 @@ public class CardController {
 			Node node = 
 				ocm.getSession().getNode(String.format(URI.FIELDS_URI, card.getBoard(), card.getPhase(), card.getId()));
 			
-			Object correctedValue = templateCache.correctFieldType(field, value, card.getTemplate());
+			Object correctedValue = templateCache.correctFieldType(field, value, card.getBoard(), card.getTemplate());
 	
 			Object currentValue = null;
 			try {
@@ -677,24 +680,14 @@ public class CardController {
 		try{
 			cardTasks = ocm.getChildObjects(CardTask.class, 
 					String.format(URI.TASKS_URI, boardId, phaseId, cardId,""));
-			
-			Board board = boardCache.getItem(boardId);
-			Map<String, Rule> rules = board.getRules();
-			
-			if(rules==null){
-				return null;
-			}
-			
-			Set<Entry<String, Rule>> ruleEntrySet = rules.entrySet();
+						
 			Map<Integer, CardTask> cardTaskMap = new TreeMap<Integer,CardTask>();
 			
 			if(cardTasks!=null){				
 				for (CardTask cardTask : cardTasks) {
-					for (Entry<String, Rule> entry : ruleEntrySet) {
-						Rule rule = entry.getValue();						
-						if(cardTask.getTaskid().equals(rule.getId())){
-							cardTaskMap.put(rule.getIndex(),cardTask);
-						}						
+					Rule rule = ruleCache.getItem(boardId,cardTask.getTaskid());
+					if(rule!=null){
+						cardTaskMap.put(rule.getIndex(),cardTask);
 					}
 				}
 			}
@@ -916,13 +909,12 @@ public class CardController {
 		if(card==null){
 			return null;
 		}
-		Board board = boardCache.getItem(boardId);
-		Map<String, Rule> boardRules = board.getRules();
-		Rule rule = boardRules.get(taskId);
+				
+		Rule rule = ruleCache.getItem(boardId,taskId);
 		
 		if(rule==null){
 			ocm.logout();
-			logger.warn("Rule Not Found in Board: " + taskId);
+			logger.warn("Rule Not Found: " + boardId + "." + taskId);
 			throw new ResourceNotFoundException();
 		}
 		

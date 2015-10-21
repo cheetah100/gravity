@@ -102,6 +102,7 @@ public class ResourceController {
 			String newValue = reader.readLine();
 			if( newValue!=null){
 				valueBuilder.append(newValue);
+				valueBuilder.append("\n");
 			} else {
 				break;
 			}
