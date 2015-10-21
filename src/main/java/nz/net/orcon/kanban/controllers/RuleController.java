@@ -101,7 +101,7 @@ public class RuleController {
 		return rule;
 	}
 
-	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{ruleId}", method=RequestMethod.GET)
 	public @ResponseBody Rule getRule(@PathVariable String boardId, 
 									  @PathVariable String ruleId) throws Exception {
@@ -109,7 +109,7 @@ public class RuleController {
 		return ruleCache.getItem(boardId, ruleId);		
 	}
 		
-	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listRules(@PathVariable String boardId) throws Exception {
 		
@@ -152,7 +152,7 @@ public class RuleController {
 		return jmsTemplate;
 	}
 	
-	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")	
 	@RequestMapping(value = "/{boardId}/processgraph", method=RequestMethod.GET)
 	public String processGraph(@PathVariable String boardId, Model model) throws Exception {
 		
