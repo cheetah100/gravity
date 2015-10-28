@@ -192,7 +192,7 @@ public class OcmMapperFactory {
 		return host;
 	}
 
-	public void setUrl(String host) {
+	public void setHost(String host) {
 		this.host = host;
 	}
 

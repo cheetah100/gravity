@@ -66,7 +66,6 @@ public class UserController {
 		try {
 			String newId = IdentifierTools.getIdFromNamedModelClass(user);
 			user.setPath(String.format(URI.USER_URI, newId.toString()));
-			user.setPasswordhash(user.hash(user.getName(), user.getKey()));
 			user.setKey(null);
 			ocm.insert(user);			
 			ocm.save();			
@@ -88,7 +87,9 @@ public class UserController {
 			
 			if(user==null){
 				throw new ResourceNotFoundException();
-			}		
+			}
+			
+			user.setPasswordhash(null);
 
 		} finally {
 			if(ocm!=null){
@@ -155,5 +156,4 @@ public class UserController {
 		}
 		return false;			
 	}
-
 }

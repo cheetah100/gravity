@@ -88,6 +88,9 @@ public class User extends AbstractNamedModelClass implements Serializable{
 	 */
 	public void setKey(String key) {
 		this.key = key;
+		if( key!=null){
+			this.setPasswordhash(hash(this.getName(),key));
+		}
 	}
 
 	/**
@@ -100,7 +103,8 @@ public class User extends AbstractNamedModelClass implements Serializable{
 	
 	public boolean checkPassword(String password){
 		if( this.passwordhash!=null){
-			return this.passwordhash.equals( hash(this.getName(), password) );
+			String hash = hash(this.getName(), password);
+			return this.passwordhash.equals( hash );
 		} else {
 			return true;
 		}
@@ -109,6 +113,5 @@ public class User extends AbstractNamedModelClass implements Serializable{
 	public String hash( String username, String password){
 		return DigestUtils.sha256Hex(username.substring(0, 2) + password);
 	}
-	
 	
 }
