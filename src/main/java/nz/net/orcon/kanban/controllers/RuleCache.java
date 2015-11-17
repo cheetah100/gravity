@@ -26,6 +26,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,8 @@ import nz.net.orcon.kanban.tools.OcmMapperFactory;
 
 @Service
 public class RuleCache extends CacheImpl<Rule> {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(RuleCache.class);
 
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
@@ -44,6 +48,9 @@ public class RuleCache extends CacheImpl<Rule> {
 	
 	@Override
 	protected Rule getFromStore(String... itemIds) throws Exception {
+		
+		LOG.info("Get Rule Store: "+ getStringFromArray(itemIds));
+		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Rule rule;
 		try{
@@ -56,6 +63,9 @@ public class RuleCache extends CacheImpl<Rule> {
 
 	@Override
 	protected Map<String, String> getListFromStore(String... prefixes) throws Exception {
+		
+		LOG.info("Get Rule List Store: "+ getStringFromArray(prefixes));
+		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		Map<String,String> result = null;
 		try{
@@ -64,6 +74,17 @@ public class RuleCache extends CacheImpl<Rule> {
 			ocm.logout();
 		}
 		return result;
+	}
+	
+	private String getStringFromArray( String[] stringArray){
+		
+		StringBuilder builder = new StringBuilder();
+		for( int a=0; a<stringArray.length; a++){
+			builder.append("[");
+			builder.append(stringArray[a]);
+			builder.append("] ");
+		}
+		return builder.toString();
 	}
 
 }

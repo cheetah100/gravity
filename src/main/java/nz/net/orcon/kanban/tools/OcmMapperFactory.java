@@ -45,7 +45,6 @@ import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//import org.springframework.beans.factory.annotation.Autowired;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
@@ -53,7 +52,7 @@ import com.mongodb.MongoClient;
 public class OcmMapperFactory {
 	
 	private static final Logger logger = LoggerFactory.getLogger(OcmMapperFactory.class);
-	
+		
 	private Repository repository;
 	
 	private String domainPackage;
@@ -86,8 +85,12 @@ public class OcmMapperFactory {
 			
 			DB db = new MongoClient(host, 27017).getDB("gravity");
 		    DocumentNodeStore ns = new DocumentMK.Builder().
-		            setMongoDB(db).getNodeStore();
-		    this.repository = new Jcr(new Oak(ns)).createRepository();
+		            setMongoDB(db).getNodeStore();		    
+		    
+		    this.repository = new Jcr(new Oak(ns))
+		    	.with(new RepositoryIndexInitializer())
+		    	.withAsyncIndexing()
+		    	.createRepository();
 		}
 		
 		if(this.mapper==null){
@@ -134,7 +137,7 @@ public class OcmMapperFactory {
 	 * 
 	 * @param session
 	 */
-	private void setupListener(Session session){
+	private void setupListener(){
 		
 		//session.getWorkspace().getObservationManager().addEventListener(arg0, arg1, arg2, arg3, arg4, arg5, arg6)
 		
