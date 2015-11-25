@@ -9,7 +9,7 @@
 
 <body>
 
-<div ng-app="myApp" ng-controller="boardCtrl">
+<div ng-app="myApp" ng-controller="boardCtrl" ng-init="mySwitch=true;board='Board';phase='Phase'">
 <nav class="navbar-form navbar-left navbar-inverse">
       <div class="container">
         <div class="navbar-header">
@@ -24,9 +24,19 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Board<span class="caret"></span></a>
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{board}}<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li ng-repeat="(key, value) in boards"><a href="{{key}}">{{value}}</a></li>
+                <li ng-repeat="(key, value) in boards">
+                <a href="" ng-click="setBoard(key,value)">{{value}}</a>
+                </li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{phase}}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="phase in phases | orderBy : 'index'">
+                <a href="" ng-click="setPhase(key,phase)">{{phase.name}}</a>
+                </li>
               </ul>
             </li>
           </ul>
@@ -34,15 +44,18 @@
             <li><a href="../navbar-fixed-top/">Logout</a></li>
           </ul>
         </div><!--/.nav-collapse -->
-      </div>
+      </div>      
 </nav>
-</div>
 
 <div class="container">
 
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
-    <h1>Gravity</h1>
+    <h1>{{board}}</h1>
+    <ul>
+    <li ng-repeat="phase in phases">{{phase.name}}</li>
+    </ul>
+    
     <p>Gravity combines the simplicity and elegance of kanban boards 
     for controlling business workflows with a powerful automation engine 
     that allows businesses to eliminate repetitive electronic tasks. 
@@ -52,7 +65,10 @@
     from Gravity Workflow Automation.</p>
 </div>
 
+
 </div> <!-- /container -->
+
+</div>
 
 <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -63,6 +79,30 @@ var app = angular.module('myApp', []);
 app.controller('boardCtrl', function($scope, $http) {
   $http.get("/gravity/spring/board")
   .success(function (response) {$scope.boards = response;});
+  
+  $scope.setBoard = function(key,name) {
+            $scope.board = name;
+            $scope.boardid = key;
+            fullUrl = "/gravity/spring/board/" + key;
+            $http.get(fullUrl).success(function (response) {
+            	$scope.boardData = response;            	
+            
+            	var phases=[];
+            	for( key in response.phases ) {
+            		phases.push(response.phases[key]);
+           		}
+           		$scope.phases = phases;
+           		$scope.phase = phases[0].name;
+           		$scope.phasid = phases[0].id;
+            });            
+  }
+  
+  $scope.setPhase = function(key,phase) {
+            $scope.phase = phase.name;
+            $scope.phaseid = key;            
+  }
+  
+  
 });
 
 </script>
