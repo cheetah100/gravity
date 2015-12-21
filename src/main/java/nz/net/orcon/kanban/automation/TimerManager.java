@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.annotation.PreDestroy;
 
 import nz.net.orcon.kanban.controllers.BoardsCache;
+import nz.net.orcon.kanban.controllers.ResourceNotFoundException;
 import nz.net.orcon.kanban.controllers.RuleCache;
 import nz.net.orcon.kanban.model.Condition;
 import nz.net.orcon.kanban.model.ConditionType;
@@ -121,14 +122,18 @@ public class TimerManager {
 		
 		// Start Timers		
 		for( String ruleId : rules.keySet()){
-			Rule rule = ruleCache.getItem(boardId,ruleId);
-			if(null != rule.getAutomationConditions()){
-				for( Condition condition : rule.getAutomationConditions().values()) {
-					if( ConditionType.TIMER.equals(condition.getConditionType())){
-						activateTimer( boardId, rule.getId(), condition.getValue());
-						LOG.info("Timer Loaded: " + boardId + "." + rule.getId());
+			try {
+				Rule rule = ruleCache.getItem(boardId,ruleId);
+				if(null != rule.getAutomationConditions()){
+					for( Condition condition : rule.getAutomationConditions().values()) {
+						if( ConditionType.TIMER.equals(condition.getConditionType())){
+							activateTimer( boardId, rule.getId(), condition.getValue());
+							LOG.info("Timer Loaded: " + boardId + "." + rule.getId());
+						}
 					}
 				}
+			} catch(ResourceNotFoundException e){
+				LOG.warn("Rule not found: " + boardId + "." + ruleId);
 			}
 		}
 	}

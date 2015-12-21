@@ -68,6 +68,7 @@
 				<entry key="dateTool" value-ref="dateTool" />
 				<entry key="createVariableAction" value-ref="createVariableAction" />
 				<entry key="clusterManager" value-ref="clusterManager" />
+				<entry key="awsAutomation" value-ref="awsAutomationAction" />
 			</map>
 		</property>
 	</bean>
@@ -129,6 +130,25 @@
 		</property>
 	</bean>
 	
+	<bean id="awsCredential"  class="com.amazonaws.auth.BasicAWSCredentials">
+		<constructor-arg value="${aws.keyid}"/>
+		<constructor-arg value="${aws.secret}"/>
+	</bean>
+	
+	<bean id="awsLoadBalanceClient" class="com.amazonaws.services.elasticloadbalancing.AmazonElasticLoadBalancingClient">
+		<constructor-arg ref="awsCredential"/>
+	</bean>
+
+	<bean id="awsIdentityClient" class="com.amazonaws.services.identitymanagement.AmazonIdentityManagementClient">
+		<constructor-arg ref="awsCredential"/>
+	</bean>
+	
+	<bean id="awsCloudFrontClient" class="com.amazonaws.services.cloudfront.AmazonCloudFrontClient">
+		<constructor-arg ref="awsCredential"/>
+	</bean>
+	
+	<bean id="awsAutomationAction" class="nz.net.orcon.kanban.automation.actions.AwsAutomationAction"/>
+
 	<!-- Cluster Management -->
 	<bean id="clusterManager" class="nz.net.orcon.kanban.automation.ClusterManager"/>
 
