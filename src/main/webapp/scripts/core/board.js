@@ -56,6 +56,7 @@ var board = {
     onlyLoadBoard: function(boardid) {
         jQuery.ajax({
             url: ajaxUrl + '/board/' + boardid,
+            async: false,
             success: function(data) {
                 if (jQuery.isEmptyObject(data)) {
                     displayError('No Board Found');
