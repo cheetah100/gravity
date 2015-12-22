@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -22,7 +23,6 @@
 package nz.net.orcon.kanban.controllers;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.jcr.Node;
@@ -81,7 +81,7 @@ public class TemplateController {
 			
 			node.remove();
 			ocm.save();
-			this.cacheInvalidationManager.invalidate(TEMPLATE, templateId);
+			this.cacheInvalidationManager.invalidate(TEMPLATE, templateCache.getCacheId(boardId,templateId));
 		} finally {
 			ocm.logout();
 		}
@@ -102,8 +102,6 @@ public class TemplateController {
 			}
 			template.setPath(String.format(URI.TEMPLATE_URI, boardId, templateId));
 			ocm.insert(template);
-		
-			//listTools.ensurePresence(String.format(URI.TEMPLATE_URI, templateId), "groups", ocm.getSession());
 			
 			ocm.save();
 			this.cacheInvalidationManager.invalidate(TEMPLATE, templateId);

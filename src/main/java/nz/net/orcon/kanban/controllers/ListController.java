@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -174,6 +175,6 @@ public class ListController {
 		ocm.save();
 		ocm.logout();
 		
-		this.cacheInvalidationManager.invalidate(LIST, listId);
+		this.cacheInvalidationManager.invalidate(LIST, listCache.getCacheId(boardId,listId));
 	}
 }

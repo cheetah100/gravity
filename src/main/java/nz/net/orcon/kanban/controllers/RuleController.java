@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import nz.net.orcon.kanban.automation.CacheInvalidationInterface;
 import nz.net.orcon.kanban.gviz.GVGraph;
@@ -113,12 +112,14 @@ public class RuleController {
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listRules(@PathVariable String boardId) throws Exception {
 		
-		ruleCache.list(boardId);
+		Map<String, String> ruleList = ruleCache.list(boardId,"");
 		
-		Session session = ocmFactory.getOcm().getSession();
-		Map<String,String> result = listTools.list(String.format(URI.RULE_URI, boardId,""), "name", session);
-		session.logout();
-		return result;
+		//ruleCache.list(boardId);
+		
+		//Session session = ocmFactory.getOcm().getSession();
+		//Map<String,String> result = listTools.list(String.format(URI.RULE_URI, boardId,""), "name", session);
+		//session.logout();
+		return ruleList;
 	}
 		
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")

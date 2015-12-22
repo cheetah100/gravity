@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -31,12 +32,21 @@ abstract public class CacheImpl<T> implements Cache<T> {
 
 	private Map<String, T> cacheMap = new ConcurrentHashMap<String,T>();
 	
-	private Map<String,String> cacheList = null;
+	private Map<String,Map<String,String>> cacheList = new ConcurrentHashMap<String, Map<String,String>>();
 		
 	@Override
-	public void invalidate(String itemId) {
-		this.cacheMap.remove(itemId);
-		this.cacheList = null;
+	public void invalidate(String... itemIds ) {
+		String cacheId = getCacheId(itemIds);
+		this.cacheMap.remove(cacheId);
+		
+		if(itemIds.length>1){
+			String[] listId = new String[itemIds.length-1];
+			for( int a=0; a<itemIds.length; a++){
+				listId[a] = itemIds[a];
+			}
+			this.cacheList.remove(getCacheId(listId));
+		}
+		
 	}
 
 	@Override
@@ -59,14 +69,35 @@ abstract public class CacheImpl<T> implements Cache<T> {
 	}
 	
 	public Map<String,String> list(String... prefixs) throws Exception{
+		String cacheId = "default";
+		if(prefixs.length>0){
+			cacheId = this.getCacheId(prefixs);
+		}
+		Map<String, String> list = this.cacheList.get(cacheId);
+		if(list==null){
+			if(prefixs.length>0){
+				list = this.getListFromStore(prefixs);	
+			} else {
+				list = this.getListFromStore("");
+			}
+			this.cacheList.put(cacheId, list);
+		}
+		
+		return new HashMap<String,String>(this.cacheList.get(cacheId));
+		
+		/*
 		if( this.cacheList == null){
 			if( prefixs.length>0){
-				this.cacheList = this.getListFromStore(prefixs);
+				cacheId = this.getCacheId(prefixs);
+				Map<String,String> list = this.getListFromStore(prefixs);
+				this.cacheList.put(cacheId, list);
 			} else {
-				this.cacheList = this.getListFromStore("");
+				Map<String,String> list = this.getListFromStore("");
+				this.cacheList.put(cacheId, list);
 			}
 		}
-		return new HashMap<String,String>(this.cacheList);
+		return new HashMap<String,String>(this.cacheList.get(cacheId));
+		*/
 	}
 
 	@Override
@@ -84,11 +115,14 @@ abstract public class CacheImpl<T> implements Cache<T> {
 	public String getCacheId( String... ids ){
 		StringBuilder id = new StringBuilder();
 		for (int i = 0; i < ids.length; ++i) {
-			id.append(ids[i]);
-			id.append("-");
+			if(!"".equals(ids[i])){
+				id.append(ids[i]);
+				id.append("-");
+			}
 		}
 		String returnValue = id.toString();
-		return returnValue.substring(0, returnValue.length()-1);
+		String substring = returnValue.substring(0, returnValue.length()-1);
+		return substring; 	
 	}
 	
 	abstract protected T getFromStore(String... itemIds) throws Exception;
