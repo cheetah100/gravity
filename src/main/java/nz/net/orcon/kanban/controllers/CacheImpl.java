@@ -109,7 +109,7 @@ abstract public class CacheImpl<T> implements Cache<T> {
 	@Scheduled(cron = "${cache.clearschedule}")	
 	public void clearCache() {
 		this.cacheMap.clear();
-		this.cacheList = null;
+		this.cacheList = new ConcurrentHashMap<String, Map<String,String>>();;
 	}
 	
 	public String getCacheId( String... ids ){
