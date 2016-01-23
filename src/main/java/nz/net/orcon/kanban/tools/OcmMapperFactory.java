@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
 
 public class OcmMapperFactory {
 	
@@ -80,10 +81,18 @@ public class OcmMapperFactory {
 		
 		if(this.repository==null){
 			logger.info("Creating Repository");
-			// MEMORY REPO
-			// repository = new Jcr(new Oak()).createRepository();
 			
-			DB db = new MongoClient(host, 27017).getDB("gravity");
+			String[] hostArray = this.getHost().split(",");
+			List<String> hostList = Arrays.asList(hostArray);
+			
+			List<ServerAddress> serverList = new ArrayList<ServerAddress>();
+			for( String hostURL : hostList){
+				ServerAddress sa = new ServerAddress(hostURL);
+				serverList.add(sa);
+			}
+			
+			MongoClient mc = new MongoClient(serverList);
+			DB db = mc.getDB("gravity");
 		    DocumentNodeStore ns = new DocumentMK.Builder().
 		            setMongoDB(db).getNodeStore();		    
 		    
@@ -198,5 +207,4 @@ public class OcmMapperFactory {
 	public void setHost(String host) {
 		this.host = host;
 	}
-
 }
