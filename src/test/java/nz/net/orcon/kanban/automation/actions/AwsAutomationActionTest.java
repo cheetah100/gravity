@@ -1,7 +1,5 @@
 package nz.net.orcon.kanban.automation.actions;
 
-import static org.junit.Assert.*;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -18,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.amazonaws.services.identitymanagement.model.ListSigningCertificatesResult;
 import com.amazonaws.services.identitymanagement.model.ServerCertificateMetadata;
-import com.amazonaws.services.identitymanagement.model.SigningCertificate;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/test-aws.xml" })
@@ -61,6 +57,7 @@ public class AwsAutomationActionTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testCreateCloudFrontDistribution(){
 		
 		Collection<String> loadBalancerList = automationAction.getLoadBalancerList();

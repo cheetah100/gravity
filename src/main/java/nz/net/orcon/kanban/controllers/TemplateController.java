@@ -96,6 +96,9 @@ public class TemplateController {
 		}
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		try{
+			
+			listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "templates", ocm.getSession());
+			
 			String templateId = template.getId();
 			if( templateId==null){
 				templateId=IdentifierTools.getIdFromNamedModelClass(template);

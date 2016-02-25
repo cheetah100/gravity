@@ -111,18 +111,21 @@ public class PhaseController {
 			logger.warn("Attempt to update phase using POST");
 			throw new Exception("Attempt to Update Phase using POST. Use PUT instead");
 		}
-		ObjectContentManager ocm = ocmFactory.getOcm();				
-		listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "phases", ocm.getSession());
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try{
+			listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "phases", ocm.getSession());
+			
+			// Save the new Phase
+			String newName = IdentifierTools.getIdFromNamedModelClass(phase);
+			phase.setPath(String.format(URI.PHASES_URI, boardId, newName));
+			ocm.insert(phase);
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();
+		}
 		
-		// Save the new Phase
-		String newName = IdentifierTools.getIdFromNamedModelClass(phase);
-		phase.setPath(String.format(URI.PHASES_URI, boardId, newName));
-		ocm.insert(phase);
 		
-		ocm.save();
-		ocm.logout();
-		
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
 		return phase;
 	}
 
@@ -136,10 +139,14 @@ public class PhaseController {
 			phase.setPath(String.format(URI.PHASES_URI, boardId, phaseId));			
 		}
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		ocm.update(phase);
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);		
+		try {
+			ocm.update(phase);
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();
+		}
+				
 		return phase;
 	}
 
@@ -147,8 +154,12 @@ public class PhaseController {
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Collection<Phase> getPhaseList(@PathVariable String boardId) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		Collection<Phase> objects = ocm.getChildObjects(Phase.class, String.format(URI.PHASES_URI, boardId, ""));		
-		ocm.logout();
+		Collection<Phase> objects = null;
+		try {
+			objects = ocm.getChildObjects(Phase.class, String.format(URI.PHASES_URI, boardId, ""));
+		} finally {
+			ocm.logout();
+		}
 		return objects;
 	}
 	
@@ -181,15 +192,17 @@ public class PhaseController {
 										  		@PathVariable String phaseId) throws Exception {
 		
 		Session session = ocmFactory.getOcm().getSession();
-		Map<String,String> result = listTools.list(String.format(URI.CARDS_URI, boardId, phaseId, ""), "id", session);
-		session.logout();
-		
-		for( Entry<String,String> entry : result.entrySet()){
-			CardHolder cardHolder = new CardHolder();
-			cardHolder.setBoardId(boardId);
-			cardHolder.setCardId(entry.getKey());
-			cardListener.addCardHolder(cardHolder);
-			Thread.sleep(3500);
+		try {
+			Map<String,String> result = listTools.list(String.format(URI.CARDS_URI, boardId, phaseId, ""), "id", session);
+			for( Entry<String,String> entry : result.entrySet()){
+				CardHolder cardHolder = new CardHolder();
+				cardHolder.setBoardId(boardId);
+				cardHolder.setCardId(entry.getKey());
+				cardListener.addCardHolder(cardHolder);
+				Thread.sleep(3500);
+			}
+		} finally {
+			session.logout();
 		}
 		return true;
 	}
@@ -217,10 +230,12 @@ public class PhaseController {
 			session.save();
 		} catch (PathNotFoundException e){
 			// This is expected - there should be no property.
+		} finally {
+			session.logout();	
 		}
 		
-		session.logout();
 		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		
 		return true;
 	}
 	
@@ -268,8 +283,7 @@ public class PhaseController {
         ObjectContentManager ocm = ocmFactory.getOcm();
         try{	        
         	
-	        Node node = ocm.getSession().getNode(String.format(URI.TASKS_URI, card.getBoard(), card.getPhase(), card.getId().toString(),""));
-		       
+	        Node node = ocm.getSession().getNode(String.format(URI.TASKS_URI, card.getBoard(), card.getPhase(), card.getId().toString(),""));  
 	        int complete = 0;
 	        NodeIterator nodes = node.getNodes();
 	        while(nodes.hasNext()){
@@ -279,7 +293,6 @@ public class PhaseController {
 	            	complete++;
 	            }
 	        }
-	        
 	        card.setCompleteTasks(new Long(complete));
 	        
         } finally {
