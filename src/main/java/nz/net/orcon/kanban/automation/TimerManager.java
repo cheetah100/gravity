@@ -105,10 +105,6 @@ public class TimerManager {
 		Map<String, String> rules;
 		try {
 			rules = ruleCache.list(boardId,"");
-			if( rules==null){
-				LOG.warn("Board Rules Not Found when Loading Timer: " + boardId);
-				return;			
-			}
 		} catch (javax.jcr.PathNotFoundException e ){
 			LOG.info("No Rule for Board: "+ boardId);
 			return;

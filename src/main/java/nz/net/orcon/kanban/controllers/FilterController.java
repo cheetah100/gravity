@@ -77,13 +77,16 @@ public class FilterController {
 		}
 			
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "filters", ocm.getSession());			
-		String newId = IdentifierTools.getIdFromNamedModelClass(filter);
-		filter.setPath(String.format(URI.FILTER_URI, boardId, newId.toString()));
-		ocm.insert(filter);			
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		try {
+			listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "filters", ocm.getSession());			
+			String newId = IdentifierTools.getIdFromNamedModelClass(filter);
+			filter.setPath(String.format(URI.FILTER_URI, boardId, newId.toString()));
+			ocm.insert(filter);			
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();
+		}
 		return filter;
 	}
 
@@ -98,10 +101,14 @@ public class FilterController {
 		}
 
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		ocm.update(filter);
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		try {
+			ocm.update(filter);
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();
+		}
+		
 		return filter;
 	}
 
@@ -110,12 +117,16 @@ public class FilterController {
 	public @ResponseBody Filter getFilter(@PathVariable String boardId, 
 			@PathVariable String filterId) throws Exception {
 		
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		Filter filter = (Filter) ocm.getObject(Filter.class,String.format(URI.FILTER_URI, boardId, filterId));
-		ocm.logout();
-		if(filter==null){
-			throw new ResourceNotFoundException();
-		}		
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		Filter filter = null;
+		try {
+			filter = (Filter) ocm.getObject(Filter.class,String.format(URI.FILTER_URI, boardId, filterId));
+			if(filter==null){
+				throw new ResourceNotFoundException();
+			}		
+		} finally {
+			ocm.logout();
+		}
 		return filter;		
 	}
 	
@@ -125,13 +136,16 @@ public class FilterController {
 			@PathVariable String filterId,
 			@RequestBody Condition filterField) throws Exception {
 		
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		listTools.ensurePresence(String.format(URI.FILTER_URI, boardId, filterId), "conditions", ocm.getSession());		
-		filterField.setPath(String.format(URI.FILTER_CONDITION_URI, boardId, filterId, filterField.getFieldName()));				
-		ocm.insert(filterField);			
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try {
+			listTools.ensurePresence(String.format(URI.FILTER_URI, boardId, filterId), "conditions", ocm.getSession());		
+			filterField.setPath(String.format(URI.FILTER_CONDITION_URI, boardId, filterId, filterField.getFieldName()));				
+			ocm.insert(filterField);			
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();
+		}
 		return filterField;
 	}
 	
@@ -141,12 +155,15 @@ public class FilterController {
 			@PathVariable String filterId,
 			@PathVariable String fieldId) throws Exception {
 
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		String path = String.format(URI.FILTER_CONDITION_URI, boardId, filterId, fieldId);		
-		ocm.getSession().removeItem(path);
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try {
+			String path = String.format(URI.FILTER_CONDITION_URI, boardId, filterId, fieldId);		
+			ocm.getSession().removeItem(path);
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();
+		}
 	}
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
@@ -154,8 +171,12 @@ public class FilterController {
 	public @ResponseBody Map<String,String> listFilters(@PathVariable String boardId) throws Exception {
 		
 		Session session = ocmFactory.getOcm().getSession();
-		Map<String,String> result = listTools.list(String.format(URI.FILTER_URI, boardId,""), "name", session);
-		session.logout();
+		Map<String,String> result = null;
+		try {
+			result = listTools.list(String.format(URI.FILTER_URI, boardId,""), "name", session);
+		} finally {
+			session.logout();
+		}
 		return result;			
 	}
 	
@@ -166,9 +187,13 @@ public class FilterController {
 														throws Exception {
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
+		Collection<Card> cards = null;
 		
-		Collection<Card> cards = listTools.query(boardId, null, filterId, ocm);		
-		ocm.logout();
+		try {
+			cards = listTools.query(boardId, null, filterId, ocm);
+		} finally {
+			ocm.logout();
+		}
 		return cards;		
 	}	
 	
@@ -182,16 +207,18 @@ public class FilterController {
 		}
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		Node node = ocm.getSession().getNode(String.format(URI.FILTER_URI, boardId, filterId));
+		try {
+			Node node = ocm.getSession().getNode(String.format(URI.FILTER_URI, boardId, filterId));
 		
-		if(node==null){
+			if(node==null){
+				throw new ResourceNotFoundException();
+			}
+		
+			node.remove();
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
 			ocm.logout();
-			throw new ResourceNotFoundException();
 		}
-		
-		node.remove();
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
 	}
 }

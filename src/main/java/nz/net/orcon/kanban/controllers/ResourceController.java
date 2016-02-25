@@ -100,15 +100,19 @@ public class ResourceController {
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		
-		listTools.ensurePresence(String.format( URI.BOARD_URI, boardId), "resources", ocm.getSession());
+		try {
 		
-		Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, ""));
-		Node addNode = node.addNode(resourceId);
-		
-		addNode.setProperty("resource",value);
-		addNode.setProperty("name",resourceId);
-		ocm.getSession().save();
-		ocm.logout();
+			listTools.ensurePresence(String.format( URI.BOARD_URI, boardId), "resources", ocm.getSession());
+			
+			Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, ""));
+			Node addNode = node.addNode(resourceId);
+			
+			addNode.setProperty("resource",value);
+			addNode.setProperty("name",resourceId);
+			ocm.getSession().save();
+		} finally {
+			ocm.logout();
+		}
 		
 		logger.info("Resource Saved " + resourceId);
 	}
@@ -120,16 +124,18 @@ public class ResourceController {
 		
 		logger.info("Deleting Resource " + resourceId);
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, resourceId));
-		if(node==null){
+		try {
+			Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, resourceId));
+			if(node==null){
+				ocm.logout();
+				throw new ResourceNotFoundException();
+			}
+			node.remove();
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(RESOURCE, resourceCache.getCacheId(boardId,resourceId));
+		} finally {
 			ocm.logout();
-			throw new ResourceNotFoundException();
 		}
-		node.remove();
-		ocm.save();
-		ocm.logout();
-		
-		this.cacheInvalidationManager.invalidate(RESOURCE, resourceCache.getCacheId(boardId,resourceId));
 	}
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	

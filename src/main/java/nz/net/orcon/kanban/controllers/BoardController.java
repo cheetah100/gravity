@@ -62,6 +62,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.amazonaws.util.StringUtils;
+
 /**
  * 
  */
@@ -407,11 +409,11 @@ public class BoardController {
 			detailFilter = "(jcr:contains(@detail,'${detail}'))".replaceAll("\\$\\{detail\\}", detail);
 		}
 		
-		if(categoryFilter!="" && detailFilter!=""){
+		if( !StringUtils.isNullOrEmpty(categoryFilter) && !StringUtils.isNullOrEmpty(detailFilter)){
 			qmFilter.addJCRExpression( categoryFilter + " or " + detailFilter);
-		} else if (categoryFilter!="" && detailFilter=="") {
+		} else if ( !StringUtils.isNullOrEmpty(categoryFilter) && StringUtils.isNullOrEmpty(detailFilter)) {
 			qmFilter.addJCRExpression( categoryFilter );
-		} else if (categoryFilter=="" && detailFilter!="") {
+		} else if (StringUtils.isNullOrEmpty(categoryFilter) && !StringUtils.isNullOrEmpty(detailFilter)) {
 			qmFilter.addJCRExpression( detailFilter );
 		}
 

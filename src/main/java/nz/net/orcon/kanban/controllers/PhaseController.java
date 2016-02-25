@@ -92,14 +92,16 @@ public class PhaseController {
 	public @ResponseBody Phase getPhase(
 			@PathVariable String boardId, @PathVariable String phaseId) throws Exception {
 		
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		Phase phase = (Phase) ocm.getObject(Phase.class, String.format(URI.PHASES_URI, boardId, phaseId));
-		ocm.logout();
-		
-		if(phase==null){
-			throw new ResourceNotFoundException();
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		Phase phase = null;
+		try {
+			phase = (Phase) ocm.getObject(Phase.class, String.format(URI.PHASES_URI, boardId, phaseId));
+			if(phase==null){
+				throw new ResourceNotFoundException();
+			}
+		} finally {
+			ocm.logout();
 		}
-		
 		return phase;		
 	}
 	
@@ -124,8 +126,6 @@ public class PhaseController {
 		} finally {
 			ocm.logout();
 		}
-		
-		
 		return phase;
 	}
 
@@ -221,9 +221,9 @@ public class PhaseController {
 										  		@PathVariable String phaseId) throws Exception {
 		
 		Session session = ocmFactory.getOcm().getSession();
-		Node node = session.getNode(String.format(URI.PHASES_URI, boardId, phaseId));
-		
+
 		try{
+			Node node = session.getNode(String.format(URI.PHASES_URI, boardId, phaseId));
 			Property property = node.getProperty("cards");
 			// If there is a property we need to kill it.
 			property.remove();
@@ -298,6 +298,5 @@ public class PhaseController {
         } finally {
         	ocm.logout();
         }              
-    }
-	
+    }	
 }

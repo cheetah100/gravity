@@ -100,17 +100,11 @@ public class AutomationEngine {
 		try {
 			card = cardController.getCard(cardHolder.getBoardId(),
 					null, cardHolder.getCardId(), "full");
-			
-			board = boardsCache.getItem(cardHolder.getBoardId());
 		} catch (ResourceNotFoundException e) {
 			LOG.info("Resource no longer exists: " + cardHolder.toString());
 			return;
 		}
-		if (board == null) {
-			LOG.warn("Board Not Found: " + cardHolder.getBoardId());
-			return;
-		}
-
+		
 		Map<String,Rule> rules = getRulesFromBoard(cardHolder.getBoardId());
 		
 		LOG.info("Automation Examining :" + card.getPath());
@@ -121,7 +115,7 @@ public class AutomationEngine {
 			Collection<CardEvent> alerts = cardController.getAlerts(card.getBoard(), card.getPhase(), card.getId().toString());
 			for( CardEvent alert : alerts){	
 				if(alert==null){
-					LOG.equals("Alert NULL inside Loop");
+					LOG.error("Alert NULL inside Loop");
 				}
 				
 				if("alert".equals(alert.getLevel())){
@@ -698,10 +692,6 @@ public class AutomationEngine {
 
 		// Get Rule.		
 		Rule rule = ruleCache.getItem(boardId, ruleId); 
-		if(rule==null){
-			LOG.warn("Execute Actions: Rule Not Found: "+ boardId + "/" + ruleId);
-			return;
-		}
 		
 		List<Action> sortedActionList = getSortedActions(rule.getActions());
 
@@ -771,37 +761,42 @@ public class AutomationEngine {
 	
 	private void raiseAlertOnError(Throwable e, Rule rule, Action action, Card card) throws Exception{
 
-		String causeMessage = "";
+		StringBuilder message = new StringBuilder();
+		message.append(rule.getName());
+		message.append(" ");
+		message.append(action.getName()); 
+		message.append(" calling: ");
+		message.append(action.getType()); 
+		message.append(".");
+		message.append(action.getResource());
+		message.append(".");
+		message.append(action.getMethod());
+		message.append(" caused ");
+
 		Throwable cause = e;
 		
 		while(cause!=null){
 			if( cause.getMessage()!=null){
-				causeMessage = causeMessage + "(" + cause.getMessage() + ") ";
+				message.append("(");
+				message.append(cause.getMessage());
+				message.append(") ");
 			}
 			cause = cause.getCause();
 		}
-						
-		String message = rule.getName()
-			+ " " + action.getName() 
-			+ " calling: " + action.getType() 
-			+ "." + action.getResource()
-			+ "." + action.getMethod()
-			+ " caused " + causeMessage;
-
+		
 		if(card!=null){
 			if( cardController!=null){
 				cardController.saveAlert(
 					card.getBoard(),
 					card.getPhase(), 
 					card.getId().toString(), 
-					message,
+					message.toString(),
 					"alert");
 			}
-			LOG.warn( "Automation Exception - Card " + card.getId() + " " + message, e);
+			LOG.warn( "Automation Exception - Card " + card.getId() + " " + message.toString(), e);
 		} else {
-			LOG.warn( "Automation Exception " + message, e);	
+			LOG.warn( "Automation Exception " + message.toString(), e);	
 		}
-		
 	}
 	
 	private void outputContext( Map<String,Object> context){

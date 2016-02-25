@@ -96,10 +96,8 @@ public class NotificationController {
 		if (null != notification) {
 			final String type = notification.getName();
 			if (StringUtils.isAlphanumeric(type)) {
-				ObjectContentManager ocm = null;
+				ObjectContentManager ocm = ocmFactory.getOcm();
 				try {
-					ocm = ocmFactory.getOcm();
-					
 					if (!doesNotificationTypeExist(type, ocm)) {
 						notification.setPath(String.format(URI.NOTIFICATIONS_TYPE_URI, type));
 						ocm.insert(notification);
@@ -109,14 +107,8 @@ public class NotificationController {
 					} else {
 						LOG.info("Failed to create new Notification Type:'" + type + "', type already exists.");
 					}
-				} catch (Exception e) {
-					LOG.error("Failed to store Notification Type:'" + notification + "' to JCR Repository.", e);
-					throw e;
 				} finally {
-					if (null != ocm) {
-						ocm.save();
-						ocm.logout();
-					}
+					ocm.logout();
 				}
 			} else {
 				LOG.error("Failed to store invalid Notification Type:'" + notification + "' to JCR Repository.  Notification Type was not alphanumeric");
@@ -128,29 +120,21 @@ public class NotificationController {
 	public @ResponseBody void createNotificationTypeMapping(@PathVariable String notificationType, @RequestBody NotificationTypeMapping notificationTypeMapping) throws Exception{
 		LOG.debug("Attempting to create notification type mapping :'" + notificationTypeMapping);
 		
-		ObjectContentManager ocm = null;
-		try {
-			ocm = ocmFactory.getOcm();
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try { 
 			   
-				if (!doesNotificationTypeExist(notificationType,ocm)) {
-					throw new IllegalArgumentException("notification type doesn't exists into jcr.");
-				}
-				final Session session = ocm.getSession();
-				listTools.ensurePresence(URI.NOTIFICATIONS_URI,notificationType, session);
-				final String path = String.format(URI.NOTIFICATIONS_TYPE_MAPPING_URI, notificationType);
-				notificationTypeMapping.setPath(path);				
-				ocm.insert(notificationTypeMapping);
-				ocm.save();
-				
-		}catch (Exception e) {
-			LOG.error("Failed to store NotificationType Mapping for Type:'"+notificationType+"' with mapping :' " + notificationTypeMapping.toString() +"to JCR Repository.", e);
-			throw e;
-		} finally {
-			if (null != ocm) {
-				ocm.logout();
+			if (!doesNotificationTypeExist(notificationType,ocm)) {
+				throw new IllegalArgumentException("notification type doesn't exists into jcr.");
 			}
+			final Session session = ocm.getSession();
+			listTools.ensurePresence(URI.NOTIFICATIONS_URI,notificationType, session);
+			final String path = String.format(URI.NOTIFICATIONS_TYPE_MAPPING_URI, notificationType);
+			notificationTypeMapping.setPath(path);				
+			ocm.insert(notificationTypeMapping);
+			ocm.save();				
+		} finally {
+			ocm.logout();
 		}
-		
 	}
 	
 	@RequestMapping(value = "/{notificationType}", method=RequestMethod.GET)
@@ -160,9 +144,7 @@ public class NotificationController {
 		try{
 			notificationTypeMapping = (NotificationTypeMapping) ocm.getObject(NotificationTypeMapping.class,String.format(URI.NOTIFICATIONS_TYPE_MAPPING_URI, notificationType));
 		} finally {
-			if (null != ocm) {
-				ocm.logout();
-			}
+			ocm.logout();
 		}
 		return notificationTypeMapping;
 	}
@@ -191,50 +173,40 @@ public class NotificationController {
 	public @ResponseBody void createNotification(@PathVariable String type,
 											  	 @RequestBody  Map<String,Object> context) throws Exception {
 		
-		LOG.debug("Attempting to create new notification for type:'"+type+"' with context :'" + context.toString() );
-		
-		ObjectContentManager ocm = null;
-		try {
-			ocm = ocmFactory.getOcm();
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try { 
 			   
-				if (!doesNotificationTypeExist(type,ocm)) {
-					throw new IllegalArgumentException("notification type doesn't exists into jcr.");
-				}
-				final Session session = ocm.getSession();
-				final String path = String.format(URI.NOTIFICATIONS_TYPE_URI, type);
-				
-				listTools.ensurePresence(URI.NOTIFICATIONS_URI, type, session);
-				
-				/*
-				 * Create cardNotification from Context and saves it to JCR.
-				 */
-				CardNotification cardNotification = new CardNotification();
-				Long notificationId = IdentifierTools.getIdFromRepository(session, path, "notifcationTypeUID");
-				cardNotification.setOccuredTime(new Date());
-				cardNotification.setPath(String.format(URI.NOTIFICATIONS_TYPE_ID_URI, type, notificationId.toString()));
-				cardNotification.setUser(listTools.getCurrentUser());
-				
-				ocm.insert(cardNotification);
-				ocm.save();
-			
-				/*
-				 * Create Notification and Send onto to JMS Queue.
-				 */
-				Notification notification = new Notification();
-				notification.setName(type);
-				notification.setContext(context);
-				
-				this.jmsTemplate.convertAndSend(notification);
-				
-				LOG.debug("Successfully created new notification for type:'"+type+"' with cardNotification:'"+cardNotification+"'.");
-			 
-		} catch (Exception e) {
-			LOG.error("Failed to store Notification for Type:'"+type+"' with values:'" +context.toString() +"' to JCR Repository.", e);
-			throw e;
-		} finally {
-			if (null != ocm) {
-				ocm.logout();
+			if (!doesNotificationTypeExist(type,ocm)) {
+				throw new IllegalArgumentException("notification type doesn't exists into jcr.");
 			}
+			final Session session = ocm.getSession();
+			final String path = String.format(URI.NOTIFICATIONS_TYPE_URI, type);
+			
+			listTools.ensurePresence(URI.NOTIFICATIONS_URI, type, session);
+			
+			/*
+			 * Create cardNotification from Context and saves it to JCR.
+			 */
+			CardNotification cardNotification = new CardNotification();
+			Long notificationId = IdentifierTools.getIdFromRepository(session, path, "notifcationTypeUID");
+			cardNotification.setOccuredTime(new Date());
+			cardNotification.setPath(String.format(URI.NOTIFICATIONS_TYPE_ID_URI, type, notificationId.toString()));
+			cardNotification.setUser(listTools.getCurrentUser());
+			
+			ocm.insert(cardNotification);
+			ocm.save();
+		
+			/*
+			 * Create Notification and Send onto to JMS Queue.
+			 */
+			Notification notification = new Notification();
+			notification.setName(type);
+			notification.setContext(context);
+			
+			this.jmsTemplate.convertAndSend(notification);
+			 
+		} finally {
+			ocm.logout();
 		}
 	
 	}	
@@ -244,11 +216,8 @@ public class NotificationController {
 													 @PathVariable String boardId, 
 													 @PathVariable String cardId) throws Exception {
 		
-		LOG.debug("Attempting to move Notification notificationId:'"+notificationId+"' type:'"+type+"' to card:'"+cardId+"' on board:'"+boardId+"'.");
-		
-		ObjectContentManager ocm = null;
-		try {
-			ocm = ocmFactory.getOcm();
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try { 
 			
 			if (doesNotificationTypeExist(type,ocm)) {
 				final Session session = ocm.getSession();
@@ -262,19 +231,13 @@ public class NotificationController {
 				session.move(source, destination);
 				ocm.save();
 				
-				LOG.info("Moved Notification:'"+source+"' to card:'"+destination+"'.");
 			} else {
 				final String errMsg = "Failed to move Notification Id:'"+notificationId+"' Type:'"+type+"' to card:'"+cardId+"' on boardId:'"+boardId+"'.";
 				LOG.error(errMsg);
 				throw new IllegalArgumentException(errMsg);
 			}
-		} catch (Exception e) {
-			LOG.error("Failed to move Notification Id:'"+notificationId+"' Type:'"+type+"' to card:'"+cardId+"' on boardId:'"+boardId+"'.Exception:"+e.getMessage(), e);
-			throw e;
 		} finally {
-			if (null != ocm) {
 				ocm.logout();
-			}
 		}
 	}
 
@@ -284,45 +247,36 @@ public class NotificationController {
 																				  @RequestParam String endDate) throws Exception {
 		final List<CardNotification> notifications = new ArrayList<CardNotification>();
 		
-		LOG.debug("Attempting to retrieve all unprocessed Notifications of type:'"+type+"' from startDate:'"+startDate+"' to endDate:'"+startDate+"'.");
-		
 		if (StringUtils.isAlphanumeric(type)) {
 			
-			ObjectContentManager ocm = null;
-			try {
-				ocm = ocmFactory.getOcm();
+			ObjectContentManager ocm = ocmFactory.getOcm();
+			try { 
 				
 				final String queryUri = String.format(URI.NOTIFICATIONS_TYPE_URI, type)+ "//";
 				
 				final List<String> conditions = Arrays.asList(
-														new String[]{
-																String.format("@%s<=xs:dateTime('%s')", "occuredTime", listTools.jcrDateFormat(endDate)),
-																String.format("@%s>=xs:dateTime('%s')", "occuredTime", listTools.jcrDateFormat(startDate))
-														});
+						new String[]{
+						String.format("@%s<=xs:dateTime('%s')", "occuredTime", listTools.jcrDateFormat(endDate)),
+						String.format("@%s>=xs:dateTime('%s')", "occuredTime", listTools.jcrDateFormat(startDate)) });
 				
 				notifications.addAll(listTools.retrieveObjects(ocm, queryUri, conditions, CardNotification.class));
 				
-				LOG.info("Successfully retrieved '"+notifications.size()+"' Unprocessed Notifications of type:'"+type+"' from startDate:'"+startDate+"' to endDate:'"+endDate+"'.");
 			} catch (Exception e) {
 				LOG.error("Failed to retrieve Unprocessed Notifications of type:'"+type+"' from startDate:'"+startDate+"' to endDate:'"+endDate+"'. Exception:"+e.getMessage());
 				throw e;
 			} finally {
-				if (null != ocm) {
-					ocm.logout();
-				}
+				ocm.logout();
 			}
 		}
 		return notifications;
 	}
 	
 	public void reprocessNotification(CardNotification cardNotification, String type) throws Exception {
-		ObjectContentManager ocm = null;
+		ObjectContentManager ocm = ocmFactory.getOcm();
 		try {
-			ocm = ocmFactory.getOcm();
-			final Session session = ocm.getSession();
-			
+ 
+			final Session session = ocm.getSession();			
 			final String source = cardNotification.getPath();
-			
 			final String destination = String.format(URI.NOTIFICATIONS_TYPE_ID_URI, type, cardNotification.getId());
 			
 			session.move(source, destination);
@@ -333,16 +287,8 @@ public class NotificationController {
 					cardNotification.getId() + "' type:'" + 
 					type + "' for reprocessing.");
 			
-		} catch (Exception e) {
-			LOG.error("Failed to move Notification id:'" + 
-					cardNotification.getId() + "' type:'" + 
-					type+"' for reprocessing.");
-			
-			throw e;
 		} finally {
-			if (null != ocm) {
-				ocm.logout();
-			}
+			ocm.logout();
 		}
 	}
 	
