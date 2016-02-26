@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -75,14 +76,17 @@ public class ListController {
 			@RequestBody ListResource list ) throws Exception {
 					
 		ObjectContentManager ocm = ocmFactory.getOcm();
+		try {
 		
-		listTools.ensurePresence(String.format( URI.BOARD_URI, boardId), "lists", ocm.getSession());
-		 
-		String newId = IdentifierTools.getIdFromNamedModelClass(list);
-		list.setPath(String.format(URI.LIST_URI, boardId, newId.toString()));
-		ocm.insert(list);			
-		ocm.save();
-		ocm.logout();
+			listTools.ensurePresence(String.format( URI.BOARD_URI, boardId), "lists", ocm.getSession());
+			 
+			String newId = IdentifierTools.getIdFromNamedModelClass(list);
+			list.setPath(String.format(URI.LIST_URI, boardId, newId.toString()));
+			ocm.insert(list);			
+			ocm.save();
+		} finally {
+			ocm.logout();
+		}
 		return list;
 	}
 
@@ -163,17 +167,18 @@ public class ListController {
 		}
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		Node node = ocm.getSession().getNode(String.format(URI.LIST_URI, boardId, listId));
+		try {
+			Node node = ocm.getSession().getNode(String.format(URI.LIST_URI, boardId, listId));
 		
-		if(node==null){
+			if(node==null){
+				throw new ResourceNotFoundException();
+			}
+		
+			node.remove();
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(LIST, listCache.getCacheId(boardId,listId));
+		} finally {
 			ocm.logout();
-			throw new ResourceNotFoundException();
 		}
-		
-		node.remove();
-		ocm.save();
-		ocm.logout();
-		
-		this.cacheInvalidationManager.invalidate(LIST, listId);
 	}
 }

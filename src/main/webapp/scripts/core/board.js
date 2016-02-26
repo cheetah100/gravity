@@ -53,6 +53,21 @@ var board = {
             }
         });
     },
+    onlyLoadBoard: function(boardid) {
+        jQuery.ajax({
+            url: ajaxUrl + '/board/' + boardid,
+            async: false,
+            success: function(data) {
+                if (jQuery.isEmptyObject(data)) {
+                    displayError('No Board Found');
+                    return;
+                }
+
+                board.boarddata[boardid] = data;
+                board.changeCurrentBoard(boardid);
+            }
+        });
+    },
     changeCurrentBoard: function(boardid) {
         if (board.boarddata[boardid] !== undefined) {
             board.currentboarddata = board.boarddata[boardid];

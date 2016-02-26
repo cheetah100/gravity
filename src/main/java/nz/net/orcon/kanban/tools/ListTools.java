@@ -110,8 +110,7 @@ public class ListTools {
 										  String filterId, 
 										  ObjectContentManager ocm){
 		
-		Filter filter = (Filter) ocm.getObject(Filter.class,String.format(URI.FIELDS_URI, boardId, filterId));
-		
+		Filter filter = (Filter) ocm.getObject(Filter.class,String.format(URI.FILTER_URI, boardId, filterId));
 		QueryManager qm = ocm.getQueryManager();
 		org.apache.jackrabbit.ocm.query.Filter qmFilter = qm.createFilter(Card.class);
 		

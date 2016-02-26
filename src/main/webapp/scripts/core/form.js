@@ -46,6 +46,8 @@ var form = {
 
                 template.loadTemplate(data.board,data.template);
                 template.setCurrentTemplate(data.template);
+                
+                board.onlyLoadBoard(data.board);
 
                 //phase.setPhases(data.phases);
                 form.buildForm();

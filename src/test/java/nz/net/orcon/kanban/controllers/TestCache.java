@@ -1,7 +1,6 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
- * (C) Copyright 2015 Orcon Limited
- * (C) Copyright 2015 Peter Harrrison
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -20,18 +19,23 @@
  * If not, see <http://www.gnu.org/licenses/>. 
  */
 
+
 package nz.net.orcon.kanban.controllers;
 
 import java.util.Map;
 
-public interface Cache<T> {
+public class TestCache extends CacheImpl<String> {
 
-	public void invalidate( String... itemIds );
+	@Override
+	protected String getFromStore(String... itemIds) throws Exception {
+		return null;
+	}
+
+	@Override
+	protected Map<String, String> getListFromStore(String... prefixs)
+			throws Exception {
+		return null;
+	}
 	
-	public T getItem(String... itemIds) throws Exception;
-	
-	public Map<String,String> list(String... prefixs) throws Exception;
-	
-	public void storeItem(T item, String... itemIds ) throws Exception;
 
 }

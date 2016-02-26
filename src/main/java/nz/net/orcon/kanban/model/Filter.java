@@ -32,6 +32,11 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 @Node
 public class Filter extends AbstractNamedModelClass implements Serializable{
 		
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Field
 	private String expression;
 	

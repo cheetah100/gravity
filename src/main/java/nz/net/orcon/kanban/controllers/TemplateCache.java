@@ -96,7 +96,7 @@ public class TemplateCache extends CacheImpl<Template>{
 		case STRING:
 			return value.toString();
 		case NUMBER:
-			return Integer.parseInt(value.toString());
+			return Double.valueOf(value.toString());
 		case BOOLEAN:
 			return Boolean.parseBoolean(value.toString());
 		case DATE:

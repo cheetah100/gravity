@@ -21,7 +21,9 @@
 
 package nz.net.orcon.kanban.model;
 
-public enum Operation {
+import java.io.Serializable;
+
+public enum Operation implements Serializable {
 	
 	CONTAINS("contains", "jcr:contains(fields/@${field},'${value}')"),
 	EQUALTO("equal to","fn:lower-case(fields/@${field})='${value}'"),

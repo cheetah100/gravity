@@ -26,7 +26,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import nz.net.orcon.kanban.automation.CacheInvalidationInterface;
 import nz.net.orcon.kanban.gviz.GVGraph;
@@ -63,7 +62,7 @@ public class RuleController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RuleController.class);
 	
-	public static String RULE = "RULE";
+	public static final String RULE = "RULE";
 		
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
@@ -101,7 +100,7 @@ public class RuleController {
 		return rule;
 	}
 
-	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "/{ruleId}", method=RequestMethod.GET)
 	public @ResponseBody Rule getRule(@PathVariable String boardId, 
 									  @PathVariable String ruleId) throws Exception {
@@ -109,16 +108,18 @@ public class RuleController {
 		return ruleCache.getItem(boardId, ruleId);		
 	}
 		
-	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listRules(@PathVariable String boardId) throws Exception {
 		
-		ruleCache.list(boardId);
+		Map<String, String> ruleList = ruleCache.list(boardId,"");
 		
-		Session session = ocmFactory.getOcm().getSession();
-		Map<String,String> result = listTools.list(String.format(URI.RULE_URI, boardId,""), "name", session);
-		session.logout();
-		return result;
+		//ruleCache.list(boardId);
+		
+		//Session session = ocmFactory.getOcm().getSession();
+		//Map<String,String> result = listTools.list(String.format(URI.RULE_URI, boardId,""), "name", session);
+		//session.logout();
+		return ruleList;
 	}
 		
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
@@ -152,7 +153,7 @@ public class RuleController {
 		return jmsTemplate;
 	}
 	
-	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")	
 	@RequestMapping(value = "/{boardId}/processgraph", method=RequestMethod.GET)
 	public String processGraph(@PathVariable String boardId, Model model) throws Exception {
 		

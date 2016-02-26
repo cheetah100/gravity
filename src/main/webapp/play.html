@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div ng-app="gravityApp" ng-controller="boardCtrl" ng-init="mySwitch=true;board='Board';phase='Phase';view='View';filter='Filter'">
+
+<nav class="navbar-form navbar-left navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Gravity</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{board}}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="(key, value) in boards">
+                <a href="" ng-click="setBoard(key,value)">{{value}}</a>
+                </li>
+                <li>
+                <a href="" ng-click="">New Board</a>
+                </li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{phase}}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="phase in phases | orderBy : 'index'">
+                <a href="" ng-click="setPhase(key,phase)">{{phase.name}}</a>
+                </li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{view}}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li>
+                	<a href="" ng-click="setView('','')">None</a>
+                </li>
+                <li ng-repeat="view in views">
+                <a href="" ng-click="setView(key,view)">{{view.name}}</a>
+                </li>
+                <li>
+                	<a href="" ng-click="">New View</a>
+                </li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{filter}}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+              	<li>
+                	<a href="" ng-click="setFilter('','')">None</a>
+                </li>
+                <li ng-repeat="filter in filters">
+                <a href="" ng-click="setFilter(key,filter)">{{filter.name}}</a>
+                </li>
+                <li>
+                	<a href="" ng-click="">New Filter</a>
+                </li>                
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="../navbar-fixed-top/">Logout</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>      
+</nav>
+
+<div class="container">
+
+<!-- Main component for a primary marketing message or call to action -->
+<div class="jumbotron">
+    <h2>{{board}}</h2>
+    
+    <p ng-show="board=='Board'">Gravity combines the simplicity and elegance of kanban boards 
+    for controlling business workflows with a powerful automation engine 
+    that allows businesses to eliminate repetitive electronic tasks. 
+    It puts managers in the driving seat of their business processes. 
+    If you are a manager frustrated with the glacial speed at which your 
+    business processes can adapt to changing conditions you could benefit 
+    from Gravity Workflow Automation.</p>
+</div>
+
+</div> <!-- /container -->
+
+</div>
+
+<script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="scripts/core/gravityApp.js"></script>
+
+</body>
+</html>

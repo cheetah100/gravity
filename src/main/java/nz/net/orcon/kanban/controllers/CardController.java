@@ -913,7 +913,6 @@ public class CardController {
 		Rule rule = ruleCache.getItem(boardId,taskId);
 		
 		if(rule==null){
-			ocm.logout();
 			logger.warn("Rule Not Found: " + boardId + "." + taskId);
 			throw new ResourceNotFoundException();
 		}
@@ -1030,15 +1029,12 @@ public class CardController {
 					String.format(URI.TASKS_URI, boardId, phaseId, cardId,
 							taskId));
 			if (node == null) {
-				ocm.logout();
 				throw new ResourceNotFoundException();
 			}
 			node.remove();
 			ocm.save();
 		} finally {
-			if (null != ocm) {
-				ocm.logout();
-			}
+			ocm.logout();
 		}
 	}
 	
