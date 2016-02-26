@@ -21,13 +21,20 @@
 
 package nz.net.orcon.kanban.model;
 
+import java.io.Serializable;
+
 import org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
 @Node
-public class Condition {
+public class Condition implements Serializable  {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Field
 	private String fieldName;
 	

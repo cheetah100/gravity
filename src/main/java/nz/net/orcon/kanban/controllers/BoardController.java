@@ -73,7 +73,7 @@ public class BoardController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(BoardController.class);
 	
-	public static String BOARD = "BOARD";
+	public static final String BOARD = "BOARD";
 
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;

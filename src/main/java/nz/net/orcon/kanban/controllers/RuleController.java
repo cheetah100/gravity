@@ -62,7 +62,7 @@ public class RuleController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(RuleController.class);
 	
-	public static String RULE = "RULE";
+	public static final String RULE = "RULE";
 		
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
