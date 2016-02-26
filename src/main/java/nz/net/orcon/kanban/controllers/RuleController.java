@@ -90,13 +90,16 @@ public class RuleController {
 		}
 			
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "rules", ocm.getSession());
-
-		rule.setPath(String.format(URI.RULE_URI, boardId, IdentifierTools.getIdFromNamedModelClass(rule)));
-		ocm.insert(rule);
+		try{
 		
-		ocm.save();
-		ocm.logout();
+			listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "rules", ocm.getSession());
+	
+			rule.setPath(String.format(URI.RULE_URI, boardId, IdentifierTools.getIdFromNamedModelClass(rule)));
+			ocm.insert(rule);
+			ocm.save();
+		} finally {
+			ocm.logout();
+		}
 		return rule;
 	}
 
@@ -132,17 +135,19 @@ public class RuleController {
 		}
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		Node node = ocm.getSession().getNode(String.format(URI.RULE_URI, boardId, ruleId));
+		try {
+			Node node = ocm.getSession().getNode(String.format(URI.RULE_URI, boardId, ruleId));
 		
-		if(node==null){
+			if(node==null){
+				throw new ResourceNotFoundException();
+			}
+		
+			node.remove();
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(RULE, ruleCache.getCacheId(boardId,ruleId));
+		} finally {
 			ocm.logout();
-			throw new ResourceNotFoundException();
 		}
-		
-		node.remove();
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(RULE, ruleCache.getCacheId(boardId,ruleId));		
 	}
 
 	public void setJmsTemplate(JmsTemplate jmsTemplate) {

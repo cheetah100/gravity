@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -70,9 +71,7 @@ public class UserController {
 			ocm.insert(user);			
 			ocm.save();			
 		} finally {
-			if(ocm!=null){
-				ocm.logout();		
-			}
+			ocm.logout();		
 		}
 		return user;
 	}
@@ -92,9 +91,7 @@ public class UserController {
 			user.setPasswordhash(null);
 
 		} finally {
-			if(ocm!=null){
-				ocm.logout();
-			}
+			ocm.logout();
 		}
 		return user;	
 	}
@@ -106,9 +103,7 @@ public class UserController {
 			session.removeItem(String.format(URI.USER_URI, userId));
 			session.save();
 		} finally {
-			if(session!=null){
-				session.logout();		
-			}
+			session.logout();		
 		}
 	}
 	
@@ -147,8 +142,6 @@ public class UserController {
 			} else {
 				logger.warn("Wrong user credentials while changing password.");
 			}
-		} catch( Exception e){
-			logger.error("Exception changing password.", e);
 		} finally {
 			if(ocm!=null){
 				ocm.logout();
