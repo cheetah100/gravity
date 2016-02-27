@@ -92,6 +92,21 @@
     If you are a manager frustrated with the glacial speed at which your 
     business processes can adapt to changing conditions you could benefit 
     from Gravity Workflow Automation.</p>
+    
+    
+<md-content>
+    <md-list>
+      <md-subheader class="md-no-sticky">Subheading</md-subheader>
+      <md-list-item class="md-3-line" ng-repeat="card in cards">
+      <div class="md-list-item-text" layout="column">
+      	<h3>{{ card }}</h3>
+      </div>
+      </md-list-item>
+    </md-list>
+</md-content>    
+    
+    
+    
 </div>
 
 </div> <!-- /container -->
@@ -99,7 +114,8 @@
 </div>
 
 <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+<script src="scripts/lib/jquery-1.11.1.min.js" type="text/javascript"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="scripts/core/gravityApp.js"></script>
 

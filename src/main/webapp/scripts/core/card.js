@@ -143,42 +143,59 @@ var card = {
         $block.append('<h2>Tasks</h2>');
 
         jQuery.each(data, function(i,t) {
-            var state = t.complete?"complete":"incomplete";
+        
+            var state = "incomplete";
+            if( t.complete ) state = "complete"
+				else if( t.user != "" && t.user!=null ) state = "take"; 
+            
             $block.append('<div class="row card-task task-' + state + '" data-state="' + state + '">' +
                 '<button name="card-task-toggle" class="card-task-toggle" data-taskid="' + t.id + '"/>' +
                 '<div class="card-task-name">' + t.detail  + '</div>' +
                 '<div class="card-task-details"></div>' +
                 '</div>');
 
-            if (state == "complete")
+            if (state == "complete") {
                 $block.find('div.row.card-task').last().find('div.card-task-details').html('Completed by <strong>' + (t.user && t.user != null? t.user:"system") + '</strong> on ' + convertDateToString(t.occuredTime));
+            } else if (state == "take") {
+				$block.find('div.row.card-task').last().find('div.card-task-details').html('Assigned to <strong>' + t.user + '</strong>');
+			}
 
             $('button[name="card-task-toggle"]').last().bind("click", function(e) {
                 var $parent = $(this).parent(),
                     state = $parent.data('state'),
-                    newstate = state == "complete"?"incomplete":"complete",
-                    $details = $parent.find('div.card-task-details');
+                    
+                method = '';
+                if(state=='take') method='complete'
+                	else if(state=='incomplete') method='take'
+                	else if(state=='complete') method='revert';
 
-                if (state != newstate) {
-                    $parent.removeClass('error');
+                $details = $parent.find('div.card-task-details');
+                $parent.removeClass('error');
 
-                    jQuery.ajax({
-                        url: ajaxUrl + card.carddata.path + '/tasks/' + $(this).data('taskid') + '/' + (newstate == "complete"?"complete":"revert"),
-                        success: function(data) {
-                            if (newstate == "complete")
-                                $parent.find('div.card-task-details').html('Completed by <strong>' + (data.user && data.user != null? data.user:"system") + '</strong> on ' + convertDateToString(data.occuredTime));
-                            else
-                                $details.html('');
+                jQuery.ajax({
+                    url: ajaxUrl + card.carddata.path + '/tasks/' + $(this).data('taskid') + '/' + method,
+                    success: function(data) {
 
-                            $parent.removeClass('task-' + state);
-                            $parent.addClass('task-' + newstate);
-                            $parent.data('state', newstate);
-                        },
-                        error: function() {
-                            $parent.addClass('error');
-                        }
-                    });
-                }
+			            var newstate = "incomplete";
+            			if( data.complete ) newstate = "complete"
+							else if( data.user != "" && data.user!=null ) newstate = "take"; 
+							
+                        if (newstate == "complete")
+                            $parent.find('div.card-task-details').html('Completed by <strong>' + data.user + '</strong> on ' + convertDateToString(data.occuredTime));
+                        else if (newstate == "take")
+                        	$parent.find('div.card-task-details').html('Assigned to <strong>' + data.user + '</strong>')
+                        else if (newstate == "incomplete")
+                        	$parent.find('div.card-task-details').html('')
+
+                        $parent.removeClass('task-' + state);
+                        $parent.addClass('task-' + newstate);
+                        $parent.data('state', newstate);
+                    },
+                    error: function() {
+                        $parent.addClass('error');
+                    }
+                });
+
             });
         });
     },
