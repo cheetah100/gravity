@@ -22,12 +22,15 @@
 
 package nz.net.orcon.kanban.controllers;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.jcr.Session;
 
+import nz.net.orcon.kanban.model.CardTask;
 import nz.net.orcon.kanban.model.User;
+import nz.net.orcon.kanban.tools.CardTools;
 import nz.net.orcon.kanban.tools.IdentifierTools;
 import nz.net.orcon.kanban.tools.ListTools;
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
@@ -52,6 +55,9 @@ public class UserController {
 	
 	@Autowired 
 	private ListTools listTools;
+	
+	@Autowired 
+	CardTools cardTools;
 	
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
@@ -96,6 +102,19 @@ public class UserController {
 		return user;	
 	}
 
+	@RequestMapping(value = "/{userId}/tasks", method=RequestMethod.GET)
+	public @ResponseBody List<CardTask> getUserTasks(@PathVariable String userId) throws Exception {
+		
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		List<CardTask> taskList;
+		try{
+			taskList = cardTools.getCardTasksByUser(userId, ocm);
+		} finally {
+			ocm.logout();
+		}
+		return taskList;	
+	}
+	
 	@RequestMapping(value = "/{userId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteUser(@PathVariable String userId) throws Exception {
 		Session session = ocmFactory.getOcm().getSession();
