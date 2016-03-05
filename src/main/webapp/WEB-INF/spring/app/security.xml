@@ -29,7 +29,7 @@
 	</global-method-security>
 	
    	<authentication-manager>
-   		<authentication-provider ref="nullAuthenticationProvider"/>
+   		<authentication-provider ref="jcrAuthenticationProvider"/>
    	</authentication-manager>  
 
 	    

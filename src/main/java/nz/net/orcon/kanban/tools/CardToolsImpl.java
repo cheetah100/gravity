@@ -23,6 +23,7 @@ package nz.net.orcon.kanban.tools;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -130,6 +131,28 @@ public class CardToolsImpl implements CardTools{
 		Query query = qm.createQuery(filter);
 		cardTask = (CardTask) ocm.getObject(query);
 		return cardTask;
+	}
+	
+	@Override
+	public List<CardTask> getCardTasksByUser(
+			String user, 
+			ObjectContentManager ocm)
+			throws ResourceNotFoundException {
+
+		QueryManager qm = ocm.getQueryManager();
+		Filter filter = qm.createFilter(CardTask.class);
+		filter.setScope("//");
+		filter.addEqualTo("user", user);
+		filter.addEqualTo("complete", "false");
+		Query query = qm.createQuery(filter);
+		Collection objects = ocm.getObjects(query);
+		
+		List<CardTask> returnList = new ArrayList<CardTask>();
+		for( Object object : objects){
+			returnList.add((CardTask)object);
+		}
+		
+		return returnList;
 	}
 	
 	public Map<String, Object> getFieldsForCard(Card card,

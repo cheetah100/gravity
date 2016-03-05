@@ -82,7 +82,7 @@ public class XmlFileController {
 		try{
 			ocm = ocmFactory.getOcm();
 			cardList = cardTools.getCardList(boardId,includeArchive, ocm);
-		}finally{
+		} finally {
 			ocm.logout();
 		}
 		

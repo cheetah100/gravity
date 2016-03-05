@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -76,5 +77,4 @@ public class TeamCache extends CacheImpl<Team> {
 		}
 		return result;
 	}
-
 }

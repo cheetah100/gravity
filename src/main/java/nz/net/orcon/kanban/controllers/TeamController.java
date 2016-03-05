@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -76,9 +77,8 @@ public class TeamController {
 			throw new Exception("Attempt to Update team using POST. Use PUT instead");
 		}
 			
-		ObjectContentManager ocm = null;
-		try {
-			ocm = ocmFactory.getOcm();
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try { 
 			String newId = IdentifierTools.getIdFromNamedModelClass(team);
 			team.setPath(String.format(URI.TEAM_URI, newId.toString()));
 			
@@ -90,9 +90,7 @@ public class TeamController {
 			ocm.save();
 			this.cacheInvalidationManager.invalidate(TEAM, newId);
 		} finally {
-			if(ocm!=null){
-				ocm.logout();		
-			}
+			ocm.logout();
 		}
 		return team;
 	}
@@ -106,16 +104,13 @@ public class TeamController {
 	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "/{teamId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteTeam(@PathVariable String teamId) throws Exception {
-		ObjectContentManager ocm = null;
-		try{
-			ocm = ocmFactory.getOcm();
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try{ 
 			ocm.getSession().removeItem(String.format(URI.TEAM_URI, teamId));
 			ocm.save();
 			this.cacheInvalidationManager.invalidate(TEAM, teamId);
 		} finally {
-			if(ocm!=null){
-				ocm.logout();		
-			}
+			ocm.logout();
 		}
 	}
 	
@@ -129,7 +124,6 @@ public class TeamController {
 
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		try{
-			
 			listTools.ensurePresence(String.format( URI.TEAM_URI, teamId), "owners", ocm.getSession());
 			Node node = ocm.getSession().getNode(String.format(URI.TEAM_OWNERS, teamId,""));
 		
@@ -192,6 +186,4 @@ public class TeamController {
 			ocm.logout();
 		}
 	}
-
-	
 }

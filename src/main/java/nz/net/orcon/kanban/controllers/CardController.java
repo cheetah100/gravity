@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -91,6 +92,9 @@ public class CardController {
 	
 	@Autowired
 	BoardsCache boardCache;
+	
+	@Autowired 
+	RuleCache ruleCache;
 	
 	@Autowired 
 	CardTools cardTools;
@@ -238,7 +242,7 @@ public class CardController {
 										 @PathVariable String phaseId, 
 										 @RequestBody Card card) throws Exception {
 		
-		templateCache.correctCardFieldTypes(card);
+		templateCache.correctCardFieldTypes(boardId, card);
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		try{
@@ -261,7 +265,7 @@ public class CardController {
 				// Add Fields
 				for( Entry<String,Object> entry : card.getFields().entrySet()){
 					Object correctedValue = 
-						templateCache.correctFieldType( entry.getKey(), entry.getValue(), card.getTemplate());
+						templateCache.correctFieldType( entry.getKey(), entry.getValue(), card.getBoard(), card.getTemplate());
 					updateValue( node, entry.getKey(), correctedValue, null);
 				}
 				storeCardEvent(URI.HISTORY_URI,"Creating Card",boardId, phaseId, card.getId().toString(),
@@ -387,7 +391,7 @@ public class CardController {
 			Node node = 
 				ocm.getSession().getNode(String.format(URI.FIELDS_URI, card.getBoard(), card.getPhase(), card.getId()));
 			
-			Object correctedValue = templateCache.correctFieldType(field, value, card.getTemplate());
+			Object correctedValue = templateCache.correctFieldType(field, value, card.getBoard(), card.getTemplate());
 	
 			Object currentValue = null;
 			try {
@@ -677,24 +681,14 @@ public class CardController {
 		try{
 			cardTasks = ocm.getChildObjects(CardTask.class, 
 					String.format(URI.TASKS_URI, boardId, phaseId, cardId,""));
-			
-			Board board = boardCache.getItem(boardId);
-			Map<String, Rule> rules = board.getRules();
-			
-			if(rules==null){
-				return null;
-			}
-			
-			Set<Entry<String, Rule>> ruleEntrySet = rules.entrySet();
+						
 			Map<Integer, CardTask> cardTaskMap = new TreeMap<Integer,CardTask>();
 			
 			if(cardTasks!=null){				
 				for (CardTask cardTask : cardTasks) {
-					for (Entry<String, Rule> entry : ruleEntrySet) {
-						Rule rule = entry.getValue();						
-						if(cardTask.getTaskid().equals(rule.getId())){
-							cardTaskMap.put(rule.getIndex(),cardTask);
-						}						
+					Rule rule = ruleCache.getItem(boardId,cardTask.getTaskid());
+					if(rule!=null){
+						cardTaskMap.put(rule.getIndex(),cardTask);
 					}
 				}
 			}
@@ -866,6 +860,46 @@ public class CardController {
 		}
 		return cardTask;
 	}
+	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'WRITE,ADMIN')")
+	@RequestMapping(value = "/{cardId}/tasks/{taskId}/take", method=RequestMethod.GET)
+	public @ResponseBody CardTask takeTask(@PathVariable String boardId, 
+										  			  @PathVariable String phaseId, 
+										  			  @PathVariable String cardId,
+										  			  @PathVariable String taskId) throws Exception {
+		
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		CardTask cardTask;
+		try {
+			
+			cardTask = cardTools.getCardTask(boardId, phaseId, cardId, taskId, ocm);
+			
+			if(cardTask==null){
+				cardTask = createTask( boardId, phaseId, cardId, taskId, true, ocm);			
+				return cardTask;
+			}
+			
+			if(cardTask.getComplete() || !StringUtils.isEmpty(cardTask.getUser())){
+				return cardTask;
+			}
+			
+			cardTask.setUser(listTools.getCurrentUser());
+			ocm.update(cardTask);
+
+			Card card = new Card();
+			card.setPath(cardTask.getPath());
+			
+			storeCardEvent(URI.HISTORY_URI,"Assigning Task " + cardTask.getDetail() + " to " + cardTask.getUser(),
+					card.getBoard(), card.getPhase(), cardId, "info", "assign-" + cardTask.getTaskid(), ocm);
+			
+			ocm.save();
+		} finally {
+			ocm.logout();
+		}
+		return cardTask;
+	}
+	
+	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'WRITE,ADMIN')")
 	@RequestMapping(value = "/{cardId}/tasks/{taskId}/revert", method=RequestMethod.GET)
 	public @ResponseBody CardTask revertTask(@PathVariable String boardId, 
@@ -881,10 +915,6 @@ public class CardController {
 		
 			if(cardTask==null){
 				throw new ResourceNotFoundException();
-			}
-			
-			if(!cardTask.getComplete()){
-				return cardTask;
 			}
 			
 			cardTask.setComplete(false);
@@ -916,13 +946,11 @@ public class CardController {
 		if(card==null){
 			return null;
 		}
-		Board board = boardCache.getItem(boardId);
-		Map<String, Rule> boardRules = board.getRules();
-		Rule rule = boardRules.get(taskId);
+				
+		Rule rule = ruleCache.getItem(boardId,taskId);
 		
 		if(rule==null){
-			ocm.logout();
-			logger.warn("Rule Not Found in Board: " + taskId);
+			logger.warn("Rule Not Found: " + boardId + "." + taskId);
 			throw new ResourceNotFoundException();
 		}
 		
@@ -1038,15 +1066,12 @@ public class CardController {
 					String.format(URI.TASKS_URI, boardId, phaseId, cardId,
 							taskId));
 			if (node == null) {
-				ocm.logout();
 				throw new ResourceNotFoundException();
 			}
 			node.remove();
 			ocm.save();
 		} finally {
-			if (null != ocm) {
-				ocm.logout();
-			}
+			ocm.logout();
 		}
 	}
 	

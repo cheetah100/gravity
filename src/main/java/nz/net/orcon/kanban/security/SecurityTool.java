@@ -47,7 +47,7 @@ public class SecurityTool {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(SecurityTool.class);
 	
-	public static String SYSTEM = "system";
+	public static final String SYSTEM = "system";
 	
 	@Autowired
 	TeamCache teamCache;

@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -22,16 +23,14 @@
 package nz.net.orcon.kanban.controllers;
 
 import java.io.BufferedReader;
-import java.io.Reader;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
 import nz.net.orcon.kanban.automation.CacheInvalidationInterface;
+import nz.net.orcon.kanban.tools.IdentifierTools;
 import nz.net.orcon.kanban.tools.ListTools;
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
 
@@ -42,12 +41,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.ibm.wsdl.util.IOUtils;
 
 @Controller
 @RequestMapping("/board/{boardId}/resources")
@@ -64,6 +60,9 @@ public class ResourceController {
 	private ListTools listTools;
 	
 	@Autowired
+	private ResourceCache resourceCache;
+	
+	@Autowired
 	CacheInvalidationInterface cacheInvalidationManager;
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
@@ -71,19 +70,7 @@ public class ResourceController {
 	public @ResponseBody String getResource(@PathVariable String boardId, 
 			@PathVariable String resourceId) throws Exception {
 		
-		//TODO USE CACHE
-		
-		ObjectContentManager ocm = ocmFactory.getOcm();
-		
-		Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, resourceId));
-		Property property = node.getProperty("resource");
-		String value = property.getString();
-		ocm.logout();
-		
-		if(value==null){
-			throw new ResourceNotFoundException();
-		}
-		return value;		
+		return resourceCache.getItem(boardId, IdentifierTools.getIdFromName(resourceId));		
 	}
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
@@ -93,7 +80,6 @@ public class ResourceController {
 			HttpServletRequest request) throws Exception {
 				
 		logger.info("Saving Resource " + boardId + "/" + resourceId);
-		
 		BufferedReader reader = request.getReader();
 		reader.reset();
 		StringBuilder valueBuilder = new StringBuilder();
@@ -102,6 +88,7 @@ public class ResourceController {
 			String newValue = reader.readLine();
 			if( newValue!=null){
 				valueBuilder.append(newValue);
+				valueBuilder.append("\n");
 			} else {
 				break;
 			}
@@ -113,15 +100,19 @@ public class ResourceController {
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		
-		listTools.ensurePresence(String.format( URI.BOARD_URI, boardId), "resources", ocm.getSession());
+		try {
 		
-		Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, ""));
-		Node addNode = node.addNode(resourceId);
-		
-		addNode.setProperty("resource",value);
-		addNode.setProperty("name",resourceId);
-		ocm.getSession().save();
-		ocm.logout();
+			listTools.ensurePresence(String.format( URI.BOARD_URI, boardId), "resources", ocm.getSession());
+			
+			Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, ""));
+			Node addNode = node.addNode(resourceId);
+			
+			addNode.setProperty("resource",value);
+			addNode.setProperty("name",resourceId);
+			ocm.getSession().save();
+		} finally {
+			ocm.logout();
+		}
 		
 		logger.info("Resource Saved " + resourceId);
 	}
@@ -132,30 +123,26 @@ public class ResourceController {
 			@PathVariable String resourceId) throws Exception {
 		
 		logger.info("Deleting Resource " + resourceId);
-		
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, resourceId));
-		if(node==null){
+		try {
+			Node node = ocm.getSession().getNode(String.format(URI.RESOURCE_URI, boardId, resourceId));
+			if(node==null){
+				ocm.logout();
+				throw new ResourceNotFoundException();
+			}
+			node.remove();
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(RESOURCE, resourceCache.getCacheId(boardId,resourceId));
+		} finally {
 			ocm.logout();
-			throw new ResourceNotFoundException();
 		}
-		node.remove();
-		ocm.save();
-		ocm.logout();
-		
-		this.cacheInvalidationManager.invalidate(RESOURCE, resourceId);
 	}
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listResources(@PathVariable String boardId) throws Exception {	
-		
 		logger.info("Getting Resource List");
-		
-		Session session = ocmFactory.getOcm().getSession();
-		Map<String,String> result = listTools.list(String.format(URI.RESOURCE_URI, boardId, ""), "name", session);
-		session.logout();
-		return result;
+		return this.resourceCache.list(boardId,"");		
 	}
 	
 }

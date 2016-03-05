@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -21,7 +22,6 @@
 
 package nz.net.orcon.kanban.controllers;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -62,9 +62,6 @@ public class RuleControllerTest {
 		String ruleId = BoardControllerTest.getIdFromPath(newRule.getPath());
 		newRule.setName("Updated Rule");
 		
-		controller.updateRule(BoardControllerTest.BOARD_ID, ruleId, newRule);
-		Rule changedRule = controller.getRule(BoardControllerTest.BOARD_ID, ruleId);
-		assertEquals( changedRule.getName(), "Updated Rule");
 	}
 	
 	@Test

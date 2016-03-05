@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -29,7 +30,8 @@ import java.util.Map;
 import javax.annotation.PreDestroy;
 
 import nz.net.orcon.kanban.controllers.BoardsCache;
-import nz.net.orcon.kanban.model.Board;
+import nz.net.orcon.kanban.controllers.ResourceNotFoundException;
+import nz.net.orcon.kanban.controllers.RuleCache;
 import nz.net.orcon.kanban.model.Condition;
 import nz.net.orcon.kanban.model.ConditionType;
 import nz.net.orcon.kanban.model.Rule;
@@ -72,6 +74,9 @@ public class TimerManager {
 	private BoardsCache boardsCache;
 	
 	@Autowired
+	private RuleCache ruleCache;
+	
+	@Autowired
 	OcmMapperFactory ocmFactory;
 	
 	private Scheduler scheduler;
@@ -96,37 +101,37 @@ public class TimerManager {
 		if(this.scheduler==null){
 			return;
 		}
-				
-		Board board = boardsCache.getItem(boardId);
-		if( board==null){
-			LOG.warn("Board Not Found when Loading Timer: " + boardId);
+		
+		Map<String, String> rules;
+		try {
+			rules = ruleCache.list(boardId,"");
+		} catch (javax.jcr.PathNotFoundException e ){
+			LOG.info("No Rule for Board: "+ boardId);
 			return;
 		}
-		
+						
 		// Delete All Existing Timers for this board
 		List<String> jobNames = Arrays.asList(this.scheduler.getJobNames(boardId));
 		for( String jobName : jobNames){
 			this.scheduler.deleteJob(jobName, boardId);
 		}
 		
-		// Start Timers
-		Map<String,Rule> rules = board.getRules();
-		if( rules==null){
-			LOG.warn("Board Rules Not Found when Loading Timer: " + boardId);
-			return;			
-		}
-		
-		for( Rule rule : rules.values()){
-			if(null != rule.getAutomationConditions()){
-				for( Condition condition : rule.getAutomationConditions().values()) {
-					if( ConditionType.TIMER.equals(condition.getConditionType())){
-						activateTimer( board.getId(), rule.getId(), condition.getValue());
+		// Start Timers		
+		for( String ruleId : rules.keySet()){
+			try {
+				Rule rule = ruleCache.getItem(boardId,ruleId);
+				if(null != rule.getAutomationConditions()){
+					for( Condition condition : rule.getAutomationConditions().values()) {
+						if( ConditionType.TIMER.equals(condition.getConditionType())){
+							activateTimer( boardId, rule.getId(), condition.getValue());
+							LOG.info("Timer Loaded: " + boardId + "." + rule.getId());
+						}
 					}
 				}
+			} catch(ResourceNotFoundException e){
+				LOG.warn("Rule not found: " + boardId + "." + ruleId);
 			}
 		}
-		
-		LOG.info("Board Timers Loaded for Board: " + boardId);
 	}
 	
 	private void activateTimer( String boardId, String ruleId, String schedule) throws Exception{

@@ -63,10 +63,10 @@ public class TemplateCache extends CacheImpl<Template>{
 	@Autowired 
 	ListTools listTools;
 				
-	public void correctCardFieldTypes(Card card) throws Exception{
+	public void correctCardFieldTypes(String boardId, Card card) throws Exception{
 		Map<String, Object> resultFields = new HashMap<String, Object>(); 
 		for( String fieldName : card.getFields().keySet() ){
-			Object value = correctFieldType( fieldName, card.getFields().get(fieldName), card.getTemplate());
+			Object value = correctFieldType( fieldName, card.getFields().get(fieldName), boardId, card.getTemplate());
 			if( value!=null){
 				resultFields.put( fieldName, value);
 			}
@@ -74,7 +74,7 @@ public class TemplateCache extends CacheImpl<Template>{
 		card.setFields(resultFields);
 	}
 	
-	public Object correctFieldType(String fieldName, Object value, String templateId) throws Exception {
+	public Object correctFieldType(String fieldName, Object value, String boardId, String templateId) throws Exception {
 		
 		if( value==null){
 			return null;
@@ -82,7 +82,7 @@ public class TemplateCache extends CacheImpl<Template>{
 		
 		Template template;
 		try {
-			template = getItem( templateId);
+			template = getItem( boardId, templateId);
 		} catch( ResourceNotFoundException e){
 			return value;
 		}		
@@ -96,7 +96,7 @@ public class TemplateCache extends CacheImpl<Template>{
 		case STRING:
 			return value.toString();
 		case NUMBER:
-			return Integer.parseInt(value.toString());
+			return Double.valueOf(value.toString());
 		case BOOLEAN:
 			return Boolean.parseBoolean(value.toString());
 		case DATE:

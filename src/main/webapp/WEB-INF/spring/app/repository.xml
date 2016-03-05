@@ -19,6 +19,7 @@
 	<bean id="ocmFactory" class="nz.net.orcon.kanban.tools.OcmMapperFactory">
 		<property name="user" value="admin"/>
 		<property name="password" value="admin"/>
+		<property name="host" value="${repository.url}"/>
 		<property name="domainPackage" value="nz.net.orcon.kanban.model"/>
 		<property name="mainNodes">
 			<list>

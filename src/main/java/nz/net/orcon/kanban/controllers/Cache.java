@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2015 Peter Harrrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -25,7 +26,7 @@ import java.util.Map;
 
 public interface Cache<T> {
 
-	public void invalidate( String itemId );
+	public void invalidate( String... itemIds );
 	
 	public T getItem(String... itemIds) throws Exception;
 	

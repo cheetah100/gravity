@@ -21,13 +21,9 @@
 
 package nz.net.orcon.kanban.security;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 
 import nz.net.orcon.kanban.controllers.URI;
 import nz.net.orcon.kanban.model.User;
@@ -42,7 +38,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.authority.GrantedAuthorityImpl;
 
 public class JcrAuthenticationProvider implements AuthenticationProvider {
 

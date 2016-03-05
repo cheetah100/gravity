@@ -115,7 +115,7 @@ public class ClusterManager {
 	 */
 	@Scheduled( fixedDelay=30000l )
 	public void pollLeader() throws Exception{
-		if(!this.leader){
+		if(!isLeader()){
 			this.executeChallenge();
 		}
 	}
@@ -137,28 +137,28 @@ public class ClusterManager {
 		Message coupMessage = coupSync.receiveMessage(10000l);
 		boolean newLeader = (coupMessage==null);
 		
-		if( this.leader!=newLeader){
+		if( isLeader()!=newLeader){
 			if(newLeader){
 				LOG.warn("FAILOVER: Node promoted to MASTER.");
-				this.leader = true;
+				setLeader(true);
 				this.jcrObserver.start();
 				this.timerManager.startup();
 			} else {
 				LOG.warn("FAILOVER: Node demoted to worker.");
-				this.leader = false;
+				setLeader(false);
 				this.jcrObserver.stop();
 				this.timerManager.stopAll();
 			}
 		}
 		
-		return this.leader;
+		return isLeader();
 	}
 
-	public void setLeader(boolean leader) {
+	public synchronized void setLeader(boolean leader) {
 		this.leader = leader;
 	}
 
-	public boolean isLeader() {
+	public synchronized boolean isLeader() {
 		return leader;
 	}
 
