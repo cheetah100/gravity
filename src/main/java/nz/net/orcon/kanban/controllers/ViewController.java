@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -81,13 +82,16 @@ public class ViewController {
 			throw new Exception("Attempt to Update Template using POST. Use PUT instead");
 		}
 		ObjectContentManager ocm = ocmFactory.getOcm();	
-		listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "views", ocm.getSession());
-		String newId = IdentifierTools.getIdFromNamedModelClass(view);
-		view.setPath(String.format(URI.VIEW_URI, boardId, newId.toString()));			
-		ocm.insert(view);			
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		try {
+			listTools.ensurePresence(String.format(URI.BOARD_URI, boardId), "views", ocm.getSession());
+			String newId = IdentifierTools.getIdFromNamedModelClass(view);
+			view.setPath(String.format(URI.VIEW_URI, boardId, newId.toString()));			
+			ocm.insert(view);			
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();	
+		}
 		return view;
 	}
 	
@@ -117,15 +121,17 @@ public class ViewController {
 	public @ResponseBody View getView(@PathVariable String boardId, 
 			@PathVariable String viewId) throws Exception {
 		
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		View view = (View) ocm.getObject(View.class,String.format(URI.VIEW_URI, boardId, viewId));
-		ocm.logout();		
-		
-		if(view==null){
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		View view;
+		try {
+			view = (View) ocm.getObject(View.class,String.format(URI.VIEW_URI, boardId, viewId));
+			if(view==null){
+				throw new ResourceNotFoundException();
+			}
+			
+		} finally {
 			ocm.logout();
-			throw new ResourceNotFoundException();
 		}
-		
 		return view;		
 	}
 
@@ -133,12 +139,15 @@ public class ViewController {
 	public @ResponseBody void deleteView(@PathVariable String boardId, 
 			@PathVariable String viewId) throws Exception {
 
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		String path = String.format(URI.VIEW_URI, boardId, viewId);		
-		ocm.getSession().removeItem(path);
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try {
+			String path = String.format(URI.VIEW_URI, boardId, viewId);		
+			ocm.getSession().removeItem(path);
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();
+		}
 	}
 	
 	@RequestMapping(value = "/{viewId}/fields/{fieldId}", method=RequestMethod.GET)
@@ -146,14 +155,16 @@ public class ViewController {
 			@PathVariable String viewId,
 			@PathVariable String fieldId) throws Exception {
 		
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		ViewField viewField = (ViewField) ocm.getObject(ViewField.class,String.format(URI.VIEW_FIELD_URI, boardId, viewId, fieldId));
-		ocm.logout();		
-		
-		if(viewField==null){
-			throw new ResourceNotFoundException();
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		ViewField viewField;
+		try {
+			viewField = (ViewField) ocm.getObject(ViewField.class,String.format(URI.VIEW_FIELD_URI, boardId, viewId, fieldId));
+			if(viewField==null){
+				throw new ResourceNotFoundException();
+			}			
+		} finally {
+			ocm.logout();
 		}
-		
 		return viewField;		
 	}
 	
@@ -162,11 +173,14 @@ public class ViewController {
 			@PathVariable String viewId,
 			@RequestBody ViewField viewField) throws Exception {
 		
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		viewField.setPath(String.format(URI.VIEW_FIELD_URI, boardId, viewId, viewField.getName()));		
-		ocm.insert(viewField);			
-		ocm.save();
-		ocm.logout();
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try {
+			viewField.setPath(String.format(URI.VIEW_FIELD_URI, boardId, viewId, viewField.getName()));		
+			ocm.insert(viewField);			
+			ocm.save();
+		} finally {
+			ocm.logout();
+		}
 		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
 		return viewField;
 	}
@@ -176,20 +190,27 @@ public class ViewController {
 			@PathVariable String viewId,
 			@PathVariable String fieldId) throws Exception {
 
-		ObjectContentManager ocm = ocmFactory.getOcm();	
-		String path = String.format(URI.VIEW_FIELD_URI, boardId, viewId, fieldId);		
-		ocm.getSession().removeItem(path);
-		ocm.save();
-		ocm.logout();
-		this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try {
+			String path = String.format(URI.VIEW_FIELD_URI, boardId, viewId, fieldId);		
+			ocm.getSession().removeItem(path);
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(BoardController.BOARD, boardId);
+		} finally {
+			ocm.logout();
+		}
 	}
 	
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listViews(@PathVariable String boardId) throws Exception {
 	
 		Session session = ocmFactory.getOcm().getSession();
-		Map<String,String> result = listTools.list(String.format(URI.VIEW_URI, boardId,""), "name", session);
-		session.logout();
+		Map<String,String> result;
+		try {
+			result = listTools.list(String.format(URI.VIEW_URI, boardId,""), "name", session);
+		} finally {
+			session.logout();
+		}
 		return result;			
 	}		
 }

@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -859,6 +860,46 @@ public class CardController {
 		}
 		return cardTask;
 	}
+	
+	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'WRITE,ADMIN')")
+	@RequestMapping(value = "/{cardId}/tasks/{taskId}/take", method=RequestMethod.GET)
+	public @ResponseBody CardTask takeTask(@PathVariable String boardId, 
+										  			  @PathVariable String phaseId, 
+										  			  @PathVariable String cardId,
+										  			  @PathVariable String taskId) throws Exception {
+		
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		CardTask cardTask;
+		try {
+			
+			cardTask = cardTools.getCardTask(boardId, phaseId, cardId, taskId, ocm);
+			
+			if(cardTask==null){
+				cardTask = createTask( boardId, phaseId, cardId, taskId, true, ocm);			
+				return cardTask;
+			}
+			
+			if(cardTask.getComplete() || !StringUtils.isEmpty(cardTask.getUser())){
+				return cardTask;
+			}
+			
+			cardTask.setUser(listTools.getCurrentUser());
+			ocm.update(cardTask);
+
+			Card card = new Card();
+			card.setPath(cardTask.getPath());
+			
+			storeCardEvent(URI.HISTORY_URI,"Assigning Task " + cardTask.getDetail() + " to " + cardTask.getUser(),
+					card.getBoard(), card.getPhase(), cardId, "info", "assign-" + cardTask.getTaskid(), ocm);
+			
+			ocm.save();
+		} finally {
+			ocm.logout();
+		}
+		return cardTask;
+	}
+	
+	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'WRITE,ADMIN')")
 	@RequestMapping(value = "/{cardId}/tasks/{taskId}/revert", method=RequestMethod.GET)
 	public @ResponseBody CardTask revertTask(@PathVariable String boardId, 
@@ -874,10 +915,6 @@ public class CardController {
 		
 			if(cardTask==null){
 				throw new ResourceNotFoundException();
-			}
-			
-			if(!cardTask.getComplete()){
-				return cardTask;
 			}
 			
 			cardTask.setComplete(false);

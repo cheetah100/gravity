@@ -69,6 +69,11 @@ public interface CardTools {
 			String cardId,
 			String taskId,
 			ObjectContentManager ocm ) throws ResourceNotFoundException;
+	
+	public List<CardTask> getCardTasksByUser(
+			String userId, 
+			ObjectContentManager ocm)
+			throws ResourceNotFoundException;
 		
 	public List<Card> getCardList(
 			String boardId,

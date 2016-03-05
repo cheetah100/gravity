@@ -357,8 +357,16 @@ div.validation-message.validation-message-invalid {
     background: #8c8;
 }
 
+.row.card-task.task-take:hover {
+    background: #f2ff26;
+}
+
 .row.card-task.task-complete {
     background: #ada;
+}
+
+.row.card-task.task-take {
+    background: #f8ff89;
 }
 
 .row.card-task.task-incomplete {
@@ -373,6 +381,11 @@ div.validation-message.validation-message-invalid {
 }
 
 .task-complete .card-task-name {
+    font-weight: bold;
+    color: black;
+}
+
+.task-take .card-task-name {
     font-weight: bold;
     color: black;
 }
@@ -396,10 +409,14 @@ div.validation-message.validation-message-invalid {
     opacity: 0.8;
 }
 
+.card-task.task-take .card-task-toggle {
+    background: url('../../images/glyphicons_136_cogwheel.png') no-repeat center center;
+    opacity: 0.8;
+}
+
 .card-task.task-incomplete .card-task-toggle {
     background: url('../../images/glyphicons_197_remove.png') no-repeat center center;
 }
-
 
 .card-task-details {
     font-size: 9pt;
@@ -412,7 +429,7 @@ div.validation-message.validation-message-invalid {
 }
 
 .card-task.task-incomplete .card-task-details {
-    display: none;
+    opacity: 1.0;
 }
 
 

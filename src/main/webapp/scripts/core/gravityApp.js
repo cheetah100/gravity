@@ -18,16 +18,20 @@ app.controller('boardCtrl', function($scope, $http) {
            		}
            		$scope.phases = phases;
            		$scope.phase = phases[0].name;
-           		$scope.phasid = phases[0].id;
+           		$scope.phaseid = phases[0].id;
            		
            		$scope.views = response.views;
            		$scope.filters = response.filters;
-            });            
+           		
+           		$scope.getCards();
+ 
+            });
   }
   
   $scope.setPhase = function(key,phase) {
   	$scope.phase = phase.name;
-    $scope.phaseid = key;            
+    $scope.phaseid = key;
+    $scope.getCards();
   }
   
   $scope.setFilter = function(key,filter) {
@@ -49,6 +53,14 @@ app.controller('boardCtrl', function($scope, $http) {
     	$scope.viewid = key;
     }            
   }
+  
+  $scope.getCards = function() {
+      url = "/gravity/spring/board/" + $scope.boardid + "/phases/" + $scope.phaseid + "/cards";
+      $http.get(url).success(function (response) {
+    	  $scope.cards = response;
+      });
+  }
+  
   
 });
 
