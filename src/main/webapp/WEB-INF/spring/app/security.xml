@@ -12,7 +12,7 @@
         <!--  <form-login /> -->
     </http>
         
-    <beans:bean id="securityTool" class="nz.net.orcon.kanban.security.SecurityTool"/>
+    <beans:bean id="securityTool" class="nz.net.orcon.kanban.security.SecurityToolImpl"/>
 	
     <beans:bean id="nullAuthenticationProvider" class="nz.net.orcon.kanban.security.NullAuthenticationProvider"/>
     

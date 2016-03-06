@@ -38,6 +38,7 @@ import nz.net.orcon.kanban.model.Condition;
 import nz.net.orcon.kanban.model.Filter;
 import nz.net.orcon.kanban.model.Operation;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,35 +51,45 @@ public class FilterControllerTest {
 	
 	@Autowired
 	private FilterController controller;
+	
+	@Autowired
+	TestBoardTool tool;
+	
+	@Before
+	public void before() throws Exception {
+		tool.initTestBoard();
+		tool.generateFilters();
+		checkTestFilters();
+	}
 
 	@Test
 	public void testCreateUpdateAndDeleteFilter() throws Exception {
 		
 		Filter filter = getTestFilter("Test Filter "+ BoardControllerTest.RND.nextInt(9999999), "name", Operation.EQUALTO, "Smith");
-		Filter newFilter = controller.createFilter(BoardControllerTest.BOARD_ID, filter);
-		String filterId = BoardControllerTest.getIdFromPath(newFilter.getPath());
+		Filter newFilter = controller.createFilter(TestBoardTool.BOARD_ID, filter);
+		String filterId = TestBoardTool.getIdFromPath(newFilter.getPath());
 		newFilter.setName("Updated Filter");
 		
-		controller.updateFilter(BoardControllerTest.BOARD_ID, filterId, newFilter);
-		Filter changedFilter = controller.getFilter(BoardControllerTest.BOARD_ID, filterId);
+		controller.updateFilter(TestBoardTool.BOARD_ID, filterId, newFilter);
+		Filter changedFilter = controller.getFilter(TestBoardTool.BOARD_ID, filterId);
 		assertEquals( changedFilter.getName(), "Updated Filter");
 		assertEquals( changedFilter.getAccess(), filter.getAccess());
 		assertEquals( changedFilter.getOwner(), filter.getOwner());
 		
-		controller.deleteFilter(BoardControllerTest.BOARD_ID, filterId);
+		controller.deleteFilter(TestBoardTool.BOARD_ID, filterId);
 	}
 
 	@Test
 	public void testListFilters() throws Exception {
 		checkTestFilters();
-		Map<String, String> listFilters = controller.listFilters(BoardControllerTest.BOARD_ID);
+		Map<String, String> listFilters = controller.listFilters(TestBoardTool.BOARD_ID);
 		assertTrue(listFilters.containsKey("equalsfilter"));
 	}
 
 	@Test
 	public void testEquals() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "equalsfilter");
+		
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "equalsfilter");
 		assertNotNull(cards);
 		assertEquals(1,cards.size());
 		for( Card card : cards ){
@@ -89,8 +100,7 @@ public class FilterControllerTest {
 
 	@Test
 	public void testContains() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "containsfilter");
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "containsfilter");
 		assertNotNull(cards);
 		assertEquals(1,cards.size());
 		for( Card card : cards ){
@@ -102,8 +112,7 @@ public class FilterControllerTest {
 	
 	@Test
 	public void testNotEquals() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "notequalsfilter");
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "notequalsfilter");
 		assertNotNull(cards);
 		
 		for( Card card : cards ){
@@ -114,8 +123,7 @@ public class FilterControllerTest {
 	
 	@Test
 	public void testGreaterThan() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "greaterthanfilter");
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "greaterthanfilter");
 		assertNotNull(cards);
 		for( Card card : cards ){
 			Map<String, Object> fields = card.getFields();
@@ -125,8 +133,7 @@ public class FilterControllerTest {
 
 	@Test
 	public void testGreaterThanOrEqualTo() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "greaterthanorequaltofilter");
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "greaterthanorequaltofilter");
 		assertNotNull(cards);
 		for( Card card : cards ){
 			Map<String, Object> fields = card.getFields();
@@ -136,8 +143,7 @@ public class FilterControllerTest {
 	
 	@Test
 	public void testLessThan() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "lessthanfilter");
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "lessthanfilter");
 		assertNotNull(cards);
 		for( Card card : cards ){
 			Map<String, Object> fields = card.getFields();
@@ -147,8 +153,7 @@ public class FilterControllerTest {
 
 	@Test
 	public void testLessThanOrEqualTo() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "lessthanorequaltofilter");
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "lessthanorequaltofilter");
 		assertNotNull(cards);
 		for( Card card : cards ){
 			Map<String, Object> fields = card.getFields();
@@ -158,23 +163,21 @@ public class FilterControllerTest {
 	
 	@Test
 	public void testNotNull() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "notnullfilter");
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "notnullfilter");
 		assertNotNull(cards);
 		assertEquals(9,cards.size());
 	}
 
 	@Test
 	public void testIsNull() throws Exception {
-		checkTestFilters();
-		Collection<Card> cards = controller.executeFilter(BoardControllerTest.BOARD_ID, "isnullfilter");
+		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "isnullfilter");
 		assertNotNull(cards);
 		assertEquals(9,cards.size());
 	}
 	
 	private void checkTestFilters() throws Exception{
 		
-		Map<String, String> listFilters = controller.listFilters(BoardControllerTest.BOARD_ID);
+		Map<String, String> listFilters = controller.listFilters(TestBoardTool.BOARD_ID);
 		
 		Collection<Filter> f = new ArrayList<Filter>();
 		f.add(getTestFilter( "containsfilter", "name", Operation.CONTAINS, "Smi" ));
@@ -189,7 +192,7 @@ public class FilterControllerTest {
 		
 		for( Filter filter : f){
 			if( !listFilters.containsKey(filter.getName())){
-				controller.createFilter( BoardControllerTest.BOARD_ID, filter );
+				controller.createFilter( TestBoardTool.BOARD_ID, filter );
 			}			
 		}
 	}

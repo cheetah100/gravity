@@ -45,6 +45,7 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,14 +60,22 @@ public class CardControllerTest {
 
 	@Autowired
 	CardController controller;
-		
+	
+	@Autowired
+	TestBoardTool tool;
+	
+	@Before
+	public void before() throws Exception {
+		tool.initTestBoard();
+	}
+			
 	@Test
-	public void testGetCard() throws Exception {
-		String phaseId = "first_call_required";
-		Card card = controller.getCard(BoardControllerTest.BOARD_ID, phaseId, "1", null);
+	public void testGetCard() throws Exception {	
+		Card card = controller.getCard(TestBoardTool.BOARD_ID, "test-phase", "1", null);
 		assertNotNull(card);
 	}
 
+	/*
 	public void createCard() throws JsonGenerationException, JsonMappingException, IOException{
 		Card card = new Card();
 		card.setPath("/board/board1/phases/phase1/cards");
@@ -93,25 +102,26 @@ public class CardControllerTest {
 		String json = ow.writeValueAsString(card);
 		System.out.println("JSON request is " + json);		
 	}
+	*/
 	
 	@Test
 	public void testMoveCard() throws Exception {
 
-		Card createdCard = controller.createCard(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, 
-				BoardControllerTest.getTestCard("Create Test", 300));
+		Card createdCard = controller.createCard(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID, 
+				TestBoardTool.getTestCard("Create Test", 300));
 		
-		controller.moveCard(BoardControllerTest.BOARD_ID,
-				BoardControllerTest.PHASE_ID, 
+		controller.moveCard(TestBoardTool.BOARD_ID,
+				TestBoardTool.PHASE_ID, 
 				createdCard.getId().toString(), 
 				"next-phase");
 
-		Card foundCard = controller.getCard(BoardControllerTest.BOARD_ID,
+		Card foundCard = controller.getCard(TestBoardTool.BOARD_ID,
 				"next-phase", createdCard.getId().toString(), null);
 		
 		assertNotNull(foundCard);
 		
-		controller.deleteCard(BoardControllerTest.BOARD_ID, 
+		controller.deleteCard(TestBoardTool.BOARD_ID, 
 				"next-phase", 
 				createdCard.getId().toString());
 	}
@@ -119,28 +129,30 @@ public class CardControllerTest {
 	@Test
 	public void testCreateDeleteCard() throws Exception {
 		
-		Card createdCard = controller.createCard(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, 
-				BoardControllerTest.getTestCard("Create Test", 300));
+		Card createdCard = controller.createCard(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID, 
+				TestBoardTool.getTestCard("Create Test", 300));
 		
 		assertNotNull(createdCard);
 		
-		Card foundCard = controller.getCard(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, 
-				createdCard.getId().toString(), null);
+		Card foundCard = controller.getCard(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID, 
+				createdCard.getId().toString(), "full");
 		
 		assertNotNull(foundCard);
 		assertEquals("BLUE", foundCard.getColor());
 		assertEquals("Create Test",foundCard.getFields().get("name"));
-		assertEquals(300l,foundCard.getFields().get("balance"));
+		
+		Object balance = foundCard.getFields().get("balance");
+		assertEquals("300.0", balance.toString());
 				
-		controller.deleteCard(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, 
+		controller.deleteCard(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID, 
 				foundCard.getId().toString());
 		
 		try{
-			foundCard = controller.getCard(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, 
+			foundCard = controller.getCard(TestBoardTool.BOARD_ID, 
+					TestBoardTool.PHASE_ID, 
 				createdCard.getId().toString(), null);
 			fail("Should throw ResourceNotFound");
 		} catch( ResourceNotFoundException e){
@@ -157,15 +169,15 @@ public class CardControllerTest {
 		body.put("field","name");
 		body.put("value","updatedValue");
 				
-		controller.updateField(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, 
+		controller.updateField(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID, 
 				card.getId().toString(),
 				"name", 
 				body);
 		
-		Card updatedCard = controller.getCard(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, 
-				card.getId().toString(), null);
+		Card updatedCard = controller.getCard(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID, 
+				card.getId().toString(), "full");
 		
 		Object object = updatedCard.getFields().get("name");
 		
@@ -175,9 +187,9 @@ public class CardControllerTest {
 	}
 	
 	private Card getTestCard() throws Exception{
-		Map<String, String> cardList = controller.getCardList(BoardControllerTest.BOARD_ID, BoardControllerTest.PHASE_ID, null); 
+		Map<String, String> cardList = controller.getCardList(TestBoardTool.BOARD_ID, TestBoardTool.PHASE_ID, null); 
 		String cardId = cardList.keySet().iterator().next();
-		Card card = controller.getCard(BoardControllerTest.BOARD_ID, BoardControllerTest.PHASE_ID, cardId, null);
+		Card card = controller.getCard(TestBoardTool.BOARD_ID, TestBoardTool.PHASE_ID, cardId, null);
 		return card;
 	}
 	
@@ -187,8 +199,8 @@ public class CardControllerTest {
 		Card card = getTestCard();
 		
 		Collection<CardEvent> historyList = controller.getHistoryList(
-				BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, 
+				TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID, 
 				card.getId().toString());
 		CardEvent event = historyList.iterator().next();
 		
@@ -196,8 +208,8 @@ public class CardControllerTest {
 		assertEquals( event.getDetail(), "Creating Card");
 		
 		CardEvent history = controller.getHistory(
-				BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID,
+				TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID,
 				card.getId().toString(),
 				event.getId());
 		
@@ -213,8 +225,8 @@ public class CardControllerTest {
 		Map<String,Object> body = new HashMap<String,Object>();
 		body.put("detail","Test History");
 		
-		CardEvent saveHistory = controller.saveHistory(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID,
+		CardEvent saveHistory = controller.saveHistory(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID,
 				card.getId().toString(),body);
 		
 		assertNotNull(saveHistory);
@@ -228,14 +240,14 @@ public class CardControllerTest {
 		Map<String,Object> body = new HashMap<String,Object>();
 		body.put("detail","Test History");
 		
-		CardEvent newComment = controller.saveComment(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID,
+		CardEvent newComment = controller.saveComment(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID,
 				card.getId().toString(),body);
 		
 		assertNotNull(newComment);
 		
-		Collection<CardEvent> comments = controller.getComments(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID,
+		Collection<CardEvent> comments = controller.getComments(TestBoardTool.BOARD_ID, 
+				TestBoardTool.PHASE_ID,
 				card.getId().toString());
 		
 		assertTrue(comments.size()>0);
@@ -244,80 +256,53 @@ public class CardControllerTest {
 	}
 	
 	@Test
-	public void testSaveAndGetAlerts() throws Exception {
-		String phaseId = "first_call_required";
-		String cardId = "1";
-		Map<String,Object> body = new HashMap<String,Object>();
+	public void testSaveAndDismissAlerts() throws Exception {
 		
-		Calendar instance = Calendar.getInstance();
-		int date = instance.get(Calendar.DAY_OF_MONTH);
-		int hour = instance.get(Calendar.HOUR);
-		int month = instance.get(Calendar.MONTH) + 1;
-		int min = instance.get(Calendar.MINUTE);
+		Card card = getTestCard();		
+		CardEvent saveAlert = controller.saveAlert(card.getBoard(), card.getPhase(), card.getId().toString(), "Test Alert", "alert");
 		
-		body.put("value","Month:" + month + ", Date:" + date + " @ " + hour + ":" + min);
-		body.put("user","test");
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-		String formattedDate = simpleDateFormat.format(instance.getTime());
-		body.put("time",formattedDate);
+		Collection<CardEvent> before = controller.getAlerts(TestBoardTool.BOARD_ID, card.getPhase(), card.getId().toString());
+		Assert.assertEquals(1,before.size());
 		
-		CardEvent newAlert = controller.saveAlert(BoardControllerTest.BOARD_ID, 
-				phaseId,
-				cardId,body);
-		assertNotNull(newAlert);
-		
-		Collection<CardEvent> alerts = controller.getAlerts(BoardControllerTest.BOARD_ID, phaseId, cardId);
-		assertTrue(alerts.size()>=1);
-	}	
+		controller.dismisAlert(TestBoardTool.BOARD_ID,card.getPhase(),card.getId().toString(),saveAlert.getId());
 
-	@Test
-	public void testDismissAlerts() throws Exception {
-		String phaseId = "first_call_required";
-		String cardId = "1";		
-		Collection<CardEvent> beforeAlerts = controller.getAlerts(BoardControllerTest.BOARD_ID, phaseId, cardId);
-		String alertNo = null;
-		for (CardEvent cardEvent : beforeAlerts) {
-			String path = cardEvent.getPath();
-			int lastIndexOf = path.lastIndexOf("/");
-			alertNo = path.substring(lastIndexOf+1);
-			break;
-		}		
-		controller.dismisAlert(BoardControllerTest.BOARD_ID,phaseId,cardId,alertNo);
-		Collection<CardEvent> afterAlerts = controller.getAlerts(BoardControllerTest.BOARD_ID, phaseId, cardId);
-		Assert.assertEquals(afterAlerts.size(),beforeAlerts.size()-1);
+		Collection<CardEvent> after = controller.getAlerts(TestBoardTool.BOARD_ID, card.getPhase(), card.getId().toString());
+		Assert.assertEquals(0,after.size());
 	}	
 
 	
 	@Test
 	public void testGetTasksCompleteAndRevert() throws Exception {
-				
-		Card card = getTestCard();
-
-		Collection<CardTask> tasks = controller.getTasks(BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID, card.getId().toString());
 		
+		tool.generateRule();
+		
+		Card card = getTestCard();
+		
+		CardTask task = new CardTask();
+		task.setComplete(false);
+		task.setTaskid(TestBoardTool.TASK_ID);
+		task.setCategory("test-category");
+		task.setDetail("Test Task");
+		
+		controller.saveTask(card.getBoard(), card.getPhase(), card.getId().toString(), task);
+		
+		Collection<CardTask> tasks = controller.getTasks(TestBoardTool.BOARD_ID, TestBoardTool.PHASE_ID, card.getId().toString());
 		assertNotNull(tasks);
 		assertEquals(tasks.size(),1);
 		
-		CardTask task = tasks.iterator().next();
+		controller.takeTask(card.getBoard(), card.getPhase(), card.getId().toString(), TestBoardTool.TASK_ID);
+		CardTask taken = controller.getTask(card.getBoard(), card.getPhase(), card.getId().toString(), TestBoardTool.TASK_ID);
+		assertEquals("system",taken.getUser());
+		assertFalse(taken.getComplete());
 		
-		CardTask cardTask = controller.completeTask(
-				BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID,
-				card.getId().toString(),
-				task.getId());
+		controller.completeTask(card.getBoard(), card.getPhase(), card.getId().toString(), TestBoardTool.TASK_ID);
+		CardTask complete = controller.getTask(card.getBoard(), card.getPhase(), card.getId().toString(), TestBoardTool.TASK_ID);
+		assertTrue(complete.getComplete());
 		
-		assertNotNull(cardTask);
-		assertTrue(cardTask.getComplete());
+		controller.revertTask(card.getBoard(), card.getPhase(), card.getId().toString(), TestBoardTool.TASK_ID);
+		CardTask reverted = controller.getTask(card.getBoard(), card.getPhase(), card.getId().toString(), TestBoardTool.TASK_ID);
+		assertFalse(reverted.getComplete());
 		
-		CardTask revertTask = controller.revertTask(
-				BoardControllerTest.BOARD_ID, 
-				BoardControllerTest.PHASE_ID,
-				card.getId().toString(),
-				task.getId());
-		
-		assertNotNull(revertTask);
-		assertFalse(revertTask.getComplete());
 	}
 
 }

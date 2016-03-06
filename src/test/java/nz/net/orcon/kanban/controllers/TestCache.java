@@ -26,16 +26,31 @@ import java.util.Map;
 
 public class TestCache extends CacheImpl<String> {
 
+	
+	Map<String, String> list;
+	
+	String returnValue;
+	
 	@Override
 	protected String getFromStore(String... itemIds) throws Exception {
-		return null;
+		if( returnValue==null) {
+			throw new ResourceNotFoundException();
+		}
+		return returnValue;
 	}
 
 	@Override
 	protected Map<String, String> getListFromStore(String... prefixs)
 			throws Exception {
-		return null;
+		
+		return this.list;
 	}
 	
-
+	public void setReturnList(Map<String, String> list){
+		this.list = list;
+	}
+	
+	public void setReturnValue(String value){
+		this.returnValue = value;
+	}
 }

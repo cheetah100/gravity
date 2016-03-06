@@ -138,7 +138,7 @@ public class NotificationController {
 	}
 	
 	@RequestMapping(value = "/{notificationType}", method=RequestMethod.GET)
-	public @ResponseBody NotificationTypeMapping getNotificationTypeMapping(@PathVariable String notificationType) throws LoginException, RepositoryException, ClassNotFoundException, UnknownHostException{
+	public @ResponseBody NotificationTypeMapping getNotificationTypeMapping(@PathVariable String notificationType) throws Exception{
 		ObjectContentManager ocm = ocmFactory.getOcm();
 		NotificationTypeMapping notificationTypeMapping = null;
 		try{

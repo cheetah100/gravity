@@ -49,15 +49,15 @@ public class BoardsCache extends CacheImpl<Board> implements MessageListener {
 	
 	@Autowired
 	@Qualifier("phaseChangeJmsTemplate")
-	JmsTemplate jmsTemplate;
+	private JmsTemplate jmsTemplate;
 	
 	private final Object lock = new Object();
 	
 	@Resource(name="ocmFactory")
-	OcmMapperFactory ocmFactory;
+	private OcmMapperFactory ocmFactory;
 	
 	@Autowired 
-	ListTools listTools;
+	private ListTools listTools;
 		
 	public void incrementCardCount( String boardId, String phaseId, int increment) {
 		PhaseChange change = new PhaseChange( boardId, phaseId, increment);

@@ -39,6 +39,7 @@ import nz.net.orcon.kanban.model.Rule;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,23 +52,26 @@ public class RuleControllerTest {
 
 	@Autowired
 	private RuleController controller;
+	
+	@Autowired
+	TestBoardTool tool;
+	
+	@Before
+	public void before() throws Exception {
+		tool.initTestBoard();
+	}
 
 	@Test
 	public void testCreateUpdateAndDeleteFilter() throws Exception {
-		
-		assertNotNull(controller);
-		
 		Rule rule = getTestRule("Test Rule", "name", Operation.EQUALTO, "Smith");
-		Rule newRule = controller.createRule(BoardControllerTest.BOARD_ID, rule);
-		String ruleId = BoardControllerTest.getIdFromPath(newRule.getPath());
+		Rule newRule = controller.createRule(TestBoardTool.BOARD_ID, rule);
+		String ruleId = TestBoardTool.getIdFromPath(newRule.getPath());
 		newRule.setName("Updated Rule");
-		
 	}
 	
 	@Test
 	public void testListRules() throws Exception {
-	
-		Map<String, String> listRules = controller.listRules(BoardControllerTest.BOARD_ID);
+		Map<String, String> listRules = controller.listRules(TestBoardTool.BOARD_ID);
 		assertTrue(listRules.containsKey("test-rule"));
 	}
 	
