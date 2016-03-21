@@ -147,11 +147,7 @@ public class TemplateCache extends CacheImpl<Template>{
 		Map<String,Object> fields = card.getFields();
 		Map<String,Object> newFields = new LinkedHashMap<String,Object>();
 		Template template = getItem(card.getBoard(),card.getTemplate());
-		
-		if( template==null){
-			return;
-		}
-		
+				
 		for( Entry<String,TemplateGroup> entry : template.getGroups().entrySet()){
 			TemplateGroup group = entry.getValue();
 			boolean groupHeader = false;

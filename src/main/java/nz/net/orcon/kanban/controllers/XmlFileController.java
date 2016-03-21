@@ -72,11 +72,7 @@ public class XmlFileController {
 	@RequestMapping(value = "/{boardId}", method=RequestMethod.GET)
 	public @ResponseBody void getXmlFile(@PathVariable String boardId,@RequestParam(required=false) boolean includeArchive, HttpServletResponse response) throws Exception{
 		Board board = boardsCache.getItem(boardId);		
-		if(board == null){
-			logger.warn("No such board exists with name : " + boardId);
-			response.setStatus(404);
-			return;
-		}
+
 		ObjectContentManager ocm = null;
 		Collection<Card> cardList = null;
 		try{

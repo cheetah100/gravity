@@ -89,7 +89,6 @@ public class BoardsCache extends CacheImpl<Board> implements MessageListener {
 	
 	private Phase getPhase( String boardId, String phaseId) throws Exception{
 		Board board = getItem(boardId);
-		if( board==null) return null;
 		return board.getPhases().get(phaseId);		
 	}
 
