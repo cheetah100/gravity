@@ -32,6 +32,7 @@ import nz.net.orcon.kanban.automation.CacheInvalidationInterface;
 import nz.net.orcon.kanban.model.Card;
 import nz.net.orcon.kanban.model.Condition;
 import nz.net.orcon.kanban.model.Filter;
+import nz.net.orcon.kanban.tools.CardTools;
 import nz.net.orcon.kanban.tools.IdentifierTools;
 import nz.net.orcon.kanban.tools.ListTools;
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
@@ -66,6 +67,9 @@ public class FilterController {
 	
 	@Autowired 
 	private ListTools listTools;
+	
+	@Autowired 
+	CardTools cardTools;
 		
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.POST)
@@ -191,6 +195,10 @@ public class FilterController {
 		
 		try {
 			cards = listTools.query(boardId, null, filterId, ocm);
+			
+			for(Card card : cards){
+				card.setFields(this.cardTools.getFieldsForCard(card,"full",ocm));
+			}
 		} finally {
 			ocm.logout();
 		}

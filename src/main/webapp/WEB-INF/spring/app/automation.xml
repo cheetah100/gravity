@@ -150,6 +150,6 @@
 	<bean id="awsAutomationAction" class="nz.net.orcon.kanban.automation.actions.AwsAutomationAction"/>
 
 	<!-- Cluster Management -->
-	<bean id="clusterManager" class="nz.net.orcon.kanban.automation.ClusterManager"/>
+	<bean id="clusterManager" class="nz.net.orcon.kanban.automation.ClusterManagerImpl"/>
 
 </beans>

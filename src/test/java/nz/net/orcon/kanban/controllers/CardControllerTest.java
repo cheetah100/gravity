@@ -27,11 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,10 +37,6 @@ import nz.net.orcon.kanban.model.Card;
 import nz.net.orcon.kanban.model.CardEvent;
 import nz.net.orcon.kanban.model.CardTask;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.ObjectWriter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -144,6 +136,9 @@ public class CardControllerTest {
 		assertEquals("Create Test",foundCard.getFields().get("name"));
 		
 		Object balance = foundCard.getFields().get("balance");
+		
+		System.out.println( "Balance Class:" + balance.getClass().getName());
+		
 		assertEquals("300.0", balance.toString());
 				
 		controller.deleteCard(TestBoardTool.BOARD_ID, 
@@ -159,6 +154,8 @@ public class CardControllerTest {
 			// Do Nothing
 		}	
 	}
+	
+	
 	
 	@Test
 	public void testUpdateField() throws Exception {
@@ -191,7 +188,7 @@ public class CardControllerTest {
 		String cardId = cardList.keySet().iterator().next();
 		Card card = controller.getCard(TestBoardTool.BOARD_ID, TestBoardTool.PHASE_ID, cardId, null);
 		return card;
-	}
+	}	
 	
 	@Test
 	public void testGetHistoryList() throws Exception {

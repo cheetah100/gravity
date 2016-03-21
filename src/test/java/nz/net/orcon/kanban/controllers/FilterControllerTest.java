@@ -64,7 +64,6 @@ public class FilterControllerTest {
 
 	@Test
 	public void testCreateUpdateAndDeleteFilter() throws Exception {
-		
 		Filter filter = getTestFilter("Test Filter "+ BoardControllerTest.RND.nextInt(9999999), "name", Operation.EQUALTO, "Smith");
 		Filter newFilter = controller.createFilter(TestBoardTool.BOARD_ID, filter);
 		String filterId = TestBoardTool.getIdFromPath(newFilter.getPath());
@@ -88,7 +87,6 @@ public class FilterControllerTest {
 
 	@Test
 	public void testEquals() throws Exception {
-		
 		Collection<Card> cards = controller.executeFilter(TestBoardTool.BOARD_ID, "equalsfilter");
 		assertNotNull(cards);
 		assertEquals(1,cards.size());
@@ -176,9 +174,7 @@ public class FilterControllerTest {
 	}
 	
 	private void checkTestFilters() throws Exception{
-		
 		Map<String, String> listFilters = controller.listFilters(TestBoardTool.BOARD_ID);
-		
 		Collection<Filter> f = new ArrayList<Filter>();
 		f.add(getTestFilter( "containsfilter", "name", Operation.CONTAINS, "Smi" ));
 		f.add(getTestFilter( "equalsfilter", "name", Operation.EQUALTO, "Smith" ));
