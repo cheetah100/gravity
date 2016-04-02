@@ -87,7 +87,7 @@ public class SpawnPlugin implements Plugin {
 			throw new ResourceNotFoundException();
 		}
 		
-		String targetTemplateName = targetBoard.getTemplates().get(targetTemplateId);
+		String targetTemplateName = targetBoard.getTemplates().get(targetTemplateId).getName();
 		if(targetTemplateName==null){
 			logger.warn("Template Not Found:  " + targetTemplateId );			
 		}

@@ -40,6 +40,7 @@
 		<property name="classList">
 			<list>
 				<value>Template</value>
+				<value>SimpleTemplate</value>
 				<value>TemplateField</value>
 				<value>TemplateTask</value>
 				<value>TemplateGroup</value>

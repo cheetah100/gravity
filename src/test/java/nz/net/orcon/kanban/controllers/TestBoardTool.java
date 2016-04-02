@@ -17,6 +17,7 @@ import nz.net.orcon.kanban.model.Filter;
 import nz.net.orcon.kanban.model.Operation;
 import nz.net.orcon.kanban.model.Phase;
 import nz.net.orcon.kanban.model.Rule;
+import nz.net.orcon.kanban.model.SimpleTemplate;
 import nz.net.orcon.kanban.model.View;
 import nz.net.orcon.kanban.model.ViewField;
 
@@ -80,7 +81,7 @@ public class TestBoardTool {
 		ruleController.createRule(BOARD_ID, rule);		
 	}
 			
-	public Board getTestBoard( String name ){
+	public Board getTestBoard( String name ) throws Exception{
 		Map<String,Phase> phases = new HashMap<String,Phase>();		
 		phases.put("test-phase", getTestPhase( "Test Phase", 1));
 		phases.put("next-phase", getTestPhase( "Next Phase", 2));
@@ -88,8 +89,13 @@ public class TestBoardTool {
 		Map<String,View> views = new HashMap<String,View>();
 		views.put("testview", getTestView("Test View"));
 		
-		Map<String, String> templates = new HashMap<String, String>();
-		templates.put("Test Template", TEMPLATE_ID);
+		
+		SimpleTemplate template = new SimpleTemplate();
+		template.setId("test-template");
+		template.setName("Test Template");
+		
+		Map<String, SimpleTemplate> templates = new HashMap<String, SimpleTemplate>();
+		templates.put("test-template", template);
 		
 		Board board = new Board();
 		board.setName(name);
