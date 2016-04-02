@@ -145,8 +145,8 @@ public class TestBoardTool {
 		condition.setFieldName(fieldName);
 		condition.setValue(value);
 		condition.setOperation(operation);
-		List<Condition> conditions = new ArrayList<Condition>();
-		conditions.add(condition);
+		Map<String,Condition> conditions = new HashMap<String,Condition>();
+		conditions.put("a",condition);
 		Filter filter = new Filter();
 		filter.setName(name);
 		filter.setAccess(AccessType.READ);

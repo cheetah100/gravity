@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -194,12 +195,12 @@ public class FilterControllerTest {
 	}
 		
 	private Filter getTestFilter(String filterName, String fieldName, Operation operation, String value) {
-		List<Condition> conditions = new ArrayList<Condition>();
+		Map<String,Condition> conditions = new HashMap<String,Condition>();
 		Condition condition = new Condition();
 		condition.setFieldName(fieldName);
 		condition.setOperation(operation);
 		condition.setValue(value);
-		conditions.add(condition);
+		conditions.put("a", condition);
 		
 		Filter filter = new Filter();
 		filter.setName(filterName);
