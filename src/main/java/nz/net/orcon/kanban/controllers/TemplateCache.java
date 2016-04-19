@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -184,11 +185,14 @@ public class TemplateCache extends CacheImpl<Template>{
 	protected Template getFromStore(String... itemIds) throws Exception {
 		ObjectContentManager ocm = ocmFactory.getOcm();	
 		
-		String pre = Integer.toString(itemIds.length) + " - ";
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(itemIds.length);
+		buffer.append(" - ");
 		for( int x=0; x < itemIds.length; x++){
-			pre = pre + itemIds[x] + ", ";
+			buffer.append(itemIds[x]);
+			buffer.append(", ");
 		}
-		logger.info("Prefixs: " + pre);
+		logger.info("Prefixs: " + buffer.toString());
 		
 		String path = String.format(URI.TEMPLATE_URI,(Object[])itemIds);
 		logger.info( "Getting Template At: " + path);

@@ -950,11 +950,6 @@ public class CardController {
 				
 		Rule rule = ruleCache.getItem(boardId,taskId);
 		
-		if(rule==null){
-			logger.warn("Rule Not Found: " + boardId + "." + taskId);
-			throw new ResourceNotFoundException();
-		}
-		
 		CardTask cardTask = new CardTask();
 		cardTask.setTaskid(rule.getId());
 		cardTask.setDetail(rule.getName());

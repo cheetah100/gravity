@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -131,7 +132,7 @@ public class CardConverter implements Converter{
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		if("id".equalsIgnoreCase(reader.getNodeName())){
-			card.setId(new Long(reader.getValue()));
+			card.setId(Long.getLong(reader.getValue()));
 		}		
         if("template".equalsIgnoreCase(reader.getNodeName())){
         	card.setTemplate(reader.getValue());

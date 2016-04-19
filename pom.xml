@@ -11,12 +11,47 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jetty.version>6.1.4</jetty.version>
 		<spring.version>3.1.1.RELEASE</spring.version>
-		<slf4j.version>1.5.10</slf4j.version>
+		<slf4j.version>1.7.21</slf4j.version>
 		<java.version>1.6</java.version>
 		<junit.version>4.8.2</junit.version>
 		<jackson.version>1.9.10</jackson.version>
 	</properties>
-
+	
+	<licenses>
+		<license>
+			<name>GPL, Version 3.0</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.en.html</url>
+			<distribution>repo</distribution>
+			<comments></comments>
+		</license>
+    </licenses>
+    
+	<organization>
+		<name>Devcentre Limited</name>
+		<url>http://devcentre.org</url>
+	</organization>
+	
+	<developers>
+		<developer>
+		  <id>cheetah100</id>
+		  <name>Peter Harrison</name>
+		  <email>cheetah100@gmail.com</email>
+		  <organization>Devcentre Limited</organization>
+		  <organizationUrl>http://devcentre.org</organizationUrl>
+		  <roles>
+		    <role>architect</role>
+		    <role>developer</role>
+		  </roles>
+		  <timezone>New Zealand/Auckland</timezone>
+		</developer>
+	</developers>
+	
+	<scm>
+		<connection>scm:git:https://github.com/cheetah100/gravity.git</connection>
+		<tag>HEAD</tag>
+		<url>https://github.com/cheetah100/gravity</url>
+	</scm>
+	
 	<dependencies>
 
 
@@ -160,6 +195,10 @@
 					<groupId>com.sun.jmx</groupId>
 					<artifactId>jmxri</artifactId>
 				</exclusion>
+				<exclusion>
+	                <groupId>javax.jms</groupId>
+	                <artifactId>jms</artifactId>
+	            </exclusion>
 			</exclusions>
 			<scope>runtime</scope>
 		</dependency>
@@ -263,10 +302,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax.jms</groupId>
-			<artifactId>jms</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
+		    <groupId>javax.jms</groupId>
+		    <artifactId>javax.jms-api</artifactId>
+		    <version>2.0.1</version>
 		</dependency>
 
 		<dependency>

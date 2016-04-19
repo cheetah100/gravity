@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -31,7 +32,6 @@ import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import nz.net.orcon.kanban.model.Board;
 import nz.net.orcon.kanban.model.Card;
 import nz.net.orcon.kanban.tools.CardConverter;
 import nz.net.orcon.kanban.tools.CardTools;
@@ -70,23 +70,17 @@ public class XmlFileController {
 	XStreamMarshaller xstreamMarshaller;
 	
 	@RequestMapping(value = "/{boardId}", method=RequestMethod.GET)
-	public @ResponseBody void getXmlFile(@PathVariable String boardId,@RequestParam(required=false) boolean includeArchive, HttpServletResponse response) throws Exception{
-		Board board = boardsCache.getItem(boardId);		
+	public @ResponseBody void getXmlFile(@PathVariable String boardId,@RequestParam(required=false) boolean includeArchive, HttpServletResponse response) throws Exception{		
 
 		ObjectContentManager ocm = null;
 		Collection<Card> cardList = null;
 		try{
 			ocm = ocmFactory.getOcm();
-			cardList = cardTools.getCardList(boardId,includeArchive, ocm);
+			cardList = cardTools.getCardList(boardId,includeArchive,ocm);
 		} finally {
 			ocm.logout();
 		}
 		
-		if(cardList.size() == 0){
-			logger.warn("No such board: "+ boardId + " exists");
-			response.setStatus(404);
-			return;
-		}
 		generateXml(response, boardId, cardList);
 	}
 

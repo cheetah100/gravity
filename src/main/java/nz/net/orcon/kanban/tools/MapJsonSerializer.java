@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -25,7 +26,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.TimeZone;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -42,17 +43,16 @@ public class MapJsonSerializer extends JsonSerializer<Map<String, Object>> {
 			SerializerProvider provider) throws IOException,
 			JsonProcessingException {
 		jgen.writeStartObject();
-		Set<String> keySet = fields.keySet();
-		for (String key : keySet) {
-			Object objectValue = fields.get(key);
+		for (Entry<String, Object> entry : fields.entrySet()) {
+			Object objectValue = entry.getValue();
 			if (objectValue instanceof Date) {
 				Date date = (Date) objectValue;
 				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 				simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Pacific/Auckland"));
 				String formattedDate = simpleDateFormat.format(date);
-				jgen.writeObjectField(key, formattedDate);
+				jgen.writeObjectField(entry.getKey().toString(), formattedDate);
 			} else {
-				jgen.writeObjectField(key, objectValue);
+				jgen.writeObjectField(entry.getKey().toString(), objectValue);
 			}
 		}
 		jgen.writeEndObject();
