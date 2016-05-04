@@ -185,21 +185,7 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.15</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.sun.jdmk</groupId>
-					<artifactId>jmxtools</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.sun.jmx</groupId>
-					<artifactId>jmxri</artifactId>
-				</exclusion>
-				<exclusion>
-	                <groupId>javax.jms</groupId>
-	                <artifactId>jms</artifactId>
-	            </exclusion>
-			</exclusions>
+			<version>1.2.17</version>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -223,20 +209,6 @@
 			<artifactId>jcr</artifactId>
 			<version>2.0</version>
 		</dependency>
-
-		<!-- 
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-commons</artifactId>
-			<version>2.2.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.jackrabbit</groupId>
-			<artifactId>jackrabbit-jcr-commons</artifactId>
-			<version>2.4.1</version>
-		</dependency>
-		 -->
 		
 		<dependency>
 			<groupId>org.apache.jackrabbit</groupId>
@@ -305,6 +277,7 @@
 		    <groupId>javax.jms</groupId>
 		    <artifactId>javax.jms-api</artifactId>
 		    <version>2.0.1</version>
+		    <scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -431,7 +404,6 @@
 	<build>		
 		<finalName>gravity</finalName>
 		<plugins>
-
 			<!-- Facilitates downloading source and javadoc in Eclipse -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -475,7 +447,7 @@
 				</configuration>
 			</plugin>
 
-		</plugins>
+		</plugins>		
 	</build>
 	
 	<reporting>
