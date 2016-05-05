@@ -192,6 +192,11 @@ var cards = {
         $card.find('div.card-progress').animate({
             width: (incomplete != 0 && incomplete <= data.tasks?parseInt((1 - (incomplete / data.tasks)) * 100):100) + "%"
         }, 500);
+        
+        $card.bind('click', function() {
+            cards.cardscrollpoint = $(window).scrollTop();
+            showLoadingWithCallback(card.buildCardForCardID, $card.data('id'));        	
+        });
 
         $card.find('div.glyph').bind('click', function() {
             if (isLoading()) return;
