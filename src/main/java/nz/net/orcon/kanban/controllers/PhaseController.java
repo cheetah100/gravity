@@ -293,7 +293,7 @@ public class PhaseController {
 	            	complete++;
 	            }
 	        }
-	        card.setCompleteTasks(new Long(complete));
+	        card.setCompleteTasks(Long.valueOf(complete));
 	        
         } finally {
         	ocm.logout();

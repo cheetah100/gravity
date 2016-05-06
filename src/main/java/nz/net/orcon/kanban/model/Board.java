@@ -36,8 +36,10 @@ public class Board extends AbstractNamedModelClass implements Serializable, Secu
 	@Collection(jcrMandatory=false,collectionConverter=StringCollectionConverterImpl.class)
 	private Map<String,String> roles;
 	
-	@Collection(jcrMandatory=false,collectionConverter=StringCollectionConverterImpl.class)
-	private Map<String,String> templates;
+	//@Collection(jcrMandatory=false,collectionConverter=StringCollectionConverterImpl.class)
+	
+	@Collection(jcrMandatory=false)
+	private Map<String,SimpleTemplate> templates;
 	
 	@Collection(jcrMandatory=false)
 	private Map<String,Phase> phases;
@@ -48,11 +50,11 @@ public class Board extends AbstractNamedModelClass implements Serializable, Secu
 	@Collection(jcrMandatory=false)
 	private Map<String,View> views;
 		
-	public void setTemplates(Map<String,String> templates) {
+	public void setTemplates(Map<String,SimpleTemplate> templates) {
 		this.templates = templates;
 	}
 
-	public Map<String,String> getTemplates() {
+	public Map<String,SimpleTemplate> getTemplates() {
 		return templates;
 	}
 

@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -32,7 +33,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Field;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
 @Node
-public class Action extends AbstractNamedModelClass implements Comparable<Action>, Serializable{
+public class Action extends AbstractNamedModelClass implements Serializable{
 		
 	private static final long serialVersionUID = -787744857412601170L;
 
@@ -110,11 +111,6 @@ public class Action extends AbstractNamedModelClass implements Comparable<Action
 
 	public String getType() {
 		return type;
-	}
-
-	@Override
-	public int compareTo(Action action) {
-		return this.getOrder() - action.getOrder();
 	}
 
 }

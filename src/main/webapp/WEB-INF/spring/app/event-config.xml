@@ -4,29 +4,37 @@
 	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:jms="http://www.springframework.org/schema/jms"
 	xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd 
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
 	http://www.springframework.org/schema/tx 
 	http://www.springframework.org/schema/tx/spring-tx.xsd 
 	http://www.springframework.org/schema/jee
-	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+	http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
 	http://www.springframework.org/schema/jms 
-    http://www.springframework.org/schema/jms/spring-jms-3.0.xsd
+    http://www.springframework.org/schema/jms/spring-jms-3.1.xsd
     http://www.springframework.org/schema/util 
-	http://www.springframework.org/schema/util/spring-util-3.0.xsd
+	http://www.springframework.org/schema/util/spring-util-3.1.xsd
 	http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
 
 	<!-- EVENT LISTENING FROM QUEUE -->
-
-	<bean id="hornetqConfiguration"
-		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="location" value="file:///etc/hornetq.conf" />
+ 
+	<bean id="jmsConnectionFactory" class="org.hornetq.jms.client.HornetQJMSConnectionFactory">
+		<constructor-arg name="ha" value="false" />
+		<constructor-arg>
+			<bean class="org.hornetq.api.core.TransportConfiguration">
+				<constructor-arg
+					value="org.hornetq.core.remoting.impl.netty.NettyConnectorFactory" />
+				<constructor-arg>
+					<map key-type="java.lang.String" value-type="java.lang.Object">
+						<entry key="host" value="${hornetq.server}"></entry>
+						<entry key="port" value="${hornetq.port}"></entry>
+					</map>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
 	</bean>
-
-	<jee:jndi-lookup id="jmsConnectionFactory" jndi-name="/ConnectionFactory"
-		resource-ref="true" environment-ref="hornetqConfiguration" />
-
+ 
 	<jms:listener-container container-type="default"
 		connection-factory="jmsConnectionFactory" acknowledge="auto">
 
@@ -60,9 +68,10 @@
 
 	<bean id="eventListener" class="nz.net.orcon.kanban.automation.JmsEventListener" />
 
+	<!-- 
 	<jee:jndi-lookup id="gravityEventsQueue" jndi-name="/queue/gravityEvents"
 		resource-ref="true" environment-ref="hornetqConfiguration" />
-
+ 	-->
 	<bean id="eventsJmsTemplate" class="org.springframework.jms.core.JmsTemplate">
 		<property name="connectionFactory" ref="jmsConnectionFactory" />
 		<property name="explicitQosEnabled" value="true" />

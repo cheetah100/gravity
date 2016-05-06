@@ -33,7 +33,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:spring/test-automation.xml"})
+@ContextConfiguration(locations = { "/spring/test-automation.xml"})
 public class DateInterpreterTest {
 	
 	@Autowired

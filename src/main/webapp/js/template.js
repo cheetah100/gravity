@@ -3,15 +3,15 @@ var template = {
     currenttemplate: false,
     loadTemplates: function(templates) {
         $.each(templates, function(k,t) {
-            if (!template.templates[t]) {
+            if (!template.templates[t.id]) {
                 $.ajax({
                     async: false,
-                    url: ajaxUrl + '/template/' + t,
+                    url: ajaxUrl + '/template/' + t.id,
                     success: function(data) {
-                        template.templates[t] = data;
+                        template.templates[t.id] = data;
                         $.each(data.fields, function(f, v) {
                             if (v.highlight) {
-                                template.templates[t]['highlight'][f] = v.highlight;
+                                template.templates[t.id]['highlight'][f] = v.highlight;
                             }
                         });
                     }

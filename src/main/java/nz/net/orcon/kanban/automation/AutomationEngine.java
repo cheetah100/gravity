@@ -833,7 +833,7 @@ public class AutomationEngine {
 			Collections.sort(list, new Comparator<Action>() {
 				@Override
 				public int compare(Action action1, Action action2) {
-					return action1.compareTo(action2);
+					return action1.getOrder() - action2.getOrder();
 				}
 			});
 		}

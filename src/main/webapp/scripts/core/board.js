@@ -45,7 +45,7 @@ var board = {
                 board.changeCurrentBoard(boardid);
 
                 jQuery.each(data.templates, function(i, t) {
-                    template.loadTemplate(boardid,t);
+                    template.loadTemplate(boardid,t.id);
                 });
 
                 phase.setPhases(data.phases);

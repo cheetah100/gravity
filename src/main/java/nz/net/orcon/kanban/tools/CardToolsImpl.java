@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -23,11 +24,10 @@ package nz.net.orcon.kanban.tools;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -235,6 +235,8 @@ public class CardToolsImpl implements CardTools{
 		case PropertyType.DECIMAL:
 			value = property.getDecimal();
 			break;
+		default:
+			value = null;
 		}
 		return value;
 	}
@@ -263,12 +265,10 @@ public class CardToolsImpl implements CardTools{
 		
 		Set<String> keySet = phases.keySet();
 		
-		for (Iterator<String> iterator = keySet.iterator(); iterator.hasNext();) {
-			String phaseId = (String) iterator.next();
-			Phase phase = phases.get(phaseId);
-			phaseIndexMap.put(phase.getIndex(),phaseId);
+		for( Entry<String,Phase> entry : phases.entrySet()){
+			phaseIndexMap.put(entry.getValue().getIndex(),entry.getKey());
 		}
-		
+				
 		// remove last phase from map which is believed to be archieve
 		if(!includeArchive){
 			phaseIndexMap.remove(phaseIndexMap.size());

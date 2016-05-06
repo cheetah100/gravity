@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -59,16 +60,16 @@ public class Template extends AbstractNamedModelClass implements Serializable, S
 			return;
 		}
 		SortedMap< Integer, TemplateGroup> sorted = new TreeMap< Integer, TemplateGroup>();
-		for( String key: newGroups.keySet()){
-			TemplateGroup group = newGroups.get(key);
+		for( Entry<String, TemplateGroup> entry: newGroups.entrySet()){
+			TemplateGroup group = entry.getValue();
 			if( group.getPath()==null){
-				group.setPath(key);
+				group.setPath(entry.getKey());
 			}
 			sorted.put(group.getIndex(), group);
 		}
 		
-		for( Integer key: sorted.keySet()){
-			TemplateGroup group = sorted.get(key);
+		for( Entry<Integer, TemplateGroup> entry: sorted.entrySet()){
+			TemplateGroup group = entry.getValue();
 			this.groups.put(group.getId(), group);
 		}
 	}
