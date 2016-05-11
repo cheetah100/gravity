@@ -17,8 +17,7 @@ public class RepositoryIndexInitializer implements RepositoryInitializer{
 		ImmutableList fields = 
 				ImmutableList.builder().add( "id","name" ).build(); 
 
-		NodeBuilder indexNodebuilder = 
-				IndexUtils.createIndexDefinition(index, "gravityIndexes", true, false, fields, null); 
+		IndexUtils.createIndexDefinition(index, "gravityIndexes", true, false, fields, null); 
 		
 	}
 }

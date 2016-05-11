@@ -66,9 +66,8 @@ public class TemplateGroup extends AbstractNamedModelClass implements Serializab
 			sorted.put(entry.getValue().getIndex(), entry.getValue());
 		}
 		this.fields = new LinkedHashMap<String,TemplateField>();
-		for( Integer key: sorted.keySet()){
-			TemplateField field = sorted.get(key);
-			this.fields.put(field.getId(), field);
+		for( Entry<Integer,TemplateField> entry: sorted.entrySet()){
+			this.fields.put(entry.getValue().getId(), entry.getValue());
 		}
 	}
 
