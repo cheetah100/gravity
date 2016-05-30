@@ -23,6 +23,7 @@ package nz.net.orcon.kanban.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
@@ -47,7 +48,7 @@ public class Filter extends AbstractNamedModelClass implements Serializable{
 	private AccessType access;
 	
 	@Collection(jcrMandatory=false)
-	private List<Condition> conditions;
+	private Map<String,Condition> conditions;
 
 	public void setExpression(String expression) {
 		this.expression = expression;
@@ -57,11 +58,11 @@ public class Filter extends AbstractNamedModelClass implements Serializable{
 		return expression;
 	}
 
-	public void setConditions(List<Condition> conditions) {
+	public void setConditions(Map<String,Condition> conditions) {
 		this.conditions = conditions;
 	}
 
-	public List<Condition> getConditions() {
+	public Map<String,Condition> getConditions() {
 		return conditions;
 	}
 

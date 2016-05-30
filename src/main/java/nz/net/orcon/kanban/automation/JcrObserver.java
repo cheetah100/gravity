@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -21,8 +22,6 @@
 
 package nz.net.orcon.kanban.automation;
 
-import java.net.UnknownHostException;
-
 import javax.annotation.PreDestroy;
 
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
@@ -33,9 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.jcr.LoginException;
-import javax.jcr.RepositoryException;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.observation.ObservationManager;
 
 public class JcrObserver {
@@ -50,7 +46,7 @@ public class JcrObserver {
 	
 	ObjectContentManager ocm;
 	
-	public void start() throws UnsupportedRepositoryOperationException, LoginException, RepositoryException, ClassNotFoundException, UnknownHostException{
+	public void start() throws Exception{
 		this.ocm = ocmFactory.getOcm();
 		ObservationManager observationManager = ocm.getSession().getWorkspace().getObservationManager();
 		final String[] types = { "nt:unstructured" };

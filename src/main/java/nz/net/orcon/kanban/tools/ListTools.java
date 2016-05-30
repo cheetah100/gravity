@@ -121,7 +121,7 @@ public class ListTools {
 		}
 		
 		if( filter!=null){
-			for( Condition condition : filter.getConditions()){
+			for( Condition condition : filter.getConditions().values()){
 				
 				String ex = genEx( condition.getOperation().getExpression(), 
 						condition.getFieldName(),condition.getValue());
@@ -154,7 +154,7 @@ public class ListTools {
 		}
 		
 		if( filter!=null){
-			for( Condition condition : filter.getConditions()){			
+			for( Condition condition : filter.getConditions().values()){			
 				qmFilter.addJCRExpression( genEx(condition.getOperation().getExpression(),
 						condition.getFieldName(), condition.getValue())); 						
 			}

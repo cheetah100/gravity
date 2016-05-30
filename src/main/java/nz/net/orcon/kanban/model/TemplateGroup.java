@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -24,6 +25,7 @@ package nz.net.orcon.kanban.model;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -57,17 +59,15 @@ public class TemplateGroup extends AbstractNamedModelClass implements Serializab
 
 	public void setFields(Map<String,TemplateField> newFields) {		
 		SortedMap< Integer, TemplateField> sorted = new TreeMap< Integer, TemplateField>();
-		for( String key: newFields.keySet()){
-			TemplateField field = newFields.get(key);
-			if( field.getPath()==null){
-				field.setPath(key);
+		for( Entry<String,TemplateField>entry: newFields.entrySet()){
+			if( entry.getValue().getPath()==null){
+				entry.getValue().setPath(entry.getKey());
 			}
-			sorted.put(field.getIndex(), field);
+			sorted.put(entry.getValue().getIndex(), entry.getValue());
 		}
 		this.fields = new LinkedHashMap<String,TemplateField>();
-		for( Integer key: sorted.keySet()){
-			TemplateField field = sorted.get(key);
-			this.fields.put(field.getId(), field);
+		for( Entry<Integer,TemplateField> entry: sorted.entrySet()){
+			this.fields.put(entry.getValue().getId(), entry.getValue());
 		}
 	}
 

@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -81,12 +82,11 @@ public class ScriptPlugin implements Plugin{
 		
 		engine.eval(script);
 		Bindings resultBindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
-		for( String key : resultBindings.keySet() ){
-			if( key.equals("context") || key.equals("print") || key.equals("println")){
+		for( Entry<String, Object> entry : resultBindings.entrySet() ){
+			if( entry.getKey().equals("context") || entry.getKey().equals("print") || entry.getKey().equals("println")){
 				continue;
 			}
-			Object value = resultBindings.get(key);
-			context.put(key, value);
+			context.put(entry.getKey(), entry.getValue());
 		}
 		return context;
 	}

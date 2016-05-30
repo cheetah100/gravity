@@ -108,8 +108,8 @@ public class CardController {
 	@Autowired
 	CardListener cardListener;
 	
-	@Autowired
-	AutomationEngine automationEngine;
+	//@Autowired
+	//AutomationEngine automationEngine;
 	
 	@Autowired
 	private NotificationController notificationController;
@@ -177,8 +177,9 @@ public class CardController {
 		CardHolder cardHolder = new CardHolder();
 		cardHolder.setBoardId(boardId);
 		cardHolder.setCardId(cardId);		
-		Map<String, Map<String,Boolean>> explain = automationEngine.explain(cardHolder);
-		return explain;
+		//Map<String, Map<String,Boolean>> explain = automationEngine.explain(cardHolder);
+		//return explain;
+		return null;
 	}
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
@@ -948,11 +949,6 @@ public class CardController {
 		}
 				
 		Rule rule = ruleCache.getItem(boardId,taskId);
-		
-		if(rule==null){
-			logger.warn("Rule Not Found: " + boardId + "." + taskId);
-			throw new ResourceNotFoundException();
-		}
 		
 		CardTask cardTask = new CardTask();
 		cardTask.setTaskid(rule.getId());

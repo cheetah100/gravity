@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -161,7 +162,7 @@ public class FormController {
 		try{
 			
 			listTools.ensurePresence(String.format( URI.FORM_URI, formId), "roles", ocm.getSession());
-			Node node = ocm.getSession().getNode(String.format(URI.FORM_ROLES_URI, formId, ""));
+			Node node = ocm.getSession().getNode(String.format(URI.FORM_ROLES_URI, formId));
 		
 			if( node==null){
 				throw new ResourceNotFoundException();

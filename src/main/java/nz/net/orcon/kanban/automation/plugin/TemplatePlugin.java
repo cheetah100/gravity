@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -22,6 +23,7 @@
 package nz.net.orcon.kanban.automation.plugin;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,11 +50,10 @@ public class TemplatePlugin implements Plugin {
 
 		StringBuilder builder = new StringBuilder(resource);
 		
-		for( String field : context.keySet()){
-			Object value = context.get(field);
-			if( value!=null){
-				String valueString = value.toString();
-				replaceAll( field, valueString, builder);
+		for( Entry<String,Object> entry : context.entrySet()){ 
+			if( entry.getValue()!=null){
+				String valueString = entry.getValue().toString();
+				replaceAll( entry.getKey(), valueString, builder);
 			}
 		}
 		

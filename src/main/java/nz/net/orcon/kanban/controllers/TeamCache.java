@@ -62,9 +62,11 @@ public class TeamCache extends CacheImpl<Team> {
 	@Override
 	protected Map<String, String> getListFromStore(String... prefixs) throws Exception {
 		
-		String pre = Integer.toString(prefixs.length) + " - ";
+		StringBuffer pre = new StringBuffer();
+		pre.append(Integer.toString(prefixs.length) + " - ");
 		for( int x=0; x < prefixs.length; x++){
-			pre = pre + prefixs[x] + ", ";
+			pre.append(prefixs[x]);
+			pre.append(", ");
 		}
 		logger.info("Prefixs: " + pre);
 		

@@ -96,8 +96,9 @@ var form = {
     submitForm: function() {
         var post = {template: template.currenttemplate, color: "white", fields: {}},
             tpl = template.templates[template.currenttemplate];
-
-        jQuery.each($('#page-body-form').find('input.card-field-input'), function() {
+        var $flds = $('#page-body-form').find('input.card-field-input');
+        
+        jQuery.each($flds, function() {
             var name = $(this).prop('name'),
                 val = $(this).val();
 

@@ -46,6 +46,7 @@ public class CacheImplTest {
 		assertEquals("TestSingleString1",this.testCache.getItem("testid1"));
 		assertEquals("TestSingleString2",this.testCache.getItem("testid2"));
 		
+		this.testCache.setReturnValue(null);
 		this.testCache.invalidate("testid1");
 		
 		try{
