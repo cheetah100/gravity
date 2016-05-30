@@ -30,7 +30,7 @@ app.controller('boardCtrl', function($scope, $http) {
   
   $scope.setPhase = function(key,phase) {
   	$scope.phase = phase.name;
-    $scope.phaseid = key;
+    $scope.phaseid = phase.id;
     $scope.getCards();
   }
   
@@ -41,7 +41,8 @@ app.controller('boardCtrl', function($scope, $http) {
     } else {  				
     	$scope.filter = filter.name;
     	$scope.filterid = key;
-    }            
+    }
+  	$scope.getCards();
   }
   
   $scope.setView = function(key,view) {
@@ -51,7 +52,8 @@ app.controller('boardCtrl', function($scope, $http) {
     } else {  				
     	$scope.view = view.name;
     	$scope.viewid = key;
-    }            
+    }
+  	$scope.getCards();
   }
   
   $scope.getCards = function() {
@@ -60,7 +62,6 @@ app.controller('boardCtrl', function($scope, $http) {
     	  $scope.cards = response;
       });
   }
-  
   
 });
 

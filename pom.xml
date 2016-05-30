@@ -387,6 +387,13 @@
 			<artifactId>sjsxp</artifactId>
 			<version>1.0.1</version>
 		</dependency>
+		
+		<!-- http://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client -->
+		<dependency>
+		    <groupId>com.google.oauth-client</groupId>
+		    <artifactId>google-oauth-client</artifactId>
+		    <version>1.22.0</version>
+		</dependency>
         		
 	</dependencies>
 
