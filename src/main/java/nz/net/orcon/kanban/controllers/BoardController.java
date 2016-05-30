@@ -467,12 +467,15 @@ public class BoardController {
 		if(detail!=null){
 			detailFilter = "(jcr:contains(@detail,'${detail}'))".replaceAll("\\$\\{detail\\}", detail);
 		}
+
+		boolean categoryPresent = !StringUtils.isNullOrEmpty(categoryFilter);
+		boolean detailPresent = !StringUtils.isNullOrEmpty(detailFilter);
 		
-		if(categoryFilter!="" && detailFilter!=""){
+		if(categoryPresent && detailPresent){
 			qmFilter.addJCRExpression( categoryFilter + " or " + detailFilter);
-		} else if (categoryFilter!="" && detailFilter=="") {
+		} else if (categoryPresent && !detailPresent) {
 			qmFilter.addJCRExpression( categoryFilter );
-		} else if (categoryFilter=="" && detailFilter!="") {
+		} else if (!categoryPresent && detailPresent) {
 			qmFilter.addJCRExpression( detailFilter );
 		}
 					

@@ -21,7 +21,6 @@
 
 package nz.net.orcon.kanban.tools;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,20 +34,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.apache.jackrabbit.oak.jcr.Jcr;
-import org.apache.jackrabbit.oak.plugins.document.DocumentMK;
-import org.apache.jackrabbit.oak.plugins.document.DocumentNodeStore;
-import org.apache.jackrabbit.oak.Oak;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.manager.impl.ObjectContentManagerImpl;
 import org.apache.jackrabbit.ocm.mapper.Mapper;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.AnnotationMapperImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class OcmMapperFactory {
 	
@@ -60,13 +52,14 @@ public class OcmMapperFactory {
 	private List<String> classList;
 	private List<String> mainNodes;
 	
-	private String host;
 	private String user;
 	private String password;
 	
 	private Credentials credentials;
 	private Mapper mapper;
 	private boolean mainNodesChecked = false;
+	
+	private RepositoryFactory repositoryFactory;
 
 	private void generateMapper() throws ClassNotFoundException{
 		List<Class> classes = new ArrayList<Class>();
@@ -77,29 +70,11 @@ public class OcmMapperFactory {
 		this.mapper = new AnnotationMapperImpl(classes);
 	}
 	
-	public ObjectContentManager getOcm() throws LoginException, RepositoryException, ClassNotFoundException, UnknownHostException {
+	public ObjectContentManager getOcm() throws Exception {
 		
 		if(this.repository==null){
-			logger.info("Creating Repository");
-			
-			String[] hostArray = this.getHost().split(",");
-			List<String> hostList = Arrays.asList(hostArray);
-			
-			List<ServerAddress> serverList = new ArrayList<ServerAddress>();
-			for( String hostURL : hostList){
-				ServerAddress sa = new ServerAddress(hostURL);
-				serverList.add(sa);
-			}
-			
-			MongoClient mc = new MongoClient(serverList);
-			DB db = mc.getDB("gravity");
-		    DocumentNodeStore ns = new DocumentMK.Builder().
-		            setMongoDB(db).getNodeStore();		    
-		    
-		    this.repository = new Jcr(new Oak(ns))
-		    	.with(new RepositoryIndexInitializer())
-		    	.withAsyncIndexing()
-		    	.createRepository();
+			logger.info("Creating Repository using factory: " + this.repositoryFactory.getClass().getName());
+			this.repository = this.repositoryFactory.getFactoryInstance();
 		}
 		
 		if(this.mapper==null){
@@ -200,11 +175,11 @@ public class OcmMapperFactory {
 		return mainNodes;
 	}
 
-	public String getHost() {
-		return host;
+	public RepositoryFactory getRepositoryFactory() {
+		return repositoryFactory;
 	}
 
-	public void setHost(String host) {
-		this.host = host;
+	public void setRepositoryFactory(RepositoryFactory repositoryFactory) {
+		this.repositoryFactory = repositoryFactory;
 	}
 }

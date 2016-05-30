@@ -116,30 +116,45 @@ var cards = {
     drawCard: function(data, id, pos) {
         var $card;
 
-        if (typeof template.templates[data.template] === "undefined")
+        tm = template.templates[data.template];
+        title = tm.name;
+        
+        if(Object.keys(data.fields).length > 0){
+        	title = title + ': ' + data.fields[Object.keys(data.fields)[0]];	
+        }
+        
+        if (typeof tm === "undefined")
             return;
 
         if (typeof pos == 'object') {
             pos.append('<div class="card" data-id="' + id + '" data-phase="' + data.phase + '">' +
-                '<h1>' + (template.templates[data.template].name) + '<span class="card-id">#' + data.id + '</span></h1>' +
+                '<h1>' + title + '<span class="card-id">#' + data.id + '</span></h1>' +
                 '<em class="card-modified">' +
-                (data.modified && data.modified != null?"Modified ":"Created ") + convertDateToString((data.modified && data.modified != null)?data.modified: data.created) + ' by ' + (data.modified && data.modified != null?data.modifiedby:data.creator) + '' +
-                '<br />' +
-                '<strong>Phase: </strong>' + phase.phases[data.phase].name +
-                '</em>' +
+                (data.modified && data.modified != null?"Modified ":"Created ") + 
+                convertDateToString((data.modified && data.modified != null)?data.modified: data.created) + 
+                ' by ' + 
+                (data.modified && data.modified != null?data.modifiedby:data.creator) + 
+                '' +
+                '<span class="card-phase">' + 
+                phase.phases[data.phase].name +
+                '</span></em>' +
                 '</div>');
 
             $card = pos.find('div.card').last();
         } else {
             var $cell = $('div.card').eq(pos);
             $cell.replaceWith('<div class="card" data-id="' + id + '" data-phase="' + data.phase + '">' +
-                '<h1>' + (template.templates[data.template].name) + '<span class="card-id">#' + data.id + '</span></h1>' +
-                '<em class="card-modified">' +
-                (data.modified && data.modified != null?"Modified ":"Created ") + convertDateToString((data.modified && data.modified != null)?data.modified: data.created) + ' by ' + (data.modified && data.modified != null?data.modifiedby:data.creator) + '' +
-                '<br />' +
-                '<strong>Phase: </strong>' + phase.phases[data.phase].name +
-                '</em>' +
-                '</div>');
+                    '<h1>' + title + '<span class="card-id">#' + data.id + '</span></h1>' +
+                    '<em class="card-modified">' +
+                    (data.modified && data.modified != null?"Modified ":"Created ") + 
+                    convertDateToString((data.modified && data.modified != null)?data.modified: data.created) + 
+                    ' by ' + 
+                    (data.modified && data.modified != null?data.modifiedby:data.creator) + 
+                    '' +
+                    '<span class="card-phase">' + 
+                    phase.phases[data.phase].name +
+                    '</span></em>' +
+                    '</div>');
 
             $card = $('div.card').eq(pos);
         }
@@ -192,6 +207,11 @@ var cards = {
         $card.find('div.card-progress').animate({
             width: (incomplete != 0 && incomplete <= data.tasks?parseInt((1 - (incomplete / data.tasks)) * 100):100) + "%"
         }, 500);
+        
+        $card.bind('click', function() {
+            cards.cardscrollpoint = $(window).scrollTop();
+            showLoadingWithCallback(card.buildCardForCardID, $card.data('id'));        	
+        });
 
         $card.find('div.glyph').bind('click', function() {
             if (isLoading()) return;

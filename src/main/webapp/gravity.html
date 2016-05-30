@@ -37,6 +37,14 @@
     <script src="scripts/core/view.js" type="text/javascript"></script>
     <script src="scripts/core/filter.js" type="text/javascript"></script>
     <script src="scripts/core/search.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+    history.pushState({ page: 1 }, "title 1", "#nbb");
+    window.onhashchange = function (event) {
+        window.location.hash = "nbb";
+
+    };    
+    </script>
 </head>
 <body id="gravity">
 

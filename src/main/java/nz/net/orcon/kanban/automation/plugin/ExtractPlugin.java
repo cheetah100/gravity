@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright Peter Harrison 2016
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -37,7 +38,7 @@ public class ExtractPlugin implements Plugin {
 	private static final Logger logger = LoggerFactory.getLogger(ExtractPlugin.class);
 		
 	@Override
-	public Map<String,Object> process( Action action, Map<String,Object> context ){
+	public Map<String,Object> process( Action action, Map<String,Object> context ) throws Exception{
 
 		Object target = context.get(action.getResource());
 				
@@ -60,21 +61,16 @@ public class ExtractPlugin implements Plugin {
 				}
 			}
 		}
-			
-		try {
-			// Call the Method.
-			// If there is an exception we stop processing.
 		
-			Object response = method.invoke(target,parameterValueArray);
-			
-			if (response != null) {
-				context.put(action.getResponse(), response);
-				logger.info("Recevied response is " + response);
-			}
-		} catch (Exception e) {
-			logger.error("Exception Processing :" + action.getName(), e);
-			// TO DO:
-			// add comment and change card color to red..
+		if(method==null){
+			throw new Exception("Method Not Found: " + target);
+		}
+	
+		Object response = method.invoke(target,parameterValueArray);
+		
+		if (response != null) {
+			context.put(action.getResponse(), response);
+			logger.info("Recevied response is " + response);
 		}
 		
 		return context;

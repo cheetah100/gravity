@@ -45,6 +45,7 @@ public class ScriptPluginTest {
 		action.setResource("answer=x+y;");
 
 		Map<String, Object> context = new HashMap<String, Object>();
+		context.put("boardid", "test-board");
 		context.put("x", 10);
 		context.put("y", 15);
 
@@ -94,7 +95,7 @@ public class ScriptPluginTest {
 	
 	private static class DummyResourceController extends ResourceController{
 		
-		public @ResponseBody String getResource(String resourceId) throws Exception {
+		public @ResponseBody String getResource(String boardId, String resourceId) throws Exception {
 			return resourceId;
 		}
 	}

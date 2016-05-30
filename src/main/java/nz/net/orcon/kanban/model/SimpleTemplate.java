@@ -1,6 +1,6 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
- * (C) Copyright 2015 Peter Harrison
+ * (C) Copyright 2015 Orcon Limited
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -19,38 +19,22 @@
  * If not, see <http://www.gnu.org/licenses/>. 
  */
 
+package nz.net.orcon.kanban.model;
 
-package nz.net.orcon.kanban.controllers;
+import java.io.Serializable;
+import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
-import java.util.Map;
-
-public class TestCache extends CacheImpl<String> {
-
-	
-	Map<String, String> list;
-	
-	String returnValue;
-	
-	@Override
-	protected String getFromStore(String... itemIds) throws Exception {
-		if( returnValue==null) {
-			throw new ResourceNotFoundException();
-		}
-		return returnValue;
-	}
-
-	@Override
-	protected Map<String, String> getListFromStore(String... prefixs)
-			throws Exception {
-		
-		return this.list;
+@Node(discriminator=false)
+public class SimpleTemplate extends AbstractNamedModelClass implements Serializable {
+		 	
+	public SimpleTemplate() {
+		super();
 	}
 	
-	public void setReturnList(Map<String, String> list){
-		this.list = list;
+	public SimpleTemplate(String path, String name) {
+		super();
+		setPath(path);
+		setName(name);		
 	}
 	
-	public void setReturnValue(String value){
-		this.returnValue = value;
-	}
 }

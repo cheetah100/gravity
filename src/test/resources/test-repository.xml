@@ -10,6 +10,7 @@
 	http://www.springframework.org/schema/jee
 	http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">
 	
+	<!-- 
 	<bean id="jcrConfigFactory" class="nz.net.orcon.kanban.JackrabbitRepositoryConfigFactory">
 		<property name="jcrHome" value="${testJcrHome}"/>
 	</bean>
@@ -19,8 +20,12 @@
 	<bean id="repository" class="org.apache.jackrabbit.core.RepositoryImpl">
 		<constructor-arg index="0" ref="jcrConfig" />
 	</bean>
+	 -->
+	 
+	<bean id="repositoryFactory" class="nz.net.orcon.kanban.tools.MemoryRepositoryFactory"/>
 	
 	<bean id="ocmFactory" class="nz.net.orcon.kanban.tools.OcmMapperFactory">
+		<property name="repositoryFactory" ref="repositoryFactory"/>
 		<property name="user" value="admin"/>
 		<property name="password" value="admin"/>
 		<property name="domainPackage" value="nz.net.orcon.kanban.model"/>
@@ -36,6 +41,7 @@
 		<property name="classList">
 			<list>			
 				<value>Template</value>
+				<value>SimpleTemplate</value>
 				<value>TemplateField</value>
 				<value>TemplateTask</value>
 				<value>TemplateGroup</value>

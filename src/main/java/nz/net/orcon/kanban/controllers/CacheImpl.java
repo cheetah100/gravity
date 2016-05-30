@@ -41,12 +41,11 @@ abstract public class CacheImpl<T> implements Cache<T> {
 		
 		if(itemIds.length>1){
 			String[] listId = new String[itemIds.length-1];
-			for( int a=0; a<itemIds.length; a++){
+			for( int a=0; a<itemIds.length-1; a++){
 				listId[a] = itemIds[a];
 			}
 			this.cacheList.remove(getCacheId(listId));
 		}
-		
 	}
 
 	@Override

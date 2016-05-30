@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 
 import nz.net.orcon.kanban.model.Board;
 import nz.net.orcon.kanban.model.Phase;
+import nz.net.orcon.kanban.model.SimpleTemplate;
 import nz.net.orcon.kanban.model.Template;
 
 import org.slf4j.Logger;
@@ -68,10 +69,10 @@ public class UiController {
 		model.addAttribute("boardId", boardId);
 		Board board = boardsCache.getItem(boardId);
 		model.addAttribute("board", board);
-		Map<String, String> values = board.getTemplates();
+		Map<String, SimpleTemplate> values = board.getTemplates();
 		if( values!=null){
-			String templateId = values.values().iterator().next();
-			model.addAttribute("templateId", templateId );
+			SimpleTemplate templateId = values.values().iterator().next();
+			model.addAttribute("templateId", templateId.getId() );
 		}
 		
 		List<Phase> phases = new ArrayList<Phase>(board.getPhases().values());
@@ -94,9 +95,9 @@ public class UiController {
 		model.addAttribute("boardId", boardId);
 		Board board = boardsCache.getItem(boardId);
 		model.addAttribute("board", board);
-		Map<String, String> values = board.getTemplates();
+		Map<String, SimpleTemplate> values = board.getTemplates();
 		if( values!=null){
-			String templateId = values.values().iterator().next();
+			String templateId = values.values().iterator().next().getId();
 			model.addAttribute("templateId", templateId );
 			Template template = templateController.getTemplate(boardId,templateId);
 			model.addAttribute("template", template);
@@ -111,9 +112,9 @@ public class UiController {
 						   Model model) throws Exception {
 		log.info("Card UI - " + boardId);
 		Board board = boardsCache.getItem(boardId);
-		Map<String, String> templates = board.getTemplates();
-		Entry<String, String> next = templates.entrySet().iterator().next();
-		String templateId = next.getValue();
+		Map<String, SimpleTemplate> templates = board.getTemplates();
+		Entry<String, SimpleTemplate> next = templates.entrySet().iterator().next();
+		String templateId = next.getValue().getId();
 		Template template = templateController.getTemplate(boardId,templateId);
 		model.addAttribute("template", template);
 		model.addAttribute("phaseId", phaseId);
@@ -128,9 +129,9 @@ public class UiController {
 						   Model model) throws Exception {
 		
 		Board board = boardsCache.getItem(boardId);
-		Map<String, String> templates = board.getTemplates();
-		Entry<String, String> next = templates.entrySet().iterator().next();
-		String templateId = next.getValue();
+		Map<String, SimpleTemplate> templates = board.getTemplates();
+		Entry<String, SimpleTemplate> next = templates.entrySet().iterator().next();
+		String templateId = next.getValue().getId();
 		model.addAttribute("template", templateId);
 		model.addAttribute("boardid", boardId);
 		model.addAttribute("phaseid", phaseId);

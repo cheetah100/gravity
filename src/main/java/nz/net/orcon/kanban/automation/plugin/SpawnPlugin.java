@@ -73,9 +73,6 @@ public class SpawnPlugin implements Plugin {
 		String targetTemplateId = (String) variableInterpreter.resolve(context, action.getMethod());
 
 		Board targetBoard = boardCache.getItem(targetBoardId);
-		if( targetBoard==null){
-			logger.warn("Board Not Found - board: " + targetBoardId);
-		}
 		
 		String targetPhase = null;
 		for( Phase phase : targetBoard.getPhases().values()){
@@ -90,7 +87,7 @@ public class SpawnPlugin implements Plugin {
 			throw new ResourceNotFoundException();
 		}
 		
-		String targetTemplateName = targetBoard.getTemplates().get(targetTemplateId);
+		String targetTemplateName = targetBoard.getTemplates().get(targetTemplateId).getName();
 		if(targetTemplateName==null){
 			logger.warn("Template Not Found:  " + targetTemplateId );			
 		}
