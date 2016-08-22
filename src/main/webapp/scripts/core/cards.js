@@ -172,7 +172,7 @@ var cards = {
         if (data.color)
             $card.addClass(data.color);
 
-        if (view.currentview) {
+        if (view.currentview && (view.views[view.currentview] != undefined) ) {
             $card.append('<div class="card-view-field-wrapper"></div>');
             var $fieldwrapper = $card.find('.card-view-field-wrapper'),
                 n = 0;
