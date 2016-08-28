@@ -1,4 +1,4 @@
-body { background: #101010; color: white; }
+body { background: white ; color: #101010; }
 
 
 div#loading-wrapper {
@@ -10,24 +10,25 @@ div#loading-wrapper span {
 }
 
 #page-header-wrapper {
-    background: #1f0c3f;
+    background: #049fd9;
     color: white;
-    border-color: #642882;
+    border-color: #049fd9;
     box-shadow: 0 0 24px #000;
 }
 
 div.panel.panel-left {
-    background: #642882;
+	color: white;
+    background: #049fd9;
     border-color: #101010;
 }
 
 div.panel-selection-option {
-    background: #dcdcdc;
-    color: #101010;
+    background: #049fd9;
+    color: white;
 }
 
 div.panel-selection-option:hover {
-    background: white;
+    background: #0684b3;
     text-shadow: 1px 1px 3px #666;
 }
 
@@ -37,7 +38,7 @@ div.panel-selection-option:active {
 }
 
 #phase-wrapper ul.phase-menu ul {
-    background: rgba(0,0,0,0.9);
+    background: #049fd9;
     border: solid 0 #333;
 }
 
@@ -107,12 +108,12 @@ div.panel-selection-option:active {
 }
 
 .card-wrapper .card .card-progress-wrapper {
-    background: rgba(0, 0, 0, 0.7);
-    border-color:#101010;
+    background: #c8c8c8 
+    border-color: #c8c8c8 
 }
 
 .card-wrapper .card .card-progress-wrapper .card-progress {
-    background: cornflowerblue;
+    background: #a9ff8e;
 }
 
 
@@ -188,7 +189,7 @@ div.panel-selection-option:active {
 }
 
 .card-alert {
-    border-bottom: 1px solid #aaa;
+    border-bottom: 1px solid green;
 }
 
 .card-alert-wrapper {
@@ -255,27 +256,27 @@ div.panel-selection-option:active {
 
 
 #change-phase-wrapper .phase-tile {
-    background: rgba(225,225,225,1.0);
+    background:  #0684b3;
 }
 
 #change-phase-wrapper .phase-tile .phase-tile-overlay {
-    background: rgba(225,225,225,0.9);
+    background:  #0684b3;
 }
 
 #change-phase-wrapper .phase-tile .phase-tile-text-wrapper h2 {
-    color: black;
+    color: white;
 }
 
 #change-phase-wrapper .phase-tile.phase-tile-current {
-    background: #642882;
+    background: #0684b3;
 }
 
 #change-phase-wrapper .phase-tile.phase-tile-highlight {
-    background: cornflowerblue;
+    background: #0684b3;
 }
 
 #change-phase-wrapper .phase-tile.phase-tile-current .phase-tile-text-wrapper h2, #change-phase-wrapper .phase-tile.phase-tile-highlight .phase-tile-text-wrapper h2 {
-    color: white;
+    color:0684b3;
 }
 
 #change-phase-wrapper .phase-tile .phase-tile-overlay {
@@ -283,27 +284,26 @@ div.panel-selection-option:active {
 }
 
 div.dialog-card-alert button {
-    border: 1px solid #aaa;
-    color: #aaa;
-    background: transparent;
+    border: 1px solid white;
+    color: #049fd9;
+    background: white; 
 }
 
 div.dialog-card-alert button:hover {
-    border-color: #fff;
-    background: cornflowerblue;
-    color: white;
+    border-color: white;
+    background: white;
+    color: #049fd9;
 }
 
 div.dialog-card-alert button.alert-dismiss:hover {
-    background: rgba(255, 40, 40, 0.6);
+	color: white;
+    background: green;
 }
 
 
 div.dialog-card-alert div.dialog-card-alert-body {
     border-top: 1px solid #aaa;
 }
-
-
 
 .card-comment-wrapper.card-comment-alert:hover {
     background: rgba(255,150,150,1);
@@ -313,7 +313,7 @@ div.dialog-card-alert div.dialog-card-alert-body {
 
 
 #gravity .ui-widget-content {
-    background: #101010;
+    background: #049fd9;
     color: white;
 }
 

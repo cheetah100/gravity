@@ -11,7 +11,7 @@ var main = {
         main.setSplashPage();
     },
     setSplashPage: function() {
-        $('#page-header-splash').html('<h1 class="single-line">Welcome to Gravity</h1>');
+        $('#page-header-splash').html('<h1 class="single-line">Integrated Views</h1>');
         board.getBoards();
         form.getForms();
     },
