@@ -22,7 +22,9 @@
 
 package nz.net.orcon.kanban.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -30,7 +32,9 @@ import javax.annotation.Resource;
 import javax.jcr.Node;
 
 import nz.net.orcon.kanban.automation.CacheInvalidationInterface;
+import nz.net.orcon.kanban.model.Card;
 import nz.net.orcon.kanban.model.ListResource;
+import nz.net.orcon.kanban.model.ListResourceType;
 import nz.net.orcon.kanban.model.Option;
 import nz.net.orcon.kanban.tools.IdentifierTools;
 import nz.net.orcon.kanban.tools.ListTools;
@@ -68,6 +72,12 @@ public class ListController {
 	
 	@Autowired 
 	ListTools listTools;
+	
+	@Autowired
+	PhaseController phaseController;
+	
+	@Autowired
+	CardController cardController;
 		
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")	
 	@RequestMapping(value = "", method=RequestMethod.POST)
@@ -90,13 +100,50 @@ public class ListController {
 		return list;
 	}
 
+	/**
+	 * Get List.
+	 * There are two sources for a list:
+	 * - A List within the Board itself, used for small lists.
+	 * - A List generated out of another Board.
+	 * 
+	 * @param boardId
+	 * @param listId
+	 * @return
+	 * @throws Exception
+	 */
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{listId}", method=RequestMethod.GET)
 	public @ResponseBody ListResource getList(
 			@PathVariable String boardId,
 			@PathVariable String listId) throws Exception {
 		
-		return listCache.getItem(boardId, IdentifierTools.getIdFromName(listId));
+		String lid = IdentifierTools.getIdFromName(listId);
+		ListResource item = listCache.getItem(boardId, lid);
+		
+		if( item.getListResourceType()==null || item.getListResourceType().equals(ListResourceType.INTERNAL)){
+			return item;
+		} else {
+			Map<String, String> cardList = cardController.getCardList(item.getBoard(), item.getPhase(), item.getFilter());
+			List<String> newList = new ArrayList<String>();
+			newList.addAll(cardList.keySet());
+			List<Card> cards = phaseController.getCards(item.getBoard(), item.getPhase(), item.getView(), newList);			
+			Map<String,Option> optionList = new HashMap<String,Option>(); 
+			
+			for( Card card : cards){
+				Option option = new Option();
+				option.setId(item.getBoard() + "-" + card.getId().toString());
+				option.setName( (String)card.getFields().get(item.getNameField()));				
+				Map<String,String> newAttrs = new HashMap<String,String>();
+				Map<String, Object> fields = card.getFields();
+				for( Entry<String,Object> attr : fields.entrySet()){
+					newAttrs.put(attr.getKey(), attr.getValue().toString());
+				}
+				option.setAttributes(newAttrs);
+				optionList.put(option.getId(), option);
+			}
+			item.setItems(optionList);
+			return item;
+		}
 	}
 	
 	public String getValue(
