@@ -33,7 +33,7 @@ div.panel-selection-option:hover {
 }
 
 div.panel-selection-option:active {
-    background: #606060;
+    background: #0684b3;
     color: white;
 }
 
@@ -206,7 +206,7 @@ div.panel-selection-option:active {
 
 
 #board-controls-wrapper .board-control-current {
-    color: #999;
+    color: white;
 }
 
 #board-controls-wrapper .board-control button {
@@ -233,25 +233,25 @@ div.panel-selection-option:active {
 }
 
 #board-control-options-wrapper {
-    background: rgba(0,0,0,0.9);
+    background: #049fd9;
 }
 
 .board-control-option input {
-    background: none repeat scroll 0 0 #101010;
+    background: none repeat scroll 0 0 white;
     border: 1px solid #999;
 }
 
 .board-control-option .select2-container .select2-choice, .board-control-option input {
-    color: white;
+    color: black;
 }
 
 .board-control-option .select2-container .select2-choice {
-    background: #101010;
+    background: white;
 }
 
 
 .board-control-option .select2-dropdown-open .select2-choice {
-    background: #333;
+    background: #0684b3;
 }
 
 
@@ -333,12 +333,12 @@ div.dialog-card-alert div.dialog-card-alert-body {
 
 
 .select2-drop.board-option-dropdown {
-    background: #333;
+    background: white;
 }
 
 .board-control-option .select2-dropdown-open .select2-choice {
     box-shadow: none;
 }
 .select2-drop.board-option-dropdown {
-    color: white;
+    color: black;
 }
