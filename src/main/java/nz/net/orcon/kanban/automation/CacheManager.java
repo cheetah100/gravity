@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -57,7 +58,7 @@ public class CacheManager implements MessageListener, CacheInvalidationInterface
 			CacheInvalidationInstruction instruction  = (CacheInvalidationInstruction) objectMessage.getObject();
 			
 			if( logger.isDebugEnabled()){
-				logger.debug( "Cache Invalidation Instruction: " 
+				logger.debug( "Cache Invalidation Instruction Received: " 
 						+ instruction.getCacheType() + " " + instruction.getId());
 			}
 			
@@ -78,6 +79,9 @@ public class CacheManager implements MessageListener, CacheInvalidationInterface
 		CacheInvalidationInstruction instruction = 
 			new CacheInvalidationInstruction(type,id);
 		this.jmsTemplate.convertAndSend(instruction);
+		if( logger.isDebugEnabled()){
+			logger.debug("Invalidation Message Sent to Queue: " + type + " - " + id);
+		}
 	}
 
 	public void setTimerManager(TimerManager timerManager) {
