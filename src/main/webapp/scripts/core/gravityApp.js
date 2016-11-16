@@ -61,6 +61,10 @@ app.controller('boardCtrl', function($scope, $http) {
       });
   }
   
+  $scope.alertMe = function() {
+	  alert("I am an alert box!");
+  }
+  
   
 });
 

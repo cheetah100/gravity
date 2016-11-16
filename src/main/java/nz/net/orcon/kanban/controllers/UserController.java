@@ -39,6 +39,7 @@ import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,6 +63,7 @@ public class UserController {
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
 
+	@PreAuthorize("hasPermission('admin', 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.POST)
 	public @ResponseBody User createUser(@RequestBody User user) throws Exception {
 		if( user.getPath()!=null ){
@@ -115,6 +117,7 @@ public class UserController {
 		return taskList;	
 	}
 	
+	@PreAuthorize("hasPermission('admin', 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "/{userId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteUser(@PathVariable String userId) throws Exception {
 		Session session = ocmFactory.getOcm().getSession();

@@ -1,12 +1,12 @@
 var view = {
     views: false,
-    curentview: false,
+    currentview: false,
     setViewsForCurrentBoard: function(views) {
         if (views == null)
             return;
 
         view.views = views;
-
+        
         var data = [],
             $wrapper = $('#board-control-options-wrapper'),
             $viewname = $wrapper.find('input[name="view-name"]');
@@ -16,6 +16,9 @@ var view = {
 
         jQuery.each(view.views, function(i, v) {
             data.push({id: i, text: v.name});
+            if(!view.currentview){
+            	view.currentview = i;
+            }
         });
 
         data.sort(function(a,b) {
@@ -26,7 +29,7 @@ var view = {
 
         $viewname.select2({
             placeholder: "Select a View",
-            allowClear: true,
+            allowClear: false,
             data: data,
             width: "240px",
             minimumResultsForSearch: -1,

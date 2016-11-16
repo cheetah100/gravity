@@ -95,7 +95,7 @@ public class TeamController {
 		return team;
 	}
 	
-	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'READ,WRITE,ADMIN')")
+	//@PreAuthorize("hasPermission(#teamId, 'TEAM', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{teamId}", method=RequestMethod.GET)
 	public @ResponseBody Team getTeam(@PathVariable String teamId) throws Exception {
 		return teamCache.getItem(teamId);

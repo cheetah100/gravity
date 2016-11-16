@@ -174,16 +174,16 @@ public class CardConverter implements Converter{
 	    }
 		card.setFields(map);
 		if("tasks".equalsIgnoreCase(reader.getNodeName())){
-			card.setTasks(new Long(reader.getValue()));
+			card.setTasks(Long.valueOf(reader.getValue()));
 		}
 		if("history".equalsIgnoreCase(reader.getNodeName())){
-			card.setHistory(new Long(reader.getValue()));
+			card.setHistory(Long.valueOf(reader.getValue()));
 		}
 		if("comments".equalsIgnoreCase(reader.getNodeName())){
-			card.setComments(new Long(reader.getValue()));
+			card.setComments(Long.valueOf(reader.getValue()));
 		}
 		if("alerts".equalsIgnoreCase(reader.getNodeName())){
-			card.setAlerts(new Long(reader.getValue()));
+			card.setAlerts(Long.valueOf(reader.getValue()));
 		}	
 		return card;
 	}
