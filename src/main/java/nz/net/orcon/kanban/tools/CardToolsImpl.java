@@ -263,8 +263,6 @@ public class CardToolsImpl implements CardTools{
 		
 		Map<Integer,String> phaseIndexMap = new TreeMap<Integer,String>();
 		
-		Set<String> keySet = phases.keySet();
-		
 		for( Entry<String,Phase> entry : phases.entrySet()){
 			phaseIndexMap.put(entry.getValue().getIndex(),entry.getKey());
 		}

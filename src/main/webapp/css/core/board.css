@@ -128,6 +128,13 @@
     top: 0;
 }
 
+.card-wrapper .card em span.card-phase {
+	float: right;
+    font-size: 10pt;
+    font-weight: normal;
+    position: relative;
+}
+
 .card-wrapper .card .card-modified {
     display: block;
     font-size: 9pt;

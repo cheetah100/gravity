@@ -47,6 +47,7 @@ import nz.net.orcon.kanban.tools.IdentifierTools;
 import nz.net.orcon.kanban.tools.ListTools;
 import nz.net.orcon.kanban.tools.OcmMapperFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.ocm.manager.ObjectContentManager;
 import org.apache.jackrabbit.ocm.query.Query;
 import org.apache.jackrabbit.ocm.query.QueryManager;
@@ -61,8 +62,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.amazonaws.util.StringUtils;
 
 /**
  * 
@@ -284,15 +283,12 @@ public class BoardController {
 	@RequestMapping(value = "/{boardId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteBoard(@PathVariable String boardId) throws Exception {
 		
-		throw new Exception("Method Unavailable!");
-		
-		/*
-		if( StringUtils.isBlank(boardId)){
+		if( StringUtils.isEmpty(boardId)){
 			return;
 		}
 		
 		ObjectContentManager ocm = ocmFactory.getOcm();
-		Node node = ocm.getSession().getNode(String.format(boardUri, boardId));
+		Node node = ocm.getSession().getNode(String.format(URI.BOARD_URI, boardId));
 		
 		if(node==null){
 			ocm.logout();
@@ -302,8 +298,7 @@ public class BoardController {
 		node.remove();
 		ocm.save();
 		ocm.logout();
-		this.cacheInvalidationManager.invalidate(CacheType.BOARD, boardId);
-		*/
+		this.cacheInvalidationManager.invalidate(BOARD, boardId);
 		
 	}
 	
@@ -409,11 +404,11 @@ public class BoardController {
 			detailFilter = "(jcr:contains(@detail,'${detail}'))".replaceAll("\\$\\{detail\\}", detail);
 		}
 		
-		if( !StringUtils.isNullOrEmpty(categoryFilter) && !StringUtils.isNullOrEmpty(detailFilter)){
+		if( !StringUtils.isEmpty(categoryFilter) && !StringUtils.isEmpty(detailFilter)){
 			qmFilter.addJCRExpression( categoryFilter + " or " + detailFilter);
-		} else if ( !StringUtils.isNullOrEmpty(categoryFilter) && StringUtils.isNullOrEmpty(detailFilter)) {
+		} else if ( !StringUtils.isEmpty(categoryFilter) && StringUtils.isEmpty(detailFilter)) {
 			qmFilter.addJCRExpression( categoryFilter );
-		} else if (StringUtils.isNullOrEmpty(categoryFilter) && !StringUtils.isNullOrEmpty(detailFilter)) {
+		} else if (StringUtils.isEmpty(categoryFilter) && !StringUtils.isEmpty(detailFilter)) {
 			qmFilter.addJCRExpression( detailFilter );
 		}
 
@@ -468,8 +463,8 @@ public class BoardController {
 			detailFilter = "(jcr:contains(@detail,'${detail}'))".replaceAll("\\$\\{detail\\}", detail);
 		}
 
-		boolean categoryPresent = !StringUtils.isNullOrEmpty(categoryFilter);
-		boolean detailPresent = !StringUtils.isNullOrEmpty(detailFilter);
+		boolean categoryPresent = !StringUtils.isEmpty(categoryFilter);
+		boolean detailPresent = !StringUtils.isEmpty(detailFilter);
 		
 		if(categoryPresent && detailPresent){
 			qmFilter.addJCRExpression( categoryFilter + " or " + detailFilter);

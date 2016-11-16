@@ -4,7 +4,7 @@
 	<groupId>nz.net.gravity</groupId>
 	<artifactId>gravity</artifactId>
 	<packaging>war</packaging>
-	<version>3.0.1-SNAPSHOT</version>
+	<version>3.0.2-SNAPSHOT</version>
 	<name>Gravity Workflow Automation</name>
 
 	<properties>
@@ -15,6 +15,7 @@
 		<java.version>1.6</java.version>
 		<junit.version>4.8.2</junit.version>
 		<jackson.version>1.9.10</jackson.version>
+		<camel.version>2.17.2</camel.version>
 	</properties>
 	
 	<licenses>
@@ -60,17 +61,17 @@
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
-			<version>1.0.0.GA</version>
+			<version>1.1.0.Final</version>
 			<scope>compile</scope>
 		</dependency>
- 
+  
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>4.0.0.GA</version>
+			<version>5.2.4.Final</version>
 			<scope>compile</scope>
 		</dependency>
-
+		
 		<!-- Spring Dependencies -->
 
 		<dependency>
@@ -343,7 +344,6 @@
 			<scope>compile</scope>
 		</dependency>
 		
-		
 		<dependency>
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
@@ -398,6 +398,20 @@
 			<artifactId>sjsxp</artifactId>
 			<version>1.0.1</version>
 		</dependency>
+		
+        <!-- https://mvnrepository.com/artifact/org.apache.camel/camel-core -->
+		<dependency> 
+		    <groupId>org.apache.camel</groupId>
+		    <artifactId>camel-core</artifactId>
+		    <version>${camel.version}</version>
+		</dependency> 
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.camel/camel-spring -->
+		<dependency>
+		    <groupId>org.apache.camel</groupId>
+		    <artifactId>camel-spring</artifactId>
+		    <version>${camel.version}</version>
+		</dependency> 
         		
 	</dependencies>
 

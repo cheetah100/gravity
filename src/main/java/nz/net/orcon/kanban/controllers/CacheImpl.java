@@ -26,9 +26,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
 abstract public class CacheImpl<T> implements Cache<T> {
+	
+	private static final Logger logger = LoggerFactory.getLogger(CacheImpl.class);
+	
+	private static String DEFAULT_LIST_NAME = "default";
 
 	private Map<String, T> cacheMap = new ConcurrentHashMap<String,T>();
 	
@@ -44,7 +50,18 @@ abstract public class CacheImpl<T> implements Cache<T> {
 			for( int a=0; a<itemIds.length-1; a++){
 				listId[a] = itemIds[a];
 			}
-			this.cacheList.remove(getCacheId(listId));
+			String cacheListId = getCacheId(listId);
+			this.cacheList.remove(cacheListId);
+			if(logger.isDebugEnabled()){
+				logger.debug("Clearing List: " + cacheListId);
+			}
+		} else if(itemIds.length==1){
+			
+			this.cacheList.remove(DEFAULT_LIST_NAME);
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("Clearing Root List: " + itemIds[0]);
+			}
 		}
 	}
 
@@ -68,7 +85,7 @@ abstract public class CacheImpl<T> implements Cache<T> {
 	}
 	
 	public Map<String,String> list(String... prefixs) throws Exception{
-		String cacheId = "default";
+		String cacheId = DEFAULT_LIST_NAME;
 		if(prefixs.length>0){
 			cacheId = this.getCacheId(prefixs);
 		}
@@ -83,20 +100,6 @@ abstract public class CacheImpl<T> implements Cache<T> {
 		}
 		
 		return new HashMap<String,String>(this.cacheList.get(cacheId));
-		
-		/*
-		if( this.cacheList == null){
-			if( prefixs.length>0){
-				cacheId = this.getCacheId(prefixs);
-				Map<String,String> list = this.getListFromStore(prefixs);
-				this.cacheList.put(cacheId, list);
-			} else {
-				Map<String,String> list = this.getListFromStore("");
-				this.cacheList.put(cacheId, list);
-			}
-		}
-		return new HashMap<String,String>(this.cacheList.get(cacheId));
-		*/
 	}
 
 	@Override
