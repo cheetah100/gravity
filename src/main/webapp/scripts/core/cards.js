@@ -208,7 +208,7 @@ var cards = {
             width: (incomplete != 0 && incomplete <= data.tasks?parseInt((1 - (incomplete / data.tasks)) * 100):100) + "%"
         }, 500);
         
-        $card.bind('click', function() {
+        $card.find('div.card-view-field-wrapper').bind('click', function() {
             cards.cardscrollpoint = $(window).scrollTop();
             showLoadingWithCallback(card.buildCardForCardID, $card.data('id'));        	
         });
