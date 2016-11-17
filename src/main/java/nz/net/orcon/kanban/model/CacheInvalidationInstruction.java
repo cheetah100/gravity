@@ -29,14 +29,14 @@ public class CacheInvalidationInstruction implements Serializable{
 
 	private String cacheType;
 	
-	private String id;
+	private String[] ids;
 
 	public CacheInvalidationInstruction(){
 	}
 
-	public CacheInvalidationInstruction( String cacheType, String id){
+	public CacheInvalidationInstruction( String cacheType, String... ids){
 		this.cacheType = cacheType;
-		this.id = id;
+		this.ids = ids;
 	}
 	
 	public void setCacheType(String cacheType) {
@@ -47,11 +47,11 @@ public class CacheInvalidationInstruction implements Serializable{
 		return cacheType;
 	}
 	
-	public void setId(String id) {
-		this.id = id;
+	public void setIds(String[] ids) {
+		this.ids = ids;
 	}
 	
-	public String getId() {
-		return id;
+	public String[] getIds() {
+		return ids;
 	}
 }

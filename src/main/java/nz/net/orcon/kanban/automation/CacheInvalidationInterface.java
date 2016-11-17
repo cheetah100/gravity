@@ -23,6 +23,6 @@ package nz.net.orcon.kanban.automation;
 
 public interface CacheInvalidationInterface {
 	
-	public void invalidate(String type, String id);
+	public void invalidate(String type, String... ids);
 	
 }

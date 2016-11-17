@@ -78,6 +78,7 @@ public class GravityPermissionEvaluator implements PermissionEvaluator {
 			List<String> permissions = new ArrayList<String>(Arrays.asList(permission.toString().split(",")));
 			return isAuthorised(authentication, roles, permissions);
 		} catch (Exception e){
+			LOG.warn("Exception running auth: " + e.getMessage());
 			return false;
 		}
 	}
