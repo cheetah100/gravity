@@ -155,6 +155,10 @@ public class SecurityToolImpl implements SecurityTool {
 			roles.put("administrators", "ADMIN");
 		}
 		
+		if( roles.get("system")==null){
+			roles.put("system", "WRITE");
+		}
+		
 		String username = getCurrentUser();
 		if( roles.get(username)==null){
 			roles.put(username, "ADMIN");

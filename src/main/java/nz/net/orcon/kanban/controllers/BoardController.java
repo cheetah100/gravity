@@ -299,7 +299,6 @@ public class BoardController {
 		ocm.save();
 		ocm.logout();
 		this.cacheInvalidationManager.invalidate(BOARD, boardId);
-		
 	}
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")

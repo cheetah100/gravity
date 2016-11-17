@@ -89,8 +89,18 @@ abstract public class CacheImpl<T> implements Cache<T> {
 		if(prefixs.length>0){
 			cacheId = this.getCacheId(prefixs);
 		}
+		
+		if(logger.isDebugEnabled()){
+			logger.debug("Getting List from Cache: " + cacheId);
+		}
+		
 		Map<String, String> list = this.cacheList.get(cacheId);
 		if(list==null){
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("Cache Empty, Getting List from Data Store: " + cacheId);
+			}
+			
 			if(prefixs.length>0){
 				list = this.getListFromStore(prefixs);	
 			} else {

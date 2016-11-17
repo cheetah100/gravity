@@ -81,7 +81,7 @@ public class TemplateController {
 			
 			node.remove();
 			ocm.save();
-			this.cacheInvalidationManager.invalidate(TEMPLATE, templateCache.getCacheId(boardId,templateId));
+			this.cacheInvalidationManager.invalidate(TEMPLATE, boardId,templateId);
 		} finally {
 			ocm.logout();
 		}
@@ -107,7 +107,7 @@ public class TemplateController {
 			ocm.insert(template);
 			
 			ocm.save();
-			this.cacheInvalidationManager.invalidate(TEMPLATE, templateId);
+			this.cacheInvalidationManager.invalidate(TEMPLATE, boardId, templateId);
 		} finally {
 			ocm.logout();
 		}
@@ -127,7 +127,7 @@ public class TemplateController {
 		try {
 			ocm.update(template);
 			ocm.save();
-			this.cacheInvalidationManager.invalidate(TEMPLATE, templateId);
+			this.cacheInvalidationManager.invalidate(TEMPLATE, boardId,templateId);
 		} finally {
 			ocm.logout();
 		}

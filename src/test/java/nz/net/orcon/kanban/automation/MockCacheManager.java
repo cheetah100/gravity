@@ -24,7 +24,7 @@ package nz.net.orcon.kanban.automation;
 public class MockCacheManager implements CacheInvalidationInterface {
 
 	@Override
-	public void invalidate(String type, String id) {
+	public void invalidate(String type, String[] ids) {
 		// Mock Only
 	}
 }

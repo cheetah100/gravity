@@ -94,6 +94,7 @@ public class ListController {
 			list.setPath(String.format(URI.LIST_URI, boardId, newId.toString()));
 			ocm.insert(list);			
 			ocm.save();
+			this.cacheInvalidationManager.invalidate(LIST, boardId,newId);
 		} finally {
 			ocm.logout();
 		}
@@ -223,7 +224,7 @@ public class ListController {
 		
 			node.remove();
 			ocm.save();
-			this.cacheInvalidationManager.invalidate(LIST, listCache.getCacheId(boardId,listId));
+			this.cacheInvalidationManager.invalidate(LIST, boardId, listId);
 		} finally {
 			ocm.logout();
 		}

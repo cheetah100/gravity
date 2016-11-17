@@ -110,6 +110,7 @@ public class ResourceController {
 			addNode.setProperty("resource",value);
 			addNode.setProperty("name",resourceId);
 			ocm.getSession().save();
+			this.cacheInvalidationManager.invalidate(RESOURCE, boardId,resourceId);
 		} finally {
 			ocm.logout();
 		}
@@ -132,7 +133,7 @@ public class ResourceController {
 			}
 			node.remove();
 			ocm.save();
-			this.cacheInvalidationManager.invalidate(RESOURCE, resourceCache.getCacheId(boardId,resourceId));
+			this.cacheInvalidationManager.invalidate(RESOURCE, boardId,resourceId);
 		} finally {
 			ocm.logout();
 		}

@@ -97,6 +97,7 @@ public class RuleController {
 			rule.setPath(String.format(URI.RULE_URI, boardId, IdentifierTools.getIdFromNamedModelClass(rule)));
 			ocm.insert(rule);
 			ocm.save();
+			this.cacheInvalidationManager.invalidate(RULE, boardId, rule.getId());
 		} finally {
 			ocm.logout();
 		}
@@ -114,15 +115,7 @@ public class RuleController {
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listRules(@PathVariable String boardId) throws Exception {
-		
-		Map<String, String> ruleList = ruleCache.list(boardId,"");
-		
-		//ruleCache.list(boardId);
-		
-		//Session session = ocmFactory.getOcm().getSession();
-		//Map<String,String> result = listTools.list(String.format(URI.RULE_URI, boardId,""), "name", session);
-		//session.logout();
-		return ruleList;
+		return ruleCache.list(boardId,"");
 	}
 		
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'ADMIN')")
@@ -144,7 +137,7 @@ public class RuleController {
 		
 			node.remove();
 			ocm.save();
-			this.cacheInvalidationManager.invalidate(RULE, ruleCache.getCacheId(boardId,ruleId));
+			this.cacheInvalidationManager.invalidate(RULE, boardId, ruleId);
 		} finally {
 			ocm.logout();
 		}

@@ -59,14 +59,14 @@ public class CacheManager implements MessageListener, CacheInvalidationInterface
 			
 			if( logger.isDebugEnabled()){
 				logger.debug( "Cache Invalidation Instruction Received: " 
-						+ instruction.getCacheType() + " " + instruction.getId());
+						+ instruction.getCacheType() + " " + instruction.getIds().toString());
 			}
 			
 			Cache<?> cache = cacheList.get(instruction.getCacheType().toString());
-			cache.invalidate(instruction.getId());
+			cache.invalidate(instruction.getIds());
 			
 			if(instruction.getCacheType().equals("BOARD")){
-				timerManager.loadTimersForBoard(instruction.getId());
+				timerManager.loadTimersForBoard(instruction.getIds()[0]);
 			}			
 		} catch (Exception e) {
 			logger.error("JMS Exception on Cache Invalidation Reception ",e);
@@ -75,12 +75,12 @@ public class CacheManager implements MessageListener, CacheInvalidationInterface
 	}
 
 	@Override
-	public void invalidate( String type, String id){
+	public void invalidate( String type, String... ids){
 		CacheInvalidationInstruction instruction = 
-			new CacheInvalidationInstruction(type,id);
+			new CacheInvalidationInstruction(type, ids);
 		this.jmsTemplate.convertAndSend(instruction);
 		if( logger.isDebugEnabled()){
-			logger.debug("Invalidation Message Sent to Queue: " + type + " - " + id);
+			logger.debug("Invalidation Message Sent to Queue: " + type);
 		}
 	}
 
