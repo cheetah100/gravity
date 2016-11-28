@@ -72,13 +72,19 @@ public class GravityPermissionEvaluator implements PermissionEvaluator {
 		try {
 			Map<String,String> roles = getRolesById(targetType, targetId.toString());
 			if(roles==null){
+				LOG.warn("No Roles Found for " + authentication.getName());
 				return false;
 			}
 			
 			List<String> permissions = new ArrayList<String>(Arrays.asList(permission.toString().split(",")));
+			
+			if(LOG.isDebugEnabled()){
+				LOG.debug("permissions: " + permissions);
+			}
+			
 			return isAuthorised(authentication, roles, permissions);
 		} catch (Exception e){
-			LOG.warn("Exception running auth: " + e.getMessage());
+			LOG.warn("Exception running auth: " + e.getClass().getSimpleName() + " " + e.getMessage());
 			return false;
 		}
 	}

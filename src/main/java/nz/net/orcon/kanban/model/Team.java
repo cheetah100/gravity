@@ -29,7 +29,7 @@ import org.apache.jackrabbit.ocm.mapper.impl.annotation.Collection;
 import org.apache.jackrabbit.ocm.mapper.impl.annotation.Node;
 
 @Node
-public class Team extends AbstractNamedModelClass implements Serializable {
+public class Team extends AbstractNamedModelClass implements Serializable, SecurityRoleEntity {
 	
 	private static final long serialVersionUID = 167163553039753200L;
 
@@ -53,6 +53,11 @@ public class Team extends AbstractNamedModelClass implements Serializable {
 
 	public Map<String,String> getMembers() {
 		return members;
+	}
+
+	@Override
+	public Map<String, String> getRoles() {
+		return owners;
 	}
 
 }

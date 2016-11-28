@@ -63,7 +63,7 @@ public class UserController {
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
 
-	@PreAuthorize("hasPermission('admin', 'TEAM', 'ADMIN')")
+	@PreAuthorize("hasPermission('administrators', 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.POST)
 	public @ResponseBody User createUser(@RequestBody User user) throws Exception {
 		if( user.getPath()!=null ){
@@ -77,13 +77,15 @@ public class UserController {
 			user.setPath(String.format(URI.USER_URI, newId.toString()));
 			user.setKey(null);
 			ocm.insert(user);			
-			ocm.save();			
+			ocm.save();
+			user.setPasswordhash(null);
 		} finally {
 			ocm.logout();		
 		}
 		return user;
 	}
 
+	@PreAuthorize("hasPermission('administrators', 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "/{userId}", method=RequestMethod.GET)
 	public @ResponseBody User getUser(@PathVariable String userId) throws Exception {
 		
@@ -117,7 +119,7 @@ public class UserController {
 		return taskList;	
 	}
 	
-	@PreAuthorize("hasPermission('admin', 'TEAM', 'ADMIN')")
+	@PreAuthorize("hasPermission('administrators', 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "/{userId}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteUser(@PathVariable String userId) throws Exception {
 		Session session = ocmFactory.getOcm().getSession();
@@ -129,6 +131,7 @@ public class UserController {
 		}
 	}
 	
+	@PreAuthorize("hasPermission('administrators', 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "", method=RequestMethod.GET)
 	public @ResponseBody Map<String,String> listUsers() throws Exception {
 		

@@ -70,6 +70,7 @@ public class TeamController {
 	@Autowired
 	SecurityTool securityTool;
 		
+	
 	@RequestMapping(value = "", method=RequestMethod.POST)
 	public @ResponseBody Team createTeam(@RequestBody Team team) throws Exception {
 		if( team.getPath()!=null ){
@@ -95,7 +96,7 @@ public class TeamController {
 		return team;
 	}
 	
-	//@PreAuthorize("hasPermission(#teamId, 'TEAM', 'READ,WRITE,ADMIN')")
+	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'READ,WRITE,ADMIN')")
 	@RequestMapping(value = "/{teamId}", method=RequestMethod.GET)
 	public @ResponseBody Team getTeam(@PathVariable String teamId) throws Exception {
 		return teamCache.getItem(teamId);
@@ -119,6 +120,7 @@ public class TeamController {
 		return this.teamCache.list();
 	}
 	
+	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "/{teamId}/owners", method=RequestMethod.POST)
 	public @ResponseBody void addOwners(@PathVariable String teamId, @RequestBody Map<String,String> roles) throws Exception {
 
@@ -142,6 +144,7 @@ public class TeamController {
 		}
 	}
 
+	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "/{teamId}/members", method=RequestMethod.POST)
 	public @ResponseBody void addMembers(@PathVariable String teamId, @RequestBody Map<String,String> roles) throws Exception {
 
@@ -166,6 +169,7 @@ public class TeamController {
 		}
 	}
 
+	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'ADMIN')")
 	@RequestMapping(value = "/{teamId}/members/{member}", method=RequestMethod.DELETE)
 	public @ResponseBody void deleteMember(@PathVariable String teamId, @PathVariable String member) throws Exception {
 
@@ -174,6 +178,28 @@ public class TeamController {
 			
 			listTools.ensurePresence(String.format( URI.TEAM_URI, teamId), "members", ocm.getSession());
 			Node node = ocm.getSession().getNode(String.format(URI.TEAM_MEMBERS, teamId, member));
+		
+			if( node==null){
+				throw new ResourceNotFoundException();
+			}
+			
+			node.remove();
+			ocm.save();
+			this.cacheInvalidationManager.invalidate(TEAM, teamId);
+		} finally {
+			ocm.logout();
+		}
+	}
+	
+	@PreAuthorize("hasPermission(#teamId, 'TEAM', 'ADMIN')")
+	@RequestMapping(value = "/{teamId}/owners/{owner}", method=RequestMethod.DELETE)
+	public @ResponseBody void deleteOwner(@PathVariable String teamId, @PathVariable String owner) throws Exception {
+
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try{
+			
+			listTools.ensurePresence(String.format( URI.TEAM_URI, teamId), "members", ocm.getSession());
+			Node node = ocm.getSession().getNode(String.format(URI.TEAM_OWNERS, teamId, owner));
 		
 			if( node==null){
 				throw new ResourceNotFoundException();
