@@ -16,6 +16,7 @@
 		<junit.version>4.8.2</junit.version>
 		<jackson.version>1.9.10</jackson.version>
 		<camel.version>2.17.2</camel.version>
+		<hornetq.version>2.4.0.Final</hornetq.version>
 	</properties>
 	
 	<licenses>
@@ -273,12 +274,48 @@
 			<artifactId>commons-pool</artifactId>
 			<version>1.5.5</version>
 		</dependency>
+		
+		<!-- JMS Dependencies -->
 
 		<dependency>
 		    <groupId>javax.jms</groupId>
 		    <artifactId>javax.jms-api</artifactId>
 		    <version>2.0.1</version>
 		    <scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.hornetq</groupId>
+		    <artifactId>hornetq-core-client</artifactId>
+		    <version>${hornetq.version}</version>
+		    <scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.hornetq</groupId>
+		    <artifactId>hornetq-jms-client</artifactId>
+		    <version>${hornetq.version}</version>
+		    <scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.hornetq</groupId>
+		    <artifactId>hornetq-transports</artifactId>
+		    <version>2.0.0.GA</version>
+		    <scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.jboss.netty</groupId>
+		    <artifactId>netty</artifactId>
+		    <version>3.1.0.GA</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.jboss.javaee</groupId>
+		    <artifactId>jboss-jms-api</artifactId>
+		    <version>1.1.0.GA</version>
+		    <scope>compile</scope>
 		</dependency>
 
 		<dependency>
