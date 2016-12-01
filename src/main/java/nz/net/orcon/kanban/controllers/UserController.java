@@ -22,6 +22,7 @@
 
 package nz.net.orcon.kanban.controllers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import javax.annotation.Resource;
 import javax.jcr.Session;
 
 import nz.net.orcon.kanban.model.CardTask;
+import nz.net.orcon.kanban.model.Team;
 import nz.net.orcon.kanban.model.User;
 import nz.net.orcon.kanban.tools.CardTools;
 import nz.net.orcon.kanban.tools.IdentifierTools;
@@ -59,6 +61,12 @@ public class UserController {
 	
 	@Autowired 
 	CardTools cardTools;
+	
+	@Autowired
+	TeamCache teamCache;
+	
+	@Autowired
+	TeamController teamController;
 	
 	@Resource(name="ocmFactory")
 	OcmMapperFactory ocmFactory;
@@ -173,5 +181,48 @@ public class UserController {
 			}
 		}
 		return false;			
+	}
+	
+	@RequestMapping(value = "/bootstrap", method=RequestMethod.POST)
+	public @ResponseBody User bootstrap(@RequestBody User user) throws Exception {
+		if( user.getPath()!=null ){
+			logger.warn("Attempt to update user using POST");
+			throw new Exception("Attempt to Update User using POST. Use PUT instead");
+		}
+			
+		ObjectContentManager ocm = ocmFactory.getOcm();
+		try {
+			
+			// Determine if there are new users
+			Map<String, String> result = listTools.list(String.format(URI.USER_URI,""), "name", ocm.getSession());
+			if( !result.isEmpty()){
+				throw new Exception("Users Already Exist, cannot use Bootstrap.");
+			}
+			
+			String newId = IdentifierTools.getIdFromNamedModelClass(user);
+			user.setPath(String.format(URI.USER_URI, newId.toString()));
+			user.setKey(null);
+			ocm.insert(user);			
+			ocm.save();
+			logger.info("Bootstrapping New User: "+ user.getName());
+						
+		} finally {
+			ocm.logout();		
+		}
+		
+		Team item = teamCache.getItem("administrators");
+		if( item==null){
+			Map<String,String> members = new HashMap<String,String>();
+			members.put(user.getId(), "ADMIN");
+			Team team = new Team();
+			team.setName("Administrators");
+			team.setMembers(members);
+			team.setOwners(members);
+			teamController.createTeam(team);
+			logger.info("Bootstrapping New Administration Team");
+		}
+	
+		user.setPasswordhash(null);
+		return user;
 	}
 }
