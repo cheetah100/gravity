@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -45,6 +46,7 @@ public class URI {
 	public static final String NOTIFICATIONS_TYPE_MAPPING_URI = "/notifications/%s/mapping";
 	public static final String NOTIFICATIONS_TYPE_ID_URI = "/notifications/%s/%s";
 	public static final String MOVE_NOTIFICATION_URI = "%s/notifications/%s/%s";
+	public static final String PIVOT_TABLE_URI =  "/board/%s/pivots/%s";
 	public static final String RESOURCE_URI = "/board/%s/resources/%s";
 	public static final String RULE_URI = "/board/%s/rules/%s";
 	public static final String TEAM_URI = "/team/%s";

@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -22,7 +23,6 @@
 package nz.net.orcon.kanban.model;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.jackrabbit.ocm.manager.enumconverter.EnumTypeConverter;
