@@ -12,12 +12,12 @@
 	<!-- Scans within the base package of the application for @Components to 
 		configure as beans -->
 		
-	<bean id="kanbanConfiguration"
+	<bean id="gravityConfiguration"
 		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="location" value="file:///etc/kanban.conf" />
+		<property name="location" value="file:///etc/gravity.conf" />
 	</bean>
 	
-	<context:property-placeholder properties-ref="kanbanConfiguration"/>
+	<context:property-placeholder properties-ref="gravityConfiguration"/>
 	
 	<import resource="test-event-config.xml" />
 	<import resource="test-repository.xml" />

@@ -7,6 +7,7 @@
                     http://www.springframework.org/schema/security/spring-security-3.1.xsd">
                     
     <http use-expressions="true" auto-config="true">
+    	<intercept-url pattern="/spring/bootstrap" access="permitAll()" />
         <intercept-url pattern="/spring/**" access="isAuthenticated()" />
         <http-basic />
         <!--  <form-login /> -->
