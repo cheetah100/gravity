@@ -30,9 +30,11 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import nz.net.orcon.kanban.model.Action;
 
+@Component
 public class ExtractPlugin implements Plugin {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExtractPlugin.class);

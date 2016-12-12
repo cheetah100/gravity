@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.stereotype.Component;
 
 /**
  * On startup it will recurse all the boards in Gravity to find rules which have timers.
@@ -62,6 +63,8 @@ import org.springframework.jms.core.JmsTemplate;
  * @author peter
  *
  */
+
+@Component
 public class TimerManager {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(TimerManager.class);

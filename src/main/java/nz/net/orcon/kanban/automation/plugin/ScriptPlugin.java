@@ -34,11 +34,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import nz.net.orcon.kanban.controllers.ListController;
 import nz.net.orcon.kanban.controllers.ResourceController;
 import nz.net.orcon.kanban.model.Action;
 
+@Component
 public class ScriptPlugin implements Plugin{
 	
 	private static final Logger log = LoggerFactory.getLogger(ScriptPlugin.class);

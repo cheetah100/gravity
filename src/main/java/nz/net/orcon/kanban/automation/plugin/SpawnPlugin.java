@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -28,6 +29,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import nz.net.orcon.kanban.automation.VariableInterpreter;
 import nz.net.orcon.kanban.controllers.BoardsCache;
@@ -52,6 +54,8 @@ import nz.net.orcon.kanban.model.Phase;
  * @author peter
  *
  */
+
+@Component
 public class SpawnPlugin implements Plugin {
 
 	private static final Logger logger = LoggerFactory.getLogger(SpawnPlugin.class);

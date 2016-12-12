@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import nz.net.orcon.kanban.controllers.ResourceController;
 import nz.net.orcon.kanban.model.Action;
@@ -38,6 +39,7 @@ import nz.net.orcon.kanban.model.Action;
  * @author peter
  *
  */
+@Component
 public class TemplatePlugin implements Plugin {
 	
 	@Autowired

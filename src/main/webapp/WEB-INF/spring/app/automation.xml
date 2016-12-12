@@ -22,7 +22,7 @@
     http://camel.apache.org/schema/spring 
     http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="variableInterpreter" class="nz.net.orcon.kanban.automation.VariableInterpreter"/>
+	<!-- <bean id="variableInterpreter" class="nz.net.orcon.kanban.automation.VariableInterpreter"/> -->
 	
 	<bean id="listTools" class="nz.net.orcon.kanban.tools.ListTools" >
 		<property name="dateInterpreter" ref="dateInterpreter" />
@@ -66,54 +66,18 @@
 				<entry key="cardController" value-ref="cardController" />
 				<entry key="notificationController" value-ref="notificationController" />
 				<entry key="phaseController" value-ref="phaseController" />								
-				<entry key="stringify" value-ref="stringify" />				
+				<entry key="stringify" value-ref="stringUtils" />				
 				<entry key="emailSenderAction" value-ref="emailSenderAction" />
 				<entry key="emailReceiverAction" value-ref="emailReceiverAction" />
 				<entry key="uniqueIdAction" value-ref="uniqueIdAction" />
 				<entry key="dateTool" value-ref="dateTool" />
 				<entry key="createVariableAction" value-ref="createVariableAction" />
-				<entry key="clusterManager" value-ref="clusterManager" />
+				<entry key="clusterManager" value-ref="clusterManagerImpl" />
 				<entry key="awsAutomation" value-ref="awsAutomationAction" />
 			</map>
 		</property>
 	</bean>
-	
-	<bean id="persistPlugin" class="nz.net.orcon.kanban.automation.plugin.PersistPlugin" />
-	
-	<bean id="movePlugin" class="nz.net.orcon.kanban.automation.plugin.MovePlugin" />
-
-	<bean id="objectMapperPlugin" class="nz.net.orcon.kanban.automation.plugin.ObjectMapperPlugin" />
-
-	<bean id="mapMapperPlugin" class="nz.net.orcon.kanban.automation.plugin.MapMapperPlugin" />
-
-	<bean id="xStreamPlugin" class="nz.net.orcon.kanban.automation.plugin.XStreamPlugin" />
-	
-	<bean id="extractPlugin" class="nz.net.orcon.kanban.automation.plugin.ExtractPlugin" />
-	
-	<bean id="propertyPlugin" class="nz.net.orcon.kanban.automation.plugin.PropertyMapperPlugin" />
-	
-	<bean id="scriptPlugin" class="nz.net.orcon.kanban.automation.plugin.ScriptPlugin" />
-	
-	<bean id="spawnPlugin" class="nz.net.orcon.kanban.automation.plugin.SpawnPlugin" />
-	
-	<bean id="templatePlugin" class="nz.net.orcon.kanban.automation.plugin.TemplatePlugin" />	
-
-	<bean id="jcrObserver" class="nz.net.orcon.kanban.automation.JcrObserver"/>
-
-	<bean id="timerManager" class="nz.net.orcon.kanban.automation.TimerManager"/>
-	
-	<bean id="emailSenderAction" class="nz.net.orcon.kanban.automation.actions.EmailSenderAction" />
-	
-	<bean id="uniqueIdAction" class="nz.net.orcon.kanban.automation.actions.UniqueIdAction" />
-	
-	<bean id="emailReceiverAction" class="nz.net.orcon.kanban.automation.actions.EmailReceiverAction" />
-	
-	<bean id="dateTool" class="nz.net.orcon.kanban.automation.actions.DateTool" />
-			
-	<bean id="stringify" class="nz.net.orcon.kanban.automation.actions.StringUtils"/>
-	
-	<bean id="createVariableAction" class="nz.net.orcon.kanban.automation.actions.CreateVariableAction"/>
-	
+		
 	<!-- 
 	<bean id="bulletinAdvancedEndpoint"
 		class="nz.net.orcon.kanban.automation.actions.BulletinAdvancedSmsEndpoint">
@@ -151,11 +115,6 @@
 	<bean id="awsCloudFrontClient" class="com.amazonaws.services.cloudfront.AmazonCloudFrontClient">
 		<constructor-arg ref="awsCredential"/>
 	</bean>
-	
-	<bean id="awsAutomationAction" class="nz.net.orcon.kanban.automation.actions.AwsAutomationAction"/>
-
-	<!-- Cluster Management -->
-	<bean id="clusterManager" class="nz.net.orcon.kanban.automation.ClusterManagerImpl"/>
 	
 	<camel:camelContext>
     <!-- and then let Camel use those @Component scanned route builders -->

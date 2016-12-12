@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -25,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.springframework.stereotype.Component;
+
 import nz.net.orcon.kanban.model.Action;
 
 /**
@@ -34,6 +37,8 @@ import nz.net.orcon.kanban.model.Action;
  * 
  * @author peter
  */
+
+@Component
 public class MapMapperPlugin implements Plugin {
 
 	@Override

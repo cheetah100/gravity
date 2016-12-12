@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -24,6 +25,7 @@ package nz.net.orcon.kanban.automation.plugin;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import nz.net.orcon.kanban.controllers.CardController;
 import nz.net.orcon.kanban.model.Action;
@@ -33,6 +35,8 @@ import nz.net.orcon.kanban.model.Action;
  * 
  * @author peter
  */
+
+@Component
 public class MovePlugin implements Plugin {
 
 	@Autowired

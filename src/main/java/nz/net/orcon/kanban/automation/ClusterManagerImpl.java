@@ -1,6 +1,7 @@
 /**
  * GRAVITY WORKFLOW AUTOMATION
  * (C) Copyright 2015 Orcon Limited
+ * (C) Copyright 2016 Peter Harrison
  * 
  * This file is part of Gravity Workflow Automation.
  *
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 /**
  * The purpose of the Cluster manager is to manage all the functions that need to be
@@ -48,6 +50,8 @@ import org.springframework.scheduling.annotation.Scheduled;
  * @author peter
  *
  */
+
+@Component
 public class ClusterManagerImpl implements ClusterManager {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(ClusterManagerImpl.class);
