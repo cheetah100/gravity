@@ -108,8 +108,8 @@ public class CardController {
 	@Autowired
 	CardListener cardListener;
 	
-	//@Autowired
-	//AutomationEngine automationEngine;
+	@Autowired
+	AutomationEngine automationEngine;
 	
 	@Autowired
 	private NotificationController notificationController;
@@ -177,9 +177,8 @@ public class CardController {
 		CardHolder cardHolder = new CardHolder();
 		cardHolder.setBoardId(boardId);
 		cardHolder.setCardId(cardId);		
-		//Map<String, Map<String,Boolean>> explain = automationEngine.explain(cardHolder);
-		//return explain;
-		return null;
+		Map<String, Map<String,Boolean>> explain = automationEngine.explain(cardHolder);
+		return explain;
 	}
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")	
@@ -282,6 +281,22 @@ public class CardController {
 			ocm.logout();
 		}
 		return card;
+	}
+	
+	
+	@RequestMapping(value = "/fields/{templateId}", method=RequestMethod.POST)
+	public @ResponseBody Card createCardFromFields(@PathVariable String boardId, 
+										 @PathVariable String phaseId, 
+										 @PathVariable String templateId,
+										 @RequestParam(required=false,defaultValue="white") String color,
+										 @RequestBody Map<String,Object> data) throws Exception {
+
+		logger.info(data.toString());
+		Card card = new Card();
+		card.setTemplate(templateId);
+		card.setFields(data);
+		card.setColor(color);
+		return createCard(boardId, phaseId, card);
 	}
 	
 	@PreAuthorize("hasPermission(#boardId, 'BOARD', 'READ,WRITE,ADMIN')")
